@@ -100,3 +100,15 @@ def test_cli_demos(capsys):
     from qlrisk.demos import run_frtb_demo
     run_frtb_demo()
     assert "frtb_sa.total" in capsys.readouterr().out
+
+
+def test_ccr_pipeline_credit_metrics():
+    from qlrisk.engine import CCREngine
+    with CCREngine() as e:
+        m = e.calculate_ccr_metrics({"notional": 25e6, "mtm": 500_000, "counterparty_pd": 0.015,
+                                     "counterparty_lgd": 0.5, "spread": 0.012})
+        r = e.calculate_ccr_metrics({"notional": 25e6, "mtm": 500_000, "rating": "BBB", "recovery_rate": 0.4})
+    assert m["el"] == pytest.approx(0.015 * 0.5 * 500_000)
+    assert m["economic_capital"] > 0 and m["raroc"] > 0
+    assert r["pd"] == pytest.approx(0.004) and r["lgd"] == pytest.approx(0.6)
+    assert not [k for k in {**m, **r} if k.endswith("_error")]

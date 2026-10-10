@@ -51,13 +51,14 @@ with CCREngine() as engine:
         "counterparty_pd": 0.015, "counterparty_lgd": 0.5, "rating": "A", "discount_rate": 0.045,
         "recovery_rate": 0.45, "confidence_level": 0.99, "time_horizon": 1.0, "spread": 0.012,
     })
-for k in ("ead", "el", "pfe", "cva", "economic_capital", "raroc"):
+for k in ("pd", "lgd", "ead", "el", "pfe", "cva", "economic_capital", "raroc"):
     v = metrics.get(k)
     print(k, v if v is None or isinstance(v, str) else round(v, 4))
 ```
 
-> **Known issue:** in the current pipeline `el` and `economic_capital` come back as 0 and `raroc` as `None`
-> for this input even though PD, LGD and EAD are populated. Compute EL directly as PD × LGD × EAD until fixed.
+Supply `counterparty_pd` / `counterparty_lgd` to use your own estimates; otherwise PD comes from the
+`rating` (transition-matrix table) and LGD from `1 - recovery_rate`. RAROC uses `revenue` (default
+`spread x notional`) less expected loss over economic capital.
 
 ## Wrong-way style check: exposure under stress
 
