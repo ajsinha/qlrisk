@@ -1,4 +1,4 @@
-# CCR Analytics Engine v1.3.0
+# QLRisk v1.3.0
 
 **Comprehensive Counterparty Credit Risk Analytics Platform**
 
@@ -13,16 +13,13 @@ Ashutosh Sinha | Email: ajsinha@gmail.com
 Legal Notice: This software and its associated documentation are proprietary 
 and confidential. Unauthorized copying, distribution, modification, or use is 
 strictly prohibited without explicit written permission from the copyright holder.
-
-Patent Pending: Certain architectural patterns and implementations described 
-in this software may be subject to patent applications.
 ```
 
 ---
 
 ## Overview
 
-The CCR Analytics Engine is a professional-grade Python library for comprehensive counterparty credit risk (CCR) analytics. It provides complete implementations of exposure calculations, valuation adjustments, regulatory capital metrics, and a wide range of financial product models.
+QLRisk is a professional-grade Python library for comprehensive counterparty credit risk (CCR) analytics. It provides complete implementations of exposure calculations, valuation adjustments, regulatory capital metrics, and a wide range of financial product models.
 
 ### Key Highlights
 
@@ -115,33 +112,30 @@ The CCR Analytics Engine is a professional-grade Python library for comprehensiv
 - Python 3.9 or higher
 - pip package manager
 
-### Install Dependencies
+### Install
 
 ```bash
-# Required
-pip install numpy scipy
+# From PyPI (once published)
+pip install qlrisk
 
-# Optional: QuantLib for high-performance calculations
-pip install QuantLib-Python
+# From source (editable, with dev tools)
+git clone https://github.com/ajsinha/qlrisk.git
+cd qlrisk
+pip install -e ".[dev]"
 ```
+
+This installs the dependencies (numpy, scipy, QuantLib) automatically.
 
 ### Running the Demo
 
 ```bash
-# Quick demo
-python main.py --quick
+qlrisk --quick        # Quick demo
+qlrisk                # Full demonstration
+qlrisk --benchmark    # Performance benchmarks
+qlrisk --stress       # Stress testing
 
-# Full demonstration
-python main.py
-
-# Performance benchmarks
-python main.py --benchmark
-
-# Stress testing
-python main.py --stress
-
-# Or run as module
-python -m ccranalytics --quick
+# Or run as a module
+python -m qlrisk --quick
 ```
 
 ---
@@ -151,8 +145,8 @@ python -m ccranalytics --quick
 ### Basic CCR Calculation
 
 ```python
-from ccranalytics.engine import CCREngine
-from ccranalytics.calculator import CalculatorType
+from qlrisk.engine import CCREngine
+from qlrisk.calculator import CalculatorType
 
 with CCREngine() as engine:
     # Calculate probability of default
@@ -166,7 +160,7 @@ with CCREngine() as engine:
 ### Generate Test Data
 
 ```python
-from ccranalytics.data import DataGenerator, create_test_dataset
+from qlrisk.data import DataGenerator, create_test_dataset
 
 # Quick dataset
 dataset = create_test_dataset(num_trades=1000)
@@ -176,7 +170,7 @@ print(f"Generated {dataset['summary']['num_trades']} trades")
 ### Path Generation
 
 ```python
-from ccranalytics.mathlib import MathFactory, PathGenerationParams, ProcessType
+from qlrisk.mathlib import MathFactory, PathGenerationParams, ProcessType
 
 factory = MathFactory.get_instance()
 path_gen = factory.create_path_generator(implementation='python')
@@ -199,7 +193,7 @@ print(f"Final mean: {result.paths[:, -1].mean():.2f}")
 ## Project Structure
 
 ```
-ccranalytics/
+qlrisk/
 ├── __init__.py              # Package initialization (v1.3.0)
 ├── __main__.py              # Entry point for python -m
 ├── main.py                  # Main demonstration script
@@ -278,4 +272,4 @@ PROPRIETARY AND CONFIDENTIAL
 
 ---
 
-*CCR Analytics Engine v1.3.0 | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v1.3.0 | Copyright © 2025-2030 Ashutosh Sinha*
