@@ -1,4 +1,4 @@
-# SA-CCR Implementation Guide v2.3.0
+# SA-CCR Implementation Guide v2.3.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -381,6 +381,6 @@ EAD = 1.4 × (550,000 + 2,000,000) = $3,570,000
 
 ---
 
-*Document Version: 2.3.0*  
+*Document Version: 2.3.1*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

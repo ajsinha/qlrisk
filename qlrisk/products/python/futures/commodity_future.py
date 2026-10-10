@@ -1,5 +1,5 @@
 """
-QLRisk - CommodityFuture v2.3.0
+QLRisk - CommodityFuture v2.3.1
 ==============================================
 
 Commodity Futures contract implementation with full CCR analytics support.

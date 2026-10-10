@@ -1,5 +1,5 @@
 """
-QLRisk - Product Type Enumeration (v2.3.0)
+QLRisk - Product Type Enumeration (v2.3.1)
 =========================================================
 
 Complete enumeration of all supported product types.
