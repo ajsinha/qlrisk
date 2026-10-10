@@ -11,7 +11,8 @@ strictly prohibited without explicit written permission from the copyright holde
 
 ---
 
-High-performance risk engines: CCREngine (counterparty credit risk) and MarketRiskEngine (VaR, ES, SVaR).
+High-performance risk engines: RiskEngine (every risk, one call), MarketRiskEngine (VaR, ES, SVaR,
+stress, backtesting) and CCREngine (counterparty credit risk calculators).
 
 Features:
 - Concurrent calculator execution via ThreadPoolExecutor
@@ -53,11 +54,15 @@ from .ccr_engine import (
 )
 
 from .market_risk_engine import MarketRiskEngine, FULL, TAYLOR
+from .risk_engine import RiskEngine, ALL_MEASURES, DEFAULT_MEASURES
 
 __all__ = [
     "__version__",
     "CCREngine",
     "MarketRiskEngine",
+    "RiskEngine",
+    "ALL_MEASURES",
+    "DEFAULT_MEASURES",
     "FULL",
     "TAYLOR",
     "EngineStatus",

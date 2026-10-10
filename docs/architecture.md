@@ -340,6 +340,18 @@ products.price(MarketData) ◄── apply_shocks(base, factor ± bump) ◄─�
 | `engine/market_risk_engine.py` | `MarketRiskEngine`: sensitivities, scenario P&L, VaR, ES, parametric VaR, stressed VaR, backtest, stress test, reverse stress, P&L explain, daily summary |
 | `backtesting/` | VaR (Kupiec, Christoffersen, traffic light) and ES (Acerbi-Székely) backtests |
 | `regulatory/` | FRTB SA (SBM, DRC, RRAO), FRTB IMA, Basel 2.5, BA-CVA, SA-CCR re-export ([frtb.md](market_risk/frtb.md)) |
+| `engine/risk_engine.py` | `RiskEngine`: one call for PV, sensitivities, VaR/ES/SVaR, stress, backtest, FRTB SA, exposure; hierarchy + limits |
+| `reporting/` | `Hierarchy` (additive sums, non-additive VaR/ES re-run per node), `RiskReport` (JSON/CSV), `RiskLimit` checks |
+
+```
+                     RiskEngine.run(trades, market_data, history, hierarchy, limits)
+                                              │
+        ┌──────────────┬───────────────┬──────┴────────┬────────────────┬──────────────┐
+   Sensitivity    MarketRiskEngine   stress library   regulatory.frtb_sa   products: CCR
+     Engine      (VaR/ES/SVaR/backtest)                                   exposure / SA-CCR
+        └──────────────┴───────────────┴───────┬───────┴────────────────┴──────────────┘
+                                         RiskReport ──► Hierarchy roll-up ──► limit checks ──► JSON / CSV
+```
 
 See [market_risk/var_es.md](market_risk/var_es.md).
 

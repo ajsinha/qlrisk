@@ -27,6 +27,16 @@ class LimitType(Enum):
     PRODUCT = "product"
     TENOR = "tenor"
     NOTIONAL = "notional"
+    # Market risk
+    VAR = "var"
+    EXPECTED_SHORTFALL = "expected_shortfall"
+    STRESSED_VAR = "stressed_var"
+    STRESS_LOSS = "stress_loss"
+    DV01 = "dv01"
+    CS01 = "cs01"
+    DELTA = "delta"
+    VEGA = "vega"
+    CAPITAL = "capital"
 
 
 class LimitStatus(Enum):

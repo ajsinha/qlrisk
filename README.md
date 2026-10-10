@@ -51,7 +51,7 @@ whether it is being shocked for VaR, simulated for PFE or bumped for FRTB sensit
 | Historical / age-weighted / filtered / Monte Carlo / parametric VaR, Expected Shortfall, Stressed VaR, VaR decomposition | ✅ Available (Phase 2) |
 | VaR/ES backtesting, P&L explain, FRTB PLA test, stress-scenario library, reverse stress testing, liquidity VaR | ✅ Available (Phase 3) |
 | FRTB SA (SBM delta/vega/curvature, DRC, RRAO), FRTB IMA (LH-ES, IMCC, RFET/SES, IMA DRC), Basel 2.5, BA-CVA | ✅ Available (Phase 4; SA-CVA pending) |
-| Unified `RiskEngine`, risk aggregation and reporting, market-risk limits | 🚧 Planned (Phase 5) |
+| Unified `RiskEngine`, reporting hierarchy (non-additive VaR roll-up), JSON/CSV reports, limit monitoring, wrong-way risk | ✅ Available (Phase 5) |
 
 The market-risk build-out is described module by module in
 [`docs/market_risk/README.md`](docs/market_risk/README.md).
@@ -189,7 +189,7 @@ pip install -r requirements-dev.txt    # development
 ### Run the Tests
 
 ```bash
-pytest                                  # 144 tests, incl. closed-form checks and every guide example
+pytest                                  # 151 tests, incl. closed-form checks and every guide example
 ```
 
 ### Build a Local Wheel
@@ -209,6 +209,8 @@ qlrisk --quick        # Quick demo
 qlrisk                # Full demonstration
 qlrisk --benchmark    # Performance benchmarks
 qlrisk --stress       # Stress testing
+qlrisk --market-risk  # Market risk report: VaR, ES, SVaR, stress, backtest, limits
+qlrisk --frtb         # FRTB SA capital breakdown
 
 # Or run as a module
 python -m qlrisk --quick
@@ -217,6 +219,21 @@ python -m qlrisk --quick
 ---
 
 ## Quick Start
+
+### Every Risk in One Call
+
+```python
+from qlrisk.demos import demo_book
+from qlrisk.engine import RiskEngine
+from qlrisk.reporting import RiskLimit
+
+book, md, history, tree, frtb_maps = demo_book()
+report = RiskEngine(reporting_currency="USD").run(
+    book, md, history, hierarchy=tree, frtb=frtb_maps,
+    limits=[RiskLimit("Firm 1d VaR", "var.1d", 500_000)])
+print(report)                                   # PV, DV01/CS01/delta/vega, VaR, ES, SVaR, stress, FRTB SA, exposure
+print(report.results["limits"][0])
+```
 
 ### Basic Risk Calculation
 
@@ -325,13 +342,15 @@ qlrisk/
 │   └── qlib/                # QuantLib products
 ├── models/                  # Domain models (14 files)
 ├── mathlib/                 # Mathematical library (6 files)
-├── engine/                  # Multi-threaded risk engine (2 files)
+├── engine/                  # RiskEngine, MarketRiskEngine, CCREngine
 ├── riskfactors/             # Risk-factor keys, shocks, histories (5 files)
 ├── sensitivities/           # Bump-and-reprice sensitivities and ladders (5 files)
 ├── scenarios/               # Historical, filtered, Monte Carlo, hypothetical scenarios; stress windows
 ├── pnl/                     # Full-revaluation and Taylor P&L, VaR/ES decomposition, P&L explain, PLA
 ├── backtesting/             # VaR (Kupiec, Christoffersen, traffic light) and ES backtests
 ├── regulatory/              # FRTB SA / IMA, Basel 2.5, BA-CVA, SA-CCR (re-export)
+├── reporting/               # Risk reports, hierarchy roll-ups, limit monitoring
+├── demos.py                 # Demo book used by --market-risk / --frtb and the guides
 ├── data/                    # Data generation (2 files)
 └── config/                  # Configuration
 ```
@@ -349,8 +368,8 @@ assets/branding/             # Logo, favicon, hero banner
 dist/                        # Built wheel
 ```
 
-Planned market-risk packages (see the [roadmap](docs/market_risk/README.md)):
-`reporting/` and a unified `RiskEngine` (Phase 5).
+All five roadmap phases are delivered; remaining work (SA-CVA, 12 complex products) is tracked in the
+[roadmap](docs/market_risk/README.md).
 
 Brand assets (logo, favicon, hero banner) live in [`assets/branding/`](assets/branding/BRAND.md).
 
@@ -401,7 +420,7 @@ See the `docs/` directory for comprehensive documentation:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| *Unreleased* | Oct 2026 | Phase 4: `regulatory` — FRTB SA (SBM, DRC, RRAO), FRTB IMA (LH-ES, IMCC, RFET, SES, IMA DRC), Basel 2.5, BA-CVA. Phase 3: `backtesting` (Kupiec, Christoffersen, traffic light, Acerbi-Székely), P&L explain, FRTB PLA test, stress library, reverse stress, liquidity VaR, `MarketRiskEngine.backtest / stress_test / reverse_stress / explain`; bonds exclude coupons before the effective date. Phase 2: `scenarios`, `pnl`, `MarketRiskEngine` — historical / filtered / age-weighted / Monte Carlo / parametric VaR, ES, Stressed VaR, Euler and incremental decomposition, VAR / EXPECTED_SHORTFALL calculator types. Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); user guides with tested examples; SA-CCR supervisory duration / option delta added (IR product SA-CCR previously raised AttributeError); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
+| *Unreleased* | Oct 2026 | Phase 5: `RiskEngine` (all measures in one call, from_config), `reporting` (hierarchy, RiskReport JSON/CSV, limits), wrong-way risk, `--market-risk` / `--frtb` CLI, `marketrisk.*` config, market-risk `LimitType`s. Phase 4: `regulatory` — FRTB SA (SBM, DRC, RRAO), FRTB IMA (LH-ES, IMCC, RFET, SES, IMA DRC), Basel 2.5, BA-CVA. Phase 3: `backtesting` (Kupiec, Christoffersen, traffic light, Acerbi-Székely), P&L explain, FRTB PLA test, stress library, reverse stress, liquidity VaR, `MarketRiskEngine.backtest / stress_test / reverse_stress / explain`; bonds exclude coupons before the effective date. Phase 2: `scenarios`, `pnl`, `MarketRiskEngine` — historical / filtered / age-weighted / Monte Carlo / parametric VaR, ES, Stressed VaR, Euler and incremental decomposition, VAR / EXPECTED_SHORTFALL calculator types. Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); user guides with tested examples; SA-CCR supervisory duration / option delta added (IR product SA-CCR previously raised AttributeError); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
 | **v1.3.0** | Dec 2025 | Documentation overhaul, import fixes, version sync |
 | v1.2.0 | Dec 2025 | XVA calculators, SA-CCR, 80 products |
 | v1.1.0 | Dec 2025 | Expanded products, documentation |

@@ -22,7 +22,7 @@ strictly prohibited without explicit written permission from the copyright holde
 | 2 — VaR / ES | ✅ Delivered | [var_es.md](var_es.md), [guide](../guides/market_risk/var_and_es.md) |
 | 3 — Validation and stress | ✅ Delivered | [validation.md](validation.md), [guide](../guides/market_risk/validation_and_stress.md) |
 | 4 — Regulatory capital | ✅ Delivered (SA-CVA pending) | [frtb.md](frtb.md), [guide](../guides/regulatory/capital.md) |
-| 5 — One engine | 🚧 Next | |
+| 5 — One engine | ✅ Delivered | [guide](../guides/reporting/risk_reports.md) |
 
 ---
 
@@ -147,7 +147,23 @@ CalculatorType members. Simplifications are listed in [frtb.md](frtb.md). Origin
 | `qlrisk/regulatory/saccr.py` | NEW (re-export) | Re-exports the existing SA-CCR calculator so all regulatory capital lives under one namespace; existing imports keep working |
 | `qlrisk/calculator/base.py` | EXTEND | `FRTB_SA`, `FRTB_IMA`, `BASEL25_CAPITAL`, `CVA_CAPITAL` calculator types |
 
-### Phase 5 — Unification, reporting and limits
+### Phase 5 — Unification, reporting and limits ✅ Delivered
+
+As built: `engine/risk_engine.py` (`RiskEngine.run` / `from_config`; CCREngine and MarketRiskEngine
+unchanged and used underneath), `reporting/{hierarchy, report, limits_monitor}.py`,
+`scenarios/wrong_way.py`, `demos.py` + `--market-risk` / `--frtb`, `marketrisk.*` config keys,
+market-risk members on `models.limit.LimitType` (limit checks reuse `LimitStatus`).
+
+### Outstanding after Phase 5
+
+- SA-CVA (BA-CVA is implemented)
+- Real pricers for MBS, ABS, CDO, CLO, convertible bonds, variance / dividend / equity swaps, TRS,
+  bond / IR / VIX futures (still placeholders)
+- FRTB simplifications listed in [frtb.md](frtb.md) (CSR sector table, securitisations, inflation /
+  xccy-basis factors, two-factor IMA DRC)
+- Netting-set level aggregation of exposure in `RiskEngine` (trade-level PFE / EAD are summed today)
+
+Original plan:
 
 | Module | Status | Contents |
 |--------|--------|----------|

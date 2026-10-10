@@ -39,6 +39,8 @@ print(len(enumerate_risk_factors(md)), "risk factors in the sample market")
 qlrisk --quick        # quick CCR demo
 qlrisk --stress       # stress testing demo
 qlrisk --benchmark    # performance benchmarks
+qlrisk --market-risk  # market risk report on a demo book (VaR, ES, SVaR, stress, backtest, limits)
+qlrisk --frtb         # FRTB SA capital breakdown
 pytest                # run the test suite
 ```
 
@@ -50,6 +52,10 @@ pytest                # run the test suite
 | `qlrisk.data` | Sample market data, synthetic histories, test portfolios |
 | `qlrisk.riskfactors` | Naming, reading, shocking market data; factor histories |
 | `qlrisk.sensitivities` | DV01, CS01, delta, gamma, vega, theta, ladders |
-| `qlrisk.engine` / `qlrisk.calculator` | Multi-threaded CCR / credit calculators |
+| `qlrisk.engine` | `RiskEngine` (everything), `MarketRiskEngine`, `CCREngine` |
+| `qlrisk.scenarios` / `qlrisk.pnl` | Scenario sets, stress library, scenario P&L, P&L explain |
+| `qlrisk.backtesting` / `qlrisk.regulatory` | VaR/ES backtests; FRTB SA/IMA, Basel 2.5, BA-CVA |
+| `qlrisk.reporting` | Reports, hierarchies, limits |
+| `qlrisk.calculator` | Credit / CCR calculators and VaR / ES calculators |
 
 Next: [Your first portfolio](first_portfolio.md).

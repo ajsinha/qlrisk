@@ -54,6 +54,7 @@ docs/
 │   ├── pricing/                # pricing every product family
 │   ├── market_risk/            # sensitivities, VaR/ES, backtesting and stress
 │   ├── regulatory/             # FRTB SA / IMA, Basel 2.5, BA-CVA
+│   ├── reporting/              # RiskEngine, hierarchies, limits, export
 │   └── counterparty_risk/      # exposure, SA-CCR, CCR metrics
 │
 ├── market_risk/                 # Market-risk roadmap and methodology
