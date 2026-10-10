@@ -1,4 +1,4 @@
-# QLRisk - VaR and Expected Shortfall Methodology v2.0.1
+# QLRisk - VaR and Expected Shortfall Methodology v2.1.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -78,4 +78,4 @@ The result's `metadata` reports the window dates.
 
 ---
 
-*QLRisk v2.0.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.1.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

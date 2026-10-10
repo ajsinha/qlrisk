@@ -104,3 +104,69 @@ def test_cash_equity_fixes_quantity(md):
     assert stock.price(md).npv == pytest.approx(1_000_000)
     md.equity_prices["AAPL"] *= 1.1
     assert stock.price(md).npv == pytest.approx(1_100_000)
+
+
+# ------------------------------------------------------------ v2.1 models for the former placeholders
+
+from qlrisk.riskfactors import apply_shocks, curve_shocks, parallel, RiskClass
+
+
+def _rates(md, bp):
+    return apply_shocks(md, curve_shocks(md, shape=parallel(bp * 1e-4), risk_classes=[RiskClass.INTEREST_RATE]))
+
+
+@pytest.mark.parametrize("name,kw", [
+    ("InterestRateFuture", {}), ("BondFuture", {}), ("VIXFuture", {}), ("VarianceSwap", {}),
+    ("DividendSwap", {"ticker": "SPX"}), ("EquitySwap", {"ticker": "AAPL"}),
+    ("TotalReturnSwap", {"issuer": "ACME", "coupon": 0.05}),
+])
+def test_new_derivatives_start_at_fair_value(name, kw, md):
+    assert make(name, **kw).price(md).npv == pytest.approx(0.0, abs=1e-6)
+
+
+def test_rate_futures_move_the_right_way(md):
+    irf, bf = make("InterestRateFuture", maturity=date(2027, 3, 17)), make("BondFuture", maturity=date(2026, 12, 18))
+    irf.price(md), bf.price(md)
+    assert irf.price(_rates(md, -25)).npv > 0 and bf.price(_rates(md, -25)).npv > 0
+    assert irf.price(_rates(md, -1)).npv == pytest.approx(1_000_000 * 0.25 * 1e-4, rel=0.05)   # $25 per bp per 1mm
+
+
+def test_variance_swap_and_vix_respond_to_vol(md):
+    vs, vix = make("VarianceSwap", maturity=date(2027, 10, 9)), make("VIXFuture", maturity=date(2027, 1, 9))
+    vs.price(md), vix.price(md)
+    up = apply_shocks(md, {"VOL.eq_vol.1Y": 0.02, "VOL.eq_vol.3M": 0.02, "VOL.eq_vol.6M": 0.02, "VOL.eq_vol.2Y": 0.02})
+    assert vs.price(up).npv > 0 and vix.price(up).npv > 0
+
+
+def test_equity_and_dividend_swaps(md):
+    eqs, divs = make("EquitySwap", ticker="AAPL"), make("DividendSwap", ticker="SPX")
+    eqs.price(md), divs.price(md)
+    from qlrisk.riskfactors import ShockType
+    assert eqs.price(apply_shocks(md, {"EQ.AAPL": 0.10}, ShockType.RELATIVE)).npv == pytest.approx(100_000, rel=1e-9)
+    assert divs.price(apply_shocks(md, {"DIV.SPX.1Y": 0.002, "DIV.SPX.5Y": 0.002})).npv > 0
+
+
+def test_convertible_bounds(md):
+    cb = make("ConvertibleBond", coupon=0.02, issuer="ACME", ticker="AAPL")
+    res = cb.price(md)
+    assert res.npv > res.components["bond_floor"] > 0
+    from qlrisk.riskfactors import ShockType
+    assert cb.price(apply_shocks(md, {"EQ.AAPL": 0.2}, ShockType.RELATIVE)).npv > res.npv
+
+
+def test_mbs_negative_convexity(md):
+    mbs = make("MBS", maturity=date(2056, 10, 9), coupon=0.06)
+    base = mbs.price(md).npv
+    up, down = mbs.price(_rates(md, 100)).npv - base, mbs.price(_rates(md, -100)).npv - base
+    assert down > 0 > up and down < abs(up)                       # gains less than it loses: negative convexity
+    assert mbs.price(_rates(md, -100)).components["cpr"] > mbs.price(md).components["cpr"]
+
+
+def test_abs_and_tranches(md):
+    assert 0 < make("ABS").price(md).npv < 1.2e6
+    equity = make("CDO", attachment=0.0, detachment=0.03).price(md).components["expected_tranche_loss"]
+    mezz = make("CDO").price(md).components["expected_tranche_loss"]
+    senior = make("CDO", attachment=0.15, detachment=0.30).price(md).components["expected_tranche_loss"]
+    assert equity > mezz > senior >= 0
+    clo = make("CLO", pool="ACME")
+    assert clo.price(apply_shocks(md, {"CR.ACME.5Y": 0.02})).npv < clo.price(md).npv

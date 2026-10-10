@@ -1,7 +1,7 @@
 # Convertible Bond v1.2.0
 
 <!-- generated:implementation -->
-> **Implementation status:** `ConvertibleBond` currently uses **placeholder pricing** (`notional × discount factor × 1%`), so its PV and risk are not meaningful yet. It is on the roadmap for a real model.
+> **Implementation:** `ConvertibleBond` is priced by `price_convertible` in `products/python/_pricing.py`. Product terms are keyword arguments: `coupon`, `issuer`, `ticker`, `conversion_ratio`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
 >
 > The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
 <!-- /generated:implementation -->
@@ -95,7 +95,7 @@ from qlrisk.sensitivities import SensitivityEngine
 
 md = create_sample_market_data(date(2026, 10, 9))
 d0 = md.valuation_date
-trade = ConvertibleBond("CONVERTIBLE-BOND-1", md.valuation_date, md.valuation_date, date(2031, 10, 9), 5_000_000, Currency.USD, "CP-1")
+trade = ConvertibleBond("CONVERTIBLE-BOND-1", md.valuation_date, md.valuation_date, date(2031, 10, 9), 5_000_000, Currency.USD, "CP-1", coupon=0.02, issuer="ACME", ticker="AAPL")
 
 result = trade.price(md)
 print(f"NPV: {result.npv:,.2f} {result.currency}")

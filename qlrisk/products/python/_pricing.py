@@ -443,3 +443,240 @@ def price_xccy_swap(product, md: MarketData) -> PricingResult:
                   curve_name=f_curve, notional=f_notional)
     return PricingResult(npv=_sign(product) * (dom - fgn * spot), currency=_ccy(product),
                          components={"domestic_leg": dom, "foreign_leg_domestic": fgn * spot})
+
+
+# =============================================================================
+# Futures
+# =============================================================================
+
+def _futures_qty(product, price: float) -> float:
+    return product.additional_params.setdefault("quantity", product.notional / price)
+
+
+def price_ir_future(product, md: MarketData) -> PricingResult:
+    """
+    Short-term interest-rate future (e.g. 3M SOFR): price = 100 x (1 - forward rate over
+    [T, T + tenor]); P&L = notional x tenor x (rate at trade - forward rate) per unit of price move.
+    kwargs: index ('SOFR'), tenor (0.25), strike (traded price, default fair), is_long
+    """
+    if product.is_expired(md.valuation_date):
+        return _zero(product)
+    t, tau = _t(product, md), _p(product, "tenor", 0.25)
+    index = _p(product, "index", "SOFR")
+    fwd = (_df(md, t, curve_name=index) / _df(md, t + tau, curve_name=index) - 1.0) / tau
+    price = 100.0 * (1.0 - fwd)
+    strike = product.additional_params.setdefault("strike", price)
+    pv = product.notional * tau * (price - strike) / 100.0
+    return PricingResult(npv=_sign(product) * pv, currency=_ccy(product), components={"price": price, "forward_rate": fwd})
+
+
+def price_bond_future(product, md: MarketData) -> PricingResult:
+    """
+    Bond future on a single (cheapest-to-deliver) bond: F = forward clean-ish price / conversion factor.
+    kwargs: bond_coupon (0.06), bond_maturity_years (10 after delivery), conversion_factor (1.0),
+            strike (default fair), is_long. Notional is face value; no discounting (daily margin).
+    """
+    if product.is_expired(md.valuation_date):
+        return _zero(product)
+    t = _t(product, md)
+    coupon, life = _p(product, "bond_coupon", 0.06), _p(product, "bond_maturity_years", 10.0)
+    full = bond_pv(md, t + life, coupon, 2) - bond_pv(md, t, coupon, 2) + _df(md, t)   # cash flows after delivery
+    fwd_price = 100.0 * full / _df(md, t) / _p(product, "conversion_factor", 1.0)
+    strike = product.additional_params.setdefault("strike", fwd_price)
+    pv = product.notional * (fwd_price - strike) / 100.0
+    return PricingResult(npv=_sign(product) * pv, currency=_ccy(product), components={"futures_price": fwd_price})
+
+
+def _forward_vol(md: MarketData, names, t1: float, t2: float, default: float) -> float:
+    v1, v2 = _vol(md, names, max(t1, 1e-6), default), _vol(md, names, t2, default)
+    var = (v2 * v2 * t2 - v1 * v1 * t1) / (t2 - t1)
+    return float(np.sqrt(max(var, 1e-8)))
+
+
+def price_vix_future(product, md: MarketData) -> PricingResult:
+    """
+    VIX future = 100 x forward 30-day implied volatility of the index at expiry
+    (from the equity vol term structure). kwargs: ticker ('SPX'), strike (default fair), quantity, is_long
+    """
+    if product.is_expired(md.valuation_date):
+        return _zero(product)
+    t = _t(product, md)
+    ticker = _p(product, "ticker", "SPX")
+    level = 100.0 * _forward_vol(md, [f"{ticker}_vol", "eq_vol"], t, t + 30 / 365.0, 0.18)
+    strike = product.additional_params.setdefault("strike", level)
+    qty = _futures_qty(product, strike)
+    return PricingResult(npv=_sign(product) * qty * (level - strike), currency=_ccy(product), components={"vix_forward": level})
+
+
+# =============================================================================
+# Equity derivatives
+# =============================================================================
+
+def price_variance_swap(product, md: MarketData) -> PricingResult:
+    """
+    Variance swap (no realised variance yet): PV = N_var x (sigma_imp^2 - K^2) x DF, N_var = vega_notional / (2K).
+    kwargs: ticker ('SPX'), strike (vol, default ATM implied), vega_notional (default notional), is_long
+    """
+    if product.is_expired(md.valuation_date):
+        return _zero(product)
+    t = _t(product, md)
+    ticker = _p(product, "ticker", "SPX")
+    sigma = _vol(md, [f"{ticker}_vol", "eq_vol"], t, 0.20)
+    k = product.additional_params.setdefault("strike", sigma)
+    n_var = _p(product, "vega_notional", product.notional) / (2.0 * k)
+    pv = n_var * (sigma * sigma - k * k) * 100.0 * _df(md, t)          # vol points convention: (100 sigma)^2 / 100
+    return PricingResult(npv=_sign(product) * pv, currency=_ccy(product), components={"implied_vol": sigma, "strike": k})
+
+
+def price_dividend_swap(product, md: MarketData) -> PricingResult:
+    """
+    Dividend swap: receive dividends paid until maturity, pay fixed K.
+    Expected dividends = S x (1 - exp(-q T)) per share. kwargs: ticker, strike (default fair), quantity, is_long
+    """
+    if product.is_expired(md.valuation_date):
+        return _zero(product)
+    t = _t(product, md)
+    ticker, spot, q = _equity_inputs(product, md, t)
+    divs = spot * (1.0 - np.exp(-q * t))
+    strike = product.additional_params.setdefault("strike", divs)
+    qty = product.additional_params.setdefault("quantity", product.notional / spot)
+    return PricingResult(npv=_sign(product) * qty * (divs - strike) * _df(md, t), currency=_ccy(product),
+                         components={"expected_dividends": divs})
+
+
+def price_total_return(product, md: MarketData) -> PricingResult:
+    """
+    Funded total-return swap: receive the total return of the underlying, pay floating + spread on
+    the initial notional. PV = qty x (S - S0) - N x spread x annuity.
+    Underlying: `ticker` (equity) or, if `issuer` is given, a bond (coupon, issuer) valued per unit notional.
+    kwargs: ticker / issuer + coupon, spread (0.0), initial_price (fixed at first pricing), is_long (receive TR)
+    """
+    if product.is_expired(md.valuation_date):
+        return _zero(product)
+    t = _t(product, md)
+    if _p(product, "issuer"):
+        price = bond_pv(md, t, _p(product, "coupon", 0.05), 2, _credit_spread(md, _p(product, "issuer"), t))
+    else:
+        price = _equity_inputs(product, md, t)[1]
+    s0 = product.additional_params.setdefault("initial_price", price)
+    qty = product.notional / s0
+    annuity = sum(0.25 * _df(md, s) for s in _schedule(t, 4))
+    pv = qty * (price - s0) - product.notional * _p(product, "spread", 0.0) * annuity
+    return PricingResult(npv=_sign(product) * pv, currency=_ccy(product), components={"underlying_price": price})
+
+
+def price_convertible(product, md: MarketData) -> PricingResult:
+    """
+    Convertible bond = straight bond (coupon, issuer spread) + conversion_ratio x European call on the stock
+    with strike notional / conversion_ratio. kwargs: coupon (0.02), issuer, ticker ('AAPL'),
+    conversion_ratio (default: notional / (1.3 x spot), a 30% conversion premium), is_long
+    """
+    if product.is_expired(md.valuation_date):
+        return _zero(product)
+    t = _t(product, md)
+    bond = bond_pv(md, t, _p(product, "coupon", 0.02), 2, _credit_spread(md, _p(product, "issuer"), t),
+                   notional=product.notional, after=_t_effective(product, md))
+    ticker, spot, q = _equity_inputs(product, md, t)
+    ratio = product.additional_params.setdefault("conversion_ratio", product.notional / (1.3 * spot))
+    strike = product.notional / ratio
+    r = _rate(md, t)
+    vol = _vol(md, [f"{ticker}_vol", "eq_vol"], t, 0.25)
+    option = ratio * np.exp(-r * t) * _black(spot * np.exp((r - q) * t), strike, t, vol, True)
+    return PricingResult(npv=_sign(product) * (bond + option), currency=_ccy(product),
+                         components={"bond_floor": bond, "conversion_option": option})
+
+
+# =============================================================================
+# Securitised products
+# =============================================================================
+
+def _pass_through(md: MarketData, t: float, coupon: float, cpr: float, spread: float, notional: float) -> float:
+    """Monthly level-pay pool with constant CPR; cash flows discounted at r(t) + spread."""
+    n = max(int(round(t * 12)), 1)
+    rate, smm = coupon / 12.0, 1.0 - (1.0 - cpr) ** (1.0 / 12.0)
+    balance, pv = notional, 0.0
+    for k in range(1, n + 1):
+        remaining = n - k + 1
+        payment = balance * rate / (1.0 - (1.0 + rate) ** -remaining) if rate > 0 else balance / remaining
+        interest = balance * rate
+        scheduled = payment - interest
+        prepay = (balance - scheduled) * smm
+        pv += (interest + scheduled + prepay) * _df(md, k / 12.0, spread)
+        balance -= scheduled + prepay
+    return pv
+
+
+def price_mbs(product, md: MarketData) -> PricingResult:
+    """
+    Agency MBS pass-through with rate-dependent prepayment (negative convexity):
+    CPR = clip(base_cpr + refi_multiplier x max(wac - r10y, 0), 0, 60%).
+    kwargs: coupon (0.055), wac (coupon + 0.5%), base_cpr (0.06), refi_multiplier (8), oas (0.005), is_long
+    """
+    if product.is_expired(md.valuation_date):
+        return _zero(product)
+    t = _t(product, md)
+    coupon = _p(product, "coupon", 0.055)
+    wac = _p(product, "wac", coupon + 0.005)
+    incentive = max(wac - _rate(md, 10.0), 0.0)
+    cpr = min(max(_p(product, "base_cpr", 0.06) + _p(product, "refi_multiplier", 8.0) * incentive, 0.0), 0.60)
+    pv = _pass_through(md, t, coupon, cpr, _p(product, "oas", 0.005), product.notional)
+    return PricingResult(npv=_sign(product) * pv, currency=_ccy(product), components={"cpr": cpr})
+
+
+def price_abs(product, md: MarketData) -> PricingResult:
+    """Amortising ABS with constant CPR, discounted at r(t) + issuer credit spread (or `spread`).
+    kwargs: coupon (0.05), cpr (0.10), issuer, spread (0.01 if no issuer), is_long"""
+    if product.is_expired(md.valuation_date):
+        return _zero(product)
+    t = _t(product, md)
+    spread = _credit_spread(md, _p(product, "issuer"), t) if _p(product, "issuer") else _p(product, "spread", 0.01)
+    pv = _pass_through(md, t, _p(product, "coupon", 0.05), _p(product, "cpr", 0.10), spread, product.notional)
+    return PricingResult(npv=_sign(product) * pv, currency=_ccy(product), components={"spread": spread})
+
+
+_GH_X, _GH_W = np.polynomial.hermite_e.hermegauss(48)
+_GH_W = _GH_W / _GH_W.sum()
+
+
+def _tranche_expected_loss(pd: float, rho: float, recovery: float, attach: float, detach: float) -> float:
+    """Vasicek large homogeneous pool: E[min(max(L - A, 0), D - A)] / (D - A)."""
+    if pd <= 0:
+        return 0.0
+    from scipy.stats import norm as _n
+    c = _n.ppf(min(pd, 1 - 1e-12))
+    cond_pd = _n.cdf((c - np.sqrt(rho) * _GH_X) / np.sqrt(1 - rho))
+    loss = (1 - recovery) * cond_pd
+    tranche = np.clip(loss - attach, 0.0, detach - attach)
+    return float(np.dot(_GH_W, tranche) / (detach - attach))
+
+
+def price_tranche(product, md: MarketData) -> PricingResult:
+    """
+    CDO / CLO tranche (investor side) under the Vasicek large-pool model: a risky floating-coupon bond
+    whose notional decays with the expected tranche loss.
+    kwargs: pool (credit_curves key; hazard = spread / (1 - recovery)), attachment, detachment,
+            correlation, recovery (0.4), coupon (tranche spread over the curve), is_long
+    Defaults: CDO mezzanine 3-7% / rho 0.30 / pool GLOBEX; CLO BBB 7-10% / rho 0.25 (set by product module).
+    """
+    if product.is_expired(md.valuation_date):
+        return _zero(product)
+    t = _t(product, md)
+    rec, rho = _p(product, "recovery", 0.4), _p(product, "correlation", 0.30)
+    a, d = _p(product, "attachment", 0.03), _p(product, "detachment", 0.07)
+    hazard = _credit_spread(md, _p(product, "pool", "GLOBEX"), t) / (1 - rec)
+    spread = _p(product, "coupon", 0.03)
+    pv, prev = 0.0, 0.0
+    for s in _schedule(t, 4):
+        surv = 1.0 - _tranche_expected_loss(1 - np.exp(-hazard * s), rho, rec, a, d)
+        pv += (_rate(md, s) + spread) * (s - prev) * surv * _df(md, s)
+        prev = s
+    final = 1.0 - _tranche_expected_loss(1 - np.exp(-hazard * t), rho, rec, a, d)
+    pv = product.notional * (pv + final * _df(md, t))
+    return PricingResult(npv=_sign(product) * pv, currency=_ccy(product),
+                         components={"expected_tranche_loss": 1 - final, "attachment": a, "detachment": d})
+
+
+def price_clo_tranche(product, md: MarketData) -> PricingResult:
+    for k, v in {"attachment": 0.07, "detachment": 0.10, "correlation": 0.25, "coupon": 0.035}.items():
+        product.additional_params.setdefault(k, v)
+    return price_tranche(product, md)

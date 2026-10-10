@@ -1,4 +1,4 @@
-# QLRisk - Quickstart Guide v2.0.1
+# QLRisk - Quickstart Guide v2.1.0
 
 <!-- legacy-examples -->
 > ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (11 of 24 fail). Use the [user guides](guides/README.md), whose examples are executed by the test suite, until this page is revised.
@@ -44,8 +44,8 @@ pip install -e ".[dev]"
 
 # Or build a local wheel and install it into any other project/virtualenv
 pip install build
-python -m build --wheel                       # -> dist/qlrisk-2.0.1-py3-none-any.whl
-pip install /path/to/qlrisk/dist/qlrisk-2.0.1-py3-none-any.whl
+python -m build --wheel                       # -> dist/qlrisk-2.1.0-py3-none-any.whl
+pip install /path/to/qlrisk/dist/qlrisk-2.1.0-py3-none-any.whl
 ```
 
 ### 1.3 Verify Installation
@@ -60,7 +60,7 @@ print(f'Author: {qlrisk.__author__}')
 
 Expected output:
 ```
-QLRisk v2.0.1
+QLRisk v2.1.0
 Author: Ashutosh Sinha
 ```
 
@@ -682,6 +682,6 @@ for i in range(0, total_paths, batch_size):
 
 ---
 
-*Document Version: 2.0.1*  
+*Document Version: 2.1.0*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

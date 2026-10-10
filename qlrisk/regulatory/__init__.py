@@ -1,5 +1,5 @@
 """
-QLRisk - Regulatory Capital v2.0.1
+QLRisk - Regulatory Capital v2.1.0
 ==================================
 
 Copyright © 2025-2030, All Rights Reserved
