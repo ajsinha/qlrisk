@@ -21,6 +21,7 @@ This guide covers pricing and sensitivities, counterparty credit risk and XVA, a
 
 | Document | Description |
 |----------|-------------|
+| [guides/](guides/README.md) | **User guides with tested, working examples (start here)** |
 | [README.md](../README.md) | Main project README with overview |
 | [quickstart.md](quickstart.md) | Getting started guide with examples |
 | [architecture.md](architecture.md) | System architecture and design |
@@ -42,6 +43,13 @@ docs/
 ├── quickstart.md                # Getting started guide
 ├── mathematical_formulas.md     # Mathematical reference
 ├── saccr.md                     # SA-CCR implementation details
+│
+├── guides/                      # User guides (examples run in the test suite)
+│   ├── getting_started/        # installation, first portfolio
+│   ├── market_data/            # building market data, shocks, histories
+│   ├── pricing/                # pricing every product family
+│   ├── market_risk/            # sensitivity reports
+│   └── counterparty_risk/      # exposure, SA-CCR, CCR metrics
 │
 ├── market_risk/                 # Market-risk roadmap and methodology
 │   ├── README.md               # Module plan by phase

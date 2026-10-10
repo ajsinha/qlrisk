@@ -45,7 +45,8 @@ class TestTaxonomy:
 
     @pytest.mark.parametrize("text", ["IR.DISCOUNT.5Y", "IR.FWD.SOFR.3M", "IR.REF.SOFR", "FX.EURUSD",
                                       "CR.ACME.5Y", "EQ.AAPL", "DIV.AAPL.1Y", "BOND.UST10Y",
-                                      "VOL.swaption_vol", "VOL.cap_vol.2Y", "VOL.eq_vol.1Y.100", "MISC.sofr_rate"])
+                                      "VOL.swaption_vol", "VOL.cap_vol.2Y", "VOL.eq_vol.1Y.100", "MISC.sofr_rate",
+                                      "CR.ACME.2.5Y", "VOL.eq_vol.2.5Y.102.5"])
     def test_key_string_round_trip(self, text):
         assert str(RiskFactorKey.parse(text)) == text
 
@@ -63,6 +64,8 @@ class TestTaxonomy:
             RiskFactorKey.parse("NOPE.X")
         with pytest.raises(ValueError):
             RiskFactorKey.parse("FX")
+        with pytest.raises(ValueError):
+            RiskFactorKey.parse("CR.ACME.5Y.1.2.3")
 
 
 # --------------------------------------------------------------------- mapping

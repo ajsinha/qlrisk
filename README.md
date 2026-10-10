@@ -186,7 +186,7 @@ pip install -r requirements-dev.txt    # development
 ### Run the Tests
 
 ```bash
-pytest                                  # 97 tests, incl. closed-form pricing and Greeks checks
+pytest                                  # 111 tests, incl. closed-form checks and every guide example
 ```
 
 ### Build a Local Wheel
@@ -352,6 +352,10 @@ logging.level=INFO
 
 ## Documentation
 
+**Start with the [user guides](qlrisk/docs/guides/README.md)**: installation, first portfolio, market data,
+shocks and scenarios, historical data, pricing, sensitivity reports, counterparty exposure. Every example in
+them is executed by the test suite.
+
 See the `docs/` directory for comprehensive documentation:
 
 - `docs/architecture.md` - System architecture
@@ -367,7 +371,7 @@ See the `docs/` directory for comprehensive documentation:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| *Unreleased* | Oct 2026 | Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
+| *Unreleased* | Oct 2026 | Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); user guides with tested examples; SA-CCR supervisory duration / option delta added (IR product SA-CCR previously raised AttributeError); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
 | **v1.3.0** | Dec 2025 | Documentation overhaul, import fixes, version sync |
 | v1.2.0 | Dec 2025 | XVA calculators, SA-CCR, 80 products |
 | v1.1.0 | Dec 2025 | Expanded products, documentation |

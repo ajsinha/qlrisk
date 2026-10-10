@@ -28,6 +28,7 @@ and confidential. Unauthorized copying, distribution, modification, or use is
 strictly prohibited without explicit written permission from the copyright holder.
 """
 
+import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Optional, Tuple, Union
@@ -81,6 +82,7 @@ FIELD_SPECS: Dict[str, FieldSpec] = {
 }
 
 MISC_PREFIX = "MISC"
+_TENOR_STRIKE = re.compile(r"^(\d+(?:\.\d+)?[YMWD])(?:\.(-?\d+(?:\.\d+)?(?:e-?\d+)?))?$", re.I)
 _PREFIX_TO_FIELD = {spec.prefix: spec.field for spec in FIELD_SPECS.values()}
 
 # Volatility surface names are free-form; infer their risk class from the name.
@@ -226,10 +228,14 @@ class RiskFactorKey:
             if not rest:
                 raise ValueError(f"Risk factor {text!r} needs a name")
             name, rest = rest[0], rest[1:]
-        tenor = parse_tenor(rest[0]) if rest else None
-        strike = float(rest[1]) if len(rest) > 1 else None
-        if len(rest) > 2:
-            raise ValueError(f"Too many components in risk factor key {text!r}")
+        tenor = strike = None
+        if rest:
+            # tenor and strike may themselves contain dots ('2.5Y', '100.5')
+            match = _TENOR_STRIKE.match(".".join(rest))
+            if not match:
+                raise ValueError(f"Invalid tenor/strike in risk factor key {text!r}")
+            tenor = parse_tenor(match.group(1))
+            strike = float(match.group(2)) if match.group(2) is not None else None
         return cls(field=spec.field, name=name, tenor=tenor, strike=strike)
 
 

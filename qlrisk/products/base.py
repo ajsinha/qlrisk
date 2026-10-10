@@ -676,6 +676,22 @@ class SACCRParameters:
             return cls.SUPERVISORY_FACTORS[key]
         return cls.SUPERVISORY_FACTORS.get((asset_class, None), 0.05)
     
+    @staticmethod
+    def supervisory_duration(start: float, end: float) -> float:
+        """Basel CRE52 supervisory duration: (exp(-0.05 S) - exp(-0.05 E)) / 0.05, S floored at 0, E at 10 business days."""
+        s, e = max(start, 0.0), max(end, 10 / 250)
+        return (np.exp(-0.05 * s) - np.exp(-0.05 * e)) / 0.05
+    
+    @staticmethod
+    def calculate_option_delta(is_call: bool, underlying: float, strike: float, expiry: float, vol: float) -> float:
+        """Basel CRE52.40 supervisory delta for a bought option: Phi(d) for calls, -Phi(-d) for puts."""
+        from scipy.stats import norm
+        t, sigma = max(expiry, 1e-6), max(vol, 1e-6)
+        if underlying <= 0 or strike <= 0:
+            return 1.0 if is_call else -1.0
+        d = (np.log(underlying / strike) + 0.5 * sigma * sigma * t) / (sigma * np.sqrt(t))
+        return float(norm.cdf(d)) if is_call else -float(norm.cdf(-d))
+    
     @classmethod
     def calculate_maturity_factor(cls, maturity: float, mpor: float = 10/252) -> float:
         """Calculate SA-CCR maturity factor."""
