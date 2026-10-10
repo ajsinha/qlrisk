@@ -30,7 +30,7 @@ from scipy.stats import norm
 from ..calculator.python.var_calculators import parametric_es, parametric_var
 from ..models.risk_measure import RiskMeasureResult
 from ..pnl.matrix import PnLMatrix
-from ..pnl.revaluation import full_revaluation
+from ..pnl.revaluation import _pv as full_revaluation_pv, full_revaluation
 from ..pnl.taylor import taylor_pnl
 from ..riskfactors.mapping import get_factor_value
 from ..riskfactors.shocks import ShockType
@@ -157,6 +157,70 @@ class MarketRiskEngine:
                                 "search_method": search_method, "scaling": f"sqrt({horizon_days})"})
         return result
 
+    # ---------------------------------------------------------------- validation & stress
+    
+    def backtest(self, trades: Sequence[Any], market_data: Any, history: RiskFactorTimeSeries,
+                 test_days: int = 250, lookback: int = 250, confidence: float = 0.99,
+                 es_confidence: float = 0.975) -> Dict[str, Any]:
+        """
+        Backtest historical VaR / ES of the current (static) portfolio over the last `test_days`.
+        
+        For each test day t: VaR_t and ES_t from the `lookback` 1-day returns before t (Taylor P&L
+        with today's sensitivities, i.e. the risk-theoretical model); realised hypothetical P&L =
+        full revaluation from the market of day t-1 to day t (history.market_data_at).
+        Returns VaR backtest, ES backtest, PLA test (HPL vs RTPL) and the daily series.
+        """
+        from ..backtesting import backtest_es, backtest_var
+        from ..calculator.python.var_calculators import expected_shortfall, value_at_risk
+        from ..pnl.attribution import pla_test
+        
+        trades = list(trades)
+        n_ret = len(history) - 1
+        if test_days + lookback > n_ret:
+            raise ValueError(f"history too short: need {test_days + lookback + 1} dates, have {len(history)}")
+        rtpl_all = self.scenario_pnl(trades, market_data, historical_scenarios(history), TAYLOR).portfolio
+        dates = history.dates
+        var_f, es_f, hpl, rtpl, labels = [], [], [], [], []
+        pv = lambda md: sum(full_revaluation_pv(t, md, self.reporting_currency) for t in trades)
+        prev_md = history.market_data_at(dates[n_ret - test_days], market_data)
+        prev_pv = pv(prev_md)
+        for i in range(n_ret - test_days, n_ret):          # return index i ends at dates[i + 1]
+            window = rtpl_all[i - lookback:i]
+            var_f.append(value_at_risk(window, confidence))
+            es_f.append(expected_shortfall(window, es_confidence))
+            md_t = history.market_data_at(dates[i + 1], market_data)
+            pv_t = pv(md_t)
+            hpl.append(pv_t - prev_pv)
+            rtpl.append(rtpl_all[i])
+            labels.append(dates[i + 1])
+            prev_pv = pv_t
+        es_var = [value_at_risk(rtpl_all[i - lookback:i], es_confidence) for i in range(n_ret - test_days, n_ret)]
+        return {
+            "var": backtest_var(hpl, var_f, confidence, labels),
+            "es": backtest_es(hpl, es_var, es_f, es_confidence),
+            "pla": pla_test(hpl, rtpl),
+            "series": {"dates": labels, "hpl": hpl, "rtpl": rtpl, "var": var_f, "es": es_f},
+        }
+    
+    def stress_test(self, trades: Sequence[Any], market_data: Any,
+                    scenarios: Optional[ScenarioSet] = None) -> Dict[Any, float]:
+        """Portfolio P&L under each scenario (default: the historical stress library)."""
+        from ..scenarios.stress_library import historical_stress_scenarios
+        scen = scenarios or historical_stress_scenarios(market_data)
+        pnl = self.scenario_pnl(trades, market_data, scen)
+        return dict(zip(pnl.labels, pnl.portfolio.tolist()))
+    
+    def reverse_stress(self, trades: Sequence[Any], market_data: Any, history: RiskFactorTimeSeries,
+                       loss: float, lookback: int = 250):
+        """Most plausible scenario producing `loss`; see scenarios.reverse_stress_test."""
+        from ..scenarios.reverse_stress import reverse_stress_test
+        return reverse_stress_test(trades, market_data, history, loss, lookback, self.reporting_currency)
+    
+    def explain(self, trades: Sequence[Any], md_start: Any, md_end: Any):
+        """P&L explain between two snapshots; see pnl.explain_pnl."""
+        from ..pnl.attribution import explain_pnl
+        return explain_pnl(list(trades), md_start, md_end, reporting_currency=self.reporting_currency)
+    
     # ---------------------------------------------------------------- summary
 
     def summary(self, trades: Sequence[Any], market_data: Any, history: RiskFactorTimeSeries,

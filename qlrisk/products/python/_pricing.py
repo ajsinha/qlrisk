@@ -34,6 +34,10 @@ def _t(product, md: MarketData) -> float:
     return max((product.maturity_date - md.valuation_date).days / 365.25, 0.0)
 
 
+def _t_effective(product, md: MarketData) -> float:
+    return max((product.effective_date - md.valuation_date).days / 365.25, 0.0)
+
+
 def _sign(product) -> float:
     return 1.0 if _p(product, "is_long", True) else -1.0
 
@@ -99,9 +103,9 @@ def _schedule(t: float, frequency: int):
 # =============================================================================
 
 def bond_pv(md: MarketData, t: float, coupon: float, frequency: int, spread: float = 0.0,
-            curve_name=None, notional: float = 1.0) -> float:
-    """PV of a fixed-coupon bullet bond per `notional` (coupon accrues to the first period)."""
-    times = _schedule(t, frequency)
+            curve_name=None, notional: float = 1.0, after: float = 0.0) -> float:
+    """PV of a fixed-coupon bullet bond per `notional`; coupons at or before `after` (years) are excluded."""
+    times = [s for s in _schedule(t, frequency) if s > after + 1e-9]
     if not times:
         return 0.0
     pv = notional * _df(md, t, spread, curve_name)
@@ -125,7 +129,7 @@ def price_fixed_bond(product, md: MarketData) -> PricingResult:
     t = _t(product, md)
     spread = _credit_spread(md, _p(product, "issuer"), t)
     pv = bond_pv(md, t, _p(product, "coupon", 0.0), _p(product, "frequency", 2), spread,
-                 notional=product.notional)
+                 notional=product.notional, after=_t_effective(product, md))
     return PricingResult(npv=_sign(product) * pv, currency=_ccy(product),
                          components={"maturity": t, "credit_spread": spread})
 

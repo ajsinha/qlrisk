@@ -49,7 +49,7 @@ whether it is being shocked for VaR, simulated for PFE or bumped for FRTB sensit
 | Risk-factor taxonomy, market-data shocking, factor histories, bump-and-reprice sensitivities | ✅ Available (Phase 1) |
 | Market-driven pricers for 59 formerly-placeholder products (bonds, FX/equity/commodity options, CDS, XCCY, ...) | ✅ Available (Phase 1.5) |
 | Historical / age-weighted / filtered / Monte Carlo / parametric VaR, Expected Shortfall, Stressed VaR, VaR decomposition | ✅ Available (Phase 2) |
-| VaR/ES backtesting, P&L attribution, stress-scenario library, reverse stress testing | 🚧 Planned (Phase 3) |
+| VaR/ES backtesting, P&L explain, FRTB PLA test, stress-scenario library, reverse stress testing, liquidity VaR | ✅ Available (Phase 3) |
 | FRTB Standardised Approach and Internal Models Approach, Basel 2.5, SA-CVA / BA-CVA | 🚧 Planned (Phase 4) |
 | Unified `RiskEngine`, risk aggregation and reporting, market-risk limits | 🚧 Planned (Phase 5) |
 
@@ -137,6 +137,9 @@ The market-risk build-out is described module by module in
 | ✅ | Stressed VaR | VaR on the 250-day window that maximises portfolio VaR |
 | **Tail Risk** ✅ | Expected Shortfall | ES at 97.5% or any confidence, historical or parametric |
 | **Attribution** ✅ | Component / incremental / standalone | Euler contributions by trade, desk or any grouping |
+| **Validation** ✅ | Backtesting | Kupiec, Christoffersen, Basel traffic light / multiplier; Acerbi-Székely ES (Z1, Z2) |
+| ✅ | P&L explain / PLA | Theta + per-factor Taylor + unexplained; FRTB Spearman / KS zones |
+| **Stress** ✅ | Library / reverse | 9 historical crises (1987–2023); minimum-Mahalanobis reverse stress |
 | **Regulatory** | `FRTB_SA` | Sensitivities-based method, DRC and RRAO |
 | | `FRTB_IMA` | Liquidity-horizon ES, NMRF stressed ES, IMCC |
 | | `CVA_CAPITAL` | BA-CVA and SA-CVA capital |
@@ -186,7 +189,7 @@ pip install -r requirements-dev.txt    # development
 ### Run the Tests
 
 ```bash
-pytest                                  # 123 tests, incl. closed-form checks and every guide example
+pytest                                  # 133 tests, incl. closed-form checks and every guide example
 ```
 
 ### Build a Local Wheel
@@ -326,7 +329,8 @@ qlrisk/
 ├── riskfactors/             # Risk-factor keys, shocks, histories (5 files)
 ├── sensitivities/           # Bump-and-reprice sensitivities and ladders (5 files)
 ├── scenarios/               # Historical, filtered, Monte Carlo, hypothetical scenarios; stress windows
-├── pnl/                     # Full-revaluation and Taylor P&L, VaR/ES decomposition
+├── pnl/                     # Full-revaluation and Taylor P&L, VaR/ES decomposition, P&L explain, PLA
+├── backtesting/             # VaR (Kupiec, Christoffersen, traffic light) and ES backtests
 ├── data/                    # Data generation (2 files)
 └── config/                  # Configuration
 ```
@@ -345,7 +349,7 @@ dist/                        # Built wheel
 ```
 
 Planned market-risk packages (see the [roadmap](docs/market_risk/README.md)):
-`backtesting/`, `regulatory/`, `reporting/`.
+`regulatory/`, `reporting/`.
 
 Brand assets (logo, favicon, hero banner) live in [`assets/branding/`](assets/branding/BRAND.md).
 
@@ -384,7 +388,7 @@ them is executed by the test suite.
 See the `docs/` directory for comprehensive documentation:
 
 - `docs/architecture.md` - System architecture
-- `docs/market_risk/` - Market-risk roadmap, [risk factors](docs/market_risk/risk_factors.md), [sensitivities](docs/market_risk/sensitivities.md), [pricers](docs/market_risk/pricers.md), [VaR / ES](docs/market_risk/var_es.md)
+- `docs/market_risk/` - Market-risk roadmap, [risk factors](docs/market_risk/risk_factors.md), [sensitivities](docs/market_risk/sensitivities.md), [pricers](docs/market_risk/pricers.md), [VaR / ES](docs/market_risk/var_es.md), [validation & stress](docs/market_risk/validation.md)
 - `docs/quickstart.md` - Getting started guide
 - `docs/mathematical_formulas.md` - Mathematical reference
 - `docs/calculators/` - Calculator documentation
@@ -396,7 +400,7 @@ See the `docs/` directory for comprehensive documentation:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| *Unreleased* | Oct 2026 | Phase 2: `scenarios`, `pnl`, `MarketRiskEngine` — historical / filtered / age-weighted / Monte Carlo / parametric VaR, ES, Stressed VaR, Euler and incremental decomposition, VAR / EXPECTED_SHORTFALL calculator types. Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); user guides with tested examples; SA-CCR supervisory duration / option delta added (IR product SA-CCR previously raised AttributeError); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
+| *Unreleased* | Oct 2026 | Phase 3: `backtesting` (Kupiec, Christoffersen, traffic light, Acerbi-Székely), P&L explain, FRTB PLA test, stress library, reverse stress, liquidity VaR, `MarketRiskEngine.backtest / stress_test / reverse_stress / explain`; bonds exclude coupons before the effective date. Phase 2: `scenarios`, `pnl`, `MarketRiskEngine` — historical / filtered / age-weighted / Monte Carlo / parametric VaR, ES, Stressed VaR, Euler and incremental decomposition, VAR / EXPECTED_SHORTFALL calculator types. Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); user guides with tested examples; SA-CCR supervisory duration / option delta added (IR product SA-CCR previously raised AttributeError); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
 | **v1.3.0** | Dec 2025 | Documentation overhaul, import fixes, version sync |
 | v1.2.0 | Dec 2025 | XVA calculators, SA-CCR, 80 products |
 | v1.1.0 | Dec 2025 | Expanded products, documentation |

@@ -337,7 +337,8 @@ products.price(MarketData) ◄── apply_shocks(base, factor ± bump) ◄─�
 |-----------|-------------|
 | `scenarios/` | `ScenarioSet` (returns matrix); historical, age-weighted, filtered, Monte Carlo, hypothetical; stress-window search |
 | `pnl/` | `PnLMatrix` (trades x scenarios) with VaR / ES / Euler / incremental; full revaluation; Taylor P&L |
-| `engine/market_risk_engine.py` | `MarketRiskEngine`: sensitivities, scenario P&L, VaR, ES, parametric VaR, stressed VaR, daily summary |
+| `engine/market_risk_engine.py` | `MarketRiskEngine`: sensitivities, scenario P&L, VaR, ES, parametric VaR, stressed VaR, backtest, stress test, reverse stress, P&L explain, daily summary |
+| `backtesting/` | VaR (Kupiec, Christoffersen, traffic light) and ES (Acerbi-Székely) backtests |
 
 See [market_risk/var_es.md](market_risk/var_es.md).
 
