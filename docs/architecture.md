@@ -339,6 +339,7 @@ products.price(MarketData) ◄── apply_shocks(base, factor ± bump) ◄─�
 | `pnl/` | `PnLMatrix` (trades x scenarios) with VaR / ES / Euler / incremental; full revaluation; Taylor P&L |
 | `engine/market_risk_engine.py` | `MarketRiskEngine`: sensitivities, scenario P&L, VaR, ES, parametric VaR, stressed VaR, backtest, stress test, reverse stress, P&L explain, daily summary |
 | `backtesting/` | VaR (Kupiec, Christoffersen, traffic light) and ES (Acerbi-Székely) backtests |
+| `regulatory/` | FRTB SA (SBM, DRC, RRAO), FRTB IMA, Basel 2.5, BA-CVA, SA-CCR re-export ([frtb.md](market_risk/frtb.md)) |
 
 See [market_risk/var_es.md](market_risk/var_es.md).
 
