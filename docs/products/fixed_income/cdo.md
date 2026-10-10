@@ -5,6 +5,7 @@
 >
 > The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
 <!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |

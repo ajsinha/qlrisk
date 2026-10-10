@@ -13,7 +13,7 @@ Copyright © 2025-2030, All Rights Reserved — Ashutosh Sinha | ajsinha@gmail.c
 pip install -e ".[dev]"
 
 # or from the prebuilt wheel committed in dist/ (use this in other projects)
-pip install /path/to/qlrisk/dist/qlrisk-2.2.1-py3-none-any.whl
+pip install /path/to/qlrisk/dist/qlrisk-2.3.0-py3-none-any.whl
 
 # dependencies only
 pip install -r requirements.txt

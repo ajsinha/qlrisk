@@ -45,9 +45,30 @@ CSR_OTHER_BUCKET = 16
 CSR_RHO_NAME, CSR_RHO_TENOR = 0.35, 0.65
 CSR_INDEX_RHO_NAME = 0.80
 CSR_GAMMA_RATING = 0.50
-# Simplification: the MAR21.57 sector-pair table is replaced by one cross-sector value
-# (same sector => 1.0). Configure via sbm(csr_sector_gamma=...).
-CSR_SECTOR_GAMMA_DEFAULT = 0.20
+# MAR21.57 Table 5: gamma_sector between sector groups (1/9, 2/10, ..., 7/15, 8, 16, 17, 18)
+_CSR_SECTOR_ROWS = {
+    1: {2: .75, 3: .10, 4: .20, 5: .25, 6: .20, 7: .15, 8: .10, 16: 0, 17: .45, 18: .45},
+    2: {3: .05, 4: .15, 5: .20, 6: .15, 7: .10, 8: .10, 16: 0, 17: .45, 18: .45},
+    3: {4: .05, 5: .15, 6: .20, 7: .05, 8: .20, 16: 0, 17: .45, 18: .45},
+    4: {5: .20, 6: .25, 7: .05, 8: .05, 16: 0, 17: .45, 18: .45},
+    5: {6: .25, 7: .05, 8: .15, 16: 0, 17: .45, 18: .45},
+    6: {7: .05, 8: .20, 16: 0, 17: .45, 18: .45},
+    7: {8: .05, 16: 0, 17: .45, 18: .45},
+    8: {16: 0, 17: .45, 18: .45},
+    16: {17: 0, 18: 0},
+    17: {18: .75},
+}
+
+
+def csr_sector_gamma(sector_b: int, sector_c: int) -> float:
+    """gamma_sector for two CSR sector groups (1 when equal)."""
+    if sector_b == sector_c:
+        return 1.0
+    lo, hi = sorted((sector_b, sector_c))
+    return _CSR_SECTOR_ROWS[lo][hi]
+
+
+CSR_SECTOR_GAMMA_DEFAULT = None     # None = MAR21.57 table; a number overrides it with one flat value
 
 # ----------------------------------------------------------------- Equity (MAR21.72-80)
 EQ_RW = {1: 0.55, 2: 0.60, 3: 0.45, 4: 0.55, 5: 0.30, 6: 0.35, 7: 0.40, 8: 0.50,
@@ -75,7 +96,8 @@ CM_GAMMA, CM_OTHER_BUCKET = 0.20, 11
 COMMODITY_BUCKET = {"WTI": 2, "BRENT": 2, "CRUDE_OIL_WTI": 2, "HEATING_OIL": 2, "COAL": 1,
                     "POWER": 3, "ELECTRICITY": 3, "FREIGHT": 4, "COPPER": 5, "ALUMINIUM": 5, "ALUMINUM": 5,
                     "NATGAS": 6, "NATURAL_GAS": 6, "GOLD": 7, "SILVER": 7, "PLATINUM": 7,
-                    "CORN": 8, "WHEAT": 8, "SOYBEANS": 8, "COFFEE": 9, "SUGAR": 9, "COTTON": 9, "CATTLE": 10}
+                    "CORN": 8, "WHEAT": 8, "SOYBEANS": 8, "CATTLE": 9, "LIVE_CATTLE": 9, "LEAN_HOGS": 9,
+                    "COFFEE": 10, "SUGAR": 10, "COTTON": 10, "COCOA": 10}
 
 # ----------------------------------------------------------------- FX (MAR21.86-89)
 FX_RW = 0.15

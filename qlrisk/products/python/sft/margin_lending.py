@@ -1,5 +1,5 @@
 """
-QLRisk - Margin Lending v2.2.1
+QLRisk - Margin Lending v2.3.0
 =============================================
 
 Margin Lending product implementation for Securities Financing Transactions.

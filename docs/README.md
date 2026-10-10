@@ -1,4 +1,4 @@
-# QLRisk - Documentation v2.2.1
+# QLRisk - Documentation v2.3.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -161,7 +161,7 @@ docs/
 | Valuation | CVA, DVA, FVA, KVA, MVA |
 | Capital | EC, RAROC, IM |
 | Regulatory | SA-CCR |
-| Market Risk | Sensitivities ✅, VaR (HS/filtered/MC/parametric) ✅, ES ✅, SVaR ✅, decomposition ✅, backtesting ✅, PLA ✅, stress library ✅, reverse stress ✅, FRTB SA/IMA ✅, Basel 2.5 ✅, BA-CVA ✅; planned: SA-CVA |
+| Market Risk | Sensitivities ✅, VaR (HS/filtered/MC/parametric) ✅, ES ✅, SVaR ✅, decomposition ✅, backtesting ✅, PLA ✅, stress library ✅, reverse stress ✅, FRTB SA/IMA ✅, Basel 2.5 ✅, SA-CVA ✅, BA-CVA ✅, SA-CCR netting sets ✅ |
 
 ---
 
@@ -254,7 +254,7 @@ from qlrisk.data import (
 
 | Version | Date | Changes |
 |---------|------|---------|
-| **2.2.1** | Dec 2025 | Documentation overhaul, import fixes, version sync |
+| **2.3.0** | Dec 2025 | Documentation overhaul, import fixes, version sync |
 | 1.2.0 | Dec 2025 | XVA calculators, SA-CCR, 81 products |
 | 1.1.0 | Dec 2025 | Expanded products, documentation |
 | 1.0.0 | Dec 2025 | Initial release |
@@ -269,6 +269,6 @@ For questions or issues:
 
 ---
 
-*Document Version: 2.2.1*  
+*Document Version: 2.3.0*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

@@ -1,4 +1,4 @@
-# QLRisk - Backtesting, P&L Attribution and Stress Testing v2.2.1
+# QLRisk - Backtesting, P&L Attribution and Stress Testing v2.3.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -94,4 +94,4 @@ LVaR = VaR × √(liquidity horizon) + Σ ½ |position value| × proportional bi
 
 ---
 
-*QLRisk v2.2.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.3.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
