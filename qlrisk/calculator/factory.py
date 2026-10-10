@@ -80,6 +80,10 @@ class CalculatorFactory:
             StressedExposureCalculator as PyStressedExposureCalculator,
             PeakExposureCalculator as PyPeakExposureCalculator
         )
+        from .python.var_calculators import (
+            VaRCalculator as PyVaRCalculator,
+            ExpectedShortfallCalculator as PyESCalculator,
+        )
         
         # Register Python implementations
         python_calculators = {
@@ -96,6 +100,8 @@ class CalculatorFactory:
             CalculatorType.EC: PyECCalculator,
             CalculatorType.RAROC: PyRAROCCalculator,
             CalculatorType.IM: PyIMCalculator,
+            CalculatorType.VAR: PyVaRCalculator,
+            CalculatorType.EXPECTED_SHORTFALL: PyESCalculator,
         }
         
         for calc_type, calc_class in python_calculators.items():

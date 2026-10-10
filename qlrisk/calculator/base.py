@@ -41,6 +41,10 @@ class CalculatorType(Enum):
     RAROC = "risk_adjusted_return_on_capital"
     IM = "initial_margin"
     
+    # Market Risk
+    VAR = "value_at_risk"
+    EXPECTED_SHORTFALL = "expected_shortfall"
+    
     # Pricing
     MTM = "mark_to_market"
     NPV = "net_present_value"

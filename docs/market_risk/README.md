@@ -19,8 +19,8 @@ strictly prohibited without explicit written permission from the copyright holde
 |-------|--------|------|
 | 1 — Risk factors and sensitivities | ✅ Delivered | [risk_factors.md](risk_factors.md), [sensitivities.md](sensitivities.md) |
 | 1.5 — Real pricers for placeholder products | ✅ Delivered (59 of 71) | [pricers.md](pricers.md) |
-| 2 — VaR / ES | 🚧 Next | |
-| 3 — Validation and stress | 🚧 Planned | |
+| 2 — VaR / ES | ✅ Delivered | [var_es.md](var_es.md), [guide](../guides/market_risk/var_and_es.md) |
+| 3 — Validation and stress | 🚧 Next | |
 | 4 — Regulatory capital | 🚧 Planned | |
 | 5 — One engine | 🚧 Planned | |
 
@@ -77,7 +77,13 @@ New packages are marked **NEW**; changes to existing packages are marked **EXTEN
 | `qlrisk/data/market_history.py` | ✅ NEW | `create_sample_market_data()`; `MarketHistoryGenerator` (correlated fat-tailed histories with a stress regime, ending at a snapshot) |
 | `tests/` | ✅ NEW | 68 pytest tests, incl. closed-form checks of DV01, convexity, Black-Scholes delta/gamma/vega, FX delta and theta |
 
-### Phase 2 — VaR and Expected Shortfall
+### Phase 2 — VaR and Expected Shortfall ✅ Delivered
+
+As built: `scenarios/{scenario_set, generators, stressed_period}.py`, `pnl/{matrix, revaluation, taylor}.py`,
+`calculator/python/var_calculators.py` (pure VaR/ES functions + `VAR` / `EXPECTED_SHORTFALL` calculators;
+decomposition lives on `PnLMatrix`), `models/risk_measure.py` (`RiskMeasureResult`),
+`engine/market_risk_engine.py`. QuantLib variants were not needed: pricing inside revaluation already
+uses each product's own (QuantLib where applicable) pricer. Original plan:
 
 | Module | Status | Contents |
 |--------|--------|----------|

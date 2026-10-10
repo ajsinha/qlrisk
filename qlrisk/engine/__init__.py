@@ -11,7 +11,7 @@ strictly prohibited without explicit written permission from the copyright holde
 
 ---
 
-High-performance, multi-threaded risk analytics engine (CCR today; market risk on the roadmap).
+High-performance risk engines: CCREngine (counterparty credit risk) and MarketRiskEngine (VaR, ES, SVaR).
 
 Features:
 - Concurrent calculator execution via ThreadPoolExecutor
@@ -24,6 +24,7 @@ Features:
 
 Components:
 - CCREngine: Main orchestrator for CCR calculations
+- MarketRiskEngine: Sensitivities, scenario P&L, VaR / ES / parametric VaR / stressed VaR
 - EngineStatus: Engine state enumeration (IDLE, RUNNING, PAUSED, STOPPED, ERROR)
 - CalculationTask: Single calculation task definition
 - CalculationJob: Batch of calculation tasks
@@ -51,9 +52,14 @@ from .ccr_engine import (
     create_engine,
 )
 
+from .market_risk_engine import MarketRiskEngine, FULL, TAYLOR
+
 __all__ = [
     "__version__",
     "CCREngine",
+    "MarketRiskEngine",
+    "FULL",
+    "TAYLOR",
     "EngineStatus",
     "CalculationPriority",
     "CalculationTask",

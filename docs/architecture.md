@@ -331,6 +331,16 @@ products.price(MarketData) ◄── apply_shocks(base, factor ± bump) ◄─�
           └──► SensitivityResult (DV01, CS01, delta, vega, ...) ──► ladders / aggregation
 ```
 
+### 3.10 Scenarios, P&L and Market Risk Engine
+
+| Component | Description |
+|-----------|-------------|
+| `scenarios/` | `ScenarioSet` (returns matrix); historical, age-weighted, filtered, Monte Carlo, hypothetical; stress-window search |
+| `pnl/` | `PnLMatrix` (trades x scenarios) with VaR / ES / Euler / incremental; full revaluation; Taylor P&L |
+| `engine/market_risk_engine.py` | `MarketRiskEngine`: sensitivities, scenario P&L, VaR, ES, parametric VaR, stressed VaR, daily summary |
+
+See [market_risk/var_es.md](market_risk/var_es.md).
+
 ---
 
 ## 4. Design Patterns
