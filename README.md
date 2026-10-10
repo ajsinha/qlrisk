@@ -48,7 +48,7 @@ whether it is being shocked for VaR, simulated for PFE or bumped for FRTB sensit
 | Monte Carlo path generation (7 stochastic processes) | ✅ Available |
 | Risk-factor taxonomy, market-data shocking, factor histories, bump-and-reprice sensitivities | ✅ Available (Phase 1) |
 | Market-driven pricers for 59 formerly-placeholder products (bonds, FX/equity/commodity options, CDS, XCCY, ...) | ✅ Available (Phase 1.5) |
-| Historical / parametric / Monte Carlo VaR, Expected Shortfall, Stressed VaR, VaR decomposition | 🚧 Planned (Phase 2) |
+| Historical / age-weighted / filtered / Monte Carlo / parametric VaR, Expected Shortfall, Stressed VaR, VaR decomposition | ✅ Available (Phase 2) |
 | VaR/ES backtesting, P&L attribution, stress-scenario library, reverse stress testing | 🚧 Planned (Phase 3) |
 | FRTB Standardised Approach and Internal Models Approach, Basel 2.5, SA-CVA / BA-CVA | 🚧 Planned (Phase 4) |
 | Unified `RiskEngine`, risk aggregation and reporting, market-risk limits | 🚧 Planned (Phase 5) |
@@ -131,12 +131,12 @@ The market-risk build-out is described module by module in
 |----------|---------|-------------|
 | **Sensitivities** ✅ | `DELTA`, `GAMMA`, `VEGA`, `THETA`, `CROSS_GAMMA` | Bump-and-reprice first/second-order, volatility and time sensitivities |
 | ✅ | `DV01`, `CS01`, key-rate ladders | Rate, credit-spread and key-rate sensitivities on native pillars or FRTB vertices |
-| **VaR** | `VAR_HISTORICAL` | Full-revaluation historical simulation (incl. filtered/EWMA-weighted) |
-| | `VAR_PARAMETRIC` | Delta-normal and delta-gamma (Cornish-Fisher) VaR |
-| | `VAR_MONTE_CARLO` | Simulated risk-factor scenarios with full revaluation |
-| | `STRESSED_VAR` | VaR calibrated to a 12-month stress window |
-| **Tail Risk** | `EXPECTED_SHORTFALL` | ES / CVaR at 97.5% and other confidence levels |
-| **Attribution** | `COMPONENT_VAR`, `MARGINAL_VAR`, `INCREMENTAL_VAR` | Risk decomposition by trade, desk or risk factor |
+| **VaR** ✅ | Historical | Full revaluation or Taylor; equal, age-weighted (BRW) or filtered (EWMA) scenarios |
+| ✅ | Parametric | Delta-normal (sample or EWMA covariance); Cornish-Fisher via `parametric_var` |
+| ✅ | Monte Carlo | Normal / Student-t scenarios from the return covariance |
+| ✅ | Stressed VaR | VaR on the 250-day window that maximises portfolio VaR |
+| **Tail Risk** ✅ | Expected Shortfall | ES at 97.5% or any confidence, historical or parametric |
+| **Attribution** ✅ | Component / incremental / standalone | Euler contributions by trade, desk or any grouping |
 | **Regulatory** | `FRTB_SA` | Sensitivities-based method, DRC and RRAO |
 | | `FRTB_IMA` | Liquidity-horizon ES, NMRF stressed ES, IMCC |
 | | `CVA_CAPITAL` | BA-CVA and SA-CVA capital |
@@ -186,7 +186,7 @@ pip install -r requirements-dev.txt    # development
 ### Run the Tests
 
 ```bash
-pytest                                  # 111 tests, incl. closed-form checks and every guide example
+pytest                                  # 123 tests, incl. closed-form checks and every guide example
 ```
 
 ### Build a Local Wheel
@@ -247,6 +247,20 @@ swap = InterestRateSwap("IRS-1", md.valuation_date, md.valuation_date, date(2031
 result = SensitivityEngine().compute([swap], md, reporting_currency="USD")
 print(result.aggregate(("risk_class", "measure")))                 # DV01 by risk class
 print(result.ladder("forward_curves", "SOFR", vertices=FRTB_GIRR_VERTICES))
+```
+
+### VaR and Expected Shortfall
+
+```python
+from qlrisk.data import MarketHistoryGenerator
+from qlrisk.engine import MarketRiskEngine
+from qlrisk.scenarios import historical_scenarios
+
+history = MarketHistoryGenerator(seed=7).generate(md, num_days=750, stress_start=300, stress_days=60)
+engine = MarketRiskEngine(reporting_currency="USD")
+pnl = engine.scenario_pnl([swap], md, historical_scenarios(history, lookback=250))
+print(pnl.var(0.99), pnl.es(0.975))
+print(engine.stressed_var([swap], md, history, horizon_days=10))
 ```
 
 ### Shock Market Data
@@ -311,6 +325,8 @@ qlrisk/
 ├── engine/                  # Multi-threaded risk engine (2 files)
 ├── riskfactors/             # Risk-factor keys, shocks, histories (5 files)
 ├── sensitivities/           # Bump-and-reprice sensitivities and ladders (5 files)
+├── scenarios/               # Historical, filtered, Monte Carlo, hypothetical scenarios; stress windows
+├── pnl/                     # Full-revaluation and Taylor P&L, VaR/ES decomposition
 ├── data/                    # Data generation (2 files)
 └── config/                  # Configuration
 ```
@@ -329,7 +345,7 @@ dist/                        # Built wheel
 ```
 
 Planned market-risk packages (see the [roadmap](docs/market_risk/README.md)):
-`scenarios/`, `pnl/`, `backtesting/`, `regulatory/`, `reporting/`.
+`backtesting/`, `regulatory/`, `reporting/`.
 
 Brand assets (logo, favicon, hero banner) live in [`assets/branding/`](assets/branding/BRAND.md).
 
@@ -368,7 +384,7 @@ them is executed by the test suite.
 See the `docs/` directory for comprehensive documentation:
 
 - `docs/architecture.md` - System architecture
-- `docs/market_risk/` - Market-risk roadmap, [risk factors](docs/market_risk/risk_factors.md) and [sensitivities](docs/market_risk/sensitivities.md)
+- `docs/market_risk/` - Market-risk roadmap, [risk factors](docs/market_risk/risk_factors.md), [sensitivities](docs/market_risk/sensitivities.md), [pricers](docs/market_risk/pricers.md), [VaR / ES](docs/market_risk/var_es.md)
 - `docs/quickstart.md` - Getting started guide
 - `docs/mathematical_formulas.md` - Mathematical reference
 - `docs/calculators/` - Calculator documentation
@@ -380,7 +396,7 @@ See the `docs/` directory for comprehensive documentation:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| *Unreleased* | Oct 2026 | Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); user guides with tested examples; SA-CCR supervisory duration / option delta added (IR product SA-CCR previously raised AttributeError); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
+| *Unreleased* | Oct 2026 | Phase 2: `scenarios`, `pnl`, `MarketRiskEngine` — historical / filtered / age-weighted / Monte Carlo / parametric VaR, ES, Stressed VaR, Euler and incremental decomposition, VAR / EXPECTED_SHORTFALL calculator types. Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); user guides with tested examples; SA-CCR supervisory duration / option delta added (IR product SA-CCR previously raised AttributeError); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
 | **v1.3.0** | Dec 2025 | Documentation overhaul, import fixes, version sync |
 | v1.2.0 | Dec 2025 | XVA calculators, SA-CCR, 80 products |
 | v1.1.0 | Dec 2025 | Expanded products, documentation |
