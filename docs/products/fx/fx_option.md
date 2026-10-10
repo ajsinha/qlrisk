@@ -1,9 +1,5 @@
 # FX Option v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 <!-- generated:implementation -->
 > **Implementation:** `FXOption` is priced by `price_fx_option` in `products/python/_pricing.py`. Product terms are keyword arguments: `pair`, `strike` (ATMF), `is_call`, `foreign_curve` / `foreign_rate`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
 >
@@ -89,13 +85,17 @@ print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ## QuantLib Implementation
 
 ```python
+from datetime import date
+from qlrisk.products.base import OptionType
 from qlrisk.products.qlib.fx import FXOptionQL
+
+market_data = md  # sample market data from the example above
 
 fx_opt_ql = FXOptionQL(
     trade_id="FXOPT-QL-001",
-    trade_date=date(2024, 1, 15),
-    expiry_date=date(2024, 7, 15),
-    settlement_date=date(2024, 7, 17),
+    trade_date=date(2026, 1, 15),
+    expiry_date=date(2026, 7, 15),
+    settlement_date=date(2026, 7, 17),
     base_currency=Currency.EUR,
     quote_currency=Currency.USD,
     base_notional=10000000,

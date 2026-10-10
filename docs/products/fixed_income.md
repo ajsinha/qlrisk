@@ -1,9 +1,5 @@
 # Fixed Income Products v1.1.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (4 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 QLRisk provides comprehensive support for fixed income products across all major categories including government bonds, corporate bonds, and asset-backed securities.
@@ -35,29 +31,20 @@ QLRisk provides comprehensive support for fixed income products across all major
 ### Usage Example
 
 ```python
+from datetime import date
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
 from qlrisk.products.python.fixed_income import TreasuryNote, UKGilt, TIPS
 
-# Create a 10-year Treasury Note
-t_note = TreasuryNote(
-    trade_id="TN-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2034, 1, 15),
-    face_value=1000000,
-    counterparty_id="CPY-001",
-    coupon_rate=0.04,  # 4%
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
 
-# Price the note
-result = t_note.price(market_data)
-print(f"Dirty Price: ${result.components['dirty_price']:,.2f}")
-print(f"YTM: {result.components['ytm']:.2%}")
-print(f"Modified Duration: {result.components['modified_duration']:.2f}")
-
-# Calculate CCR exposure
-ccr = t_note.calculate_ccr_exposure(market_data)
-print(f"Peak Exposure: ${ccr.peak_exposure:,.2f}")
+# 10-year Treasury Note, 4% semi-annual coupon (terms are keyword arguments)
+t_note = TreasuryNote("TN-001", d0, d0, date(2036, 10, 9), 1_000_000, Currency.USD, "UST", coupon=0.04)
+gilt = UKGilt("GILT-001", d0, d0, date(2034, 10, 9), 1_000_000, Currency.GBP, "UKDMO", coupon=0.0425)
+tips = TIPS("TIPS-001", d0, d0, date(2031, 10, 9), 1_000_000, Currency.USD, "UST", coupon=0.0125)
+for bond in (t_note, gilt, tips):
+    print(bond.trade_id, round(bond.price(md).npv, 2))
 ```
 
 ---
@@ -98,29 +85,13 @@ High yield bonds (rated BB+ or lower) offer higher yields but with greater credi
 ### Usage Example
 
 ```python
-from qlrisk.products.python.fixed_income import CorporateBond, Seniority
+from qlrisk.products.python.fixed_income import CorporateBond
 
-# Create a corporate bond
-corp_bond = CorporateBond(
-    trade_id="CORP-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2029, 1, 15),
-    face_value=5000000,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    coupon_rate=0.055,  # 5.5%
-    issuer_name="ACME Corp",
-    credit_rating="BBB",
-    seniority=Seniority.SENIOR_UNSECURED,
-    sector="technology",
-    is_long=True
-)
-
-# Price with credit spread
-result = corp_bond.price(market_data)
-print(f"Credit Spread: {result.components['credit_spread']:.0%}")
-print(f"CS01: ${result.greeks['cs01']:,.2f}")
+# Corporate bond: discounted at the curve plus the issuer's credit spread (credit_curves["ACME"])
+corp_bond = CorporateBond("CORP-001", d0, d0, date(2031, 10, 9), 5_000_000, Currency.USD, "ACME",
+                          coupon=0.055, issuer="ACME")
+res = corp_bond.price(md)
+print(f"NPV {res.npv:,.2f}, credit spread {res.components['credit_spread']:.2%}")
 ```
 
 ---
@@ -148,21 +119,9 @@ FRNs may include embedded options:
 ```python
 from qlrisk.products.python.fixed_income import FloatingRateNote
 
-frn = FloatingRateNote(
-    trade_id="FRN-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2027, 1, 15),
-    face_value=10000000,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    spread=0.0075,  # 75 bps over SOFR
-    reference_rate="SOFR",
-    reset_frequency=PaymentFrequency.QUARTERLY,
-    issuer_name="Bank ABC",
-    floor=0.0,  # 0% floor
-    is_long=True
-)
+frn = FloatingRateNote("FRN-001", d0, d0, date(2029, 10, 9), 10_000_000, Currency.USD, "BANK",
+                       index="SOFR", spread=0.0075, frequency=4, issuer="GLOBEX")
+print(f"FRN NPV: {frn.price(md).npv:,.2f}")
 ```
 
 ---
@@ -206,28 +165,12 @@ frn = FloatingRateNote(
 ```python
 from qlrisk.products.python.fixed_income import MBS, ABS, CLO
 
-# Create an MBS
-mbs = MBS(
-    trade_id="MBS-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2020, 1, 1),
-    maturity_date=date(2050, 1, 1),
-    face_value=5000000,
-    counterparty_id="CPY-001",
-    coupon_rate=0.035,
-    pool_factor=0.85,  # 85% remaining
-    cpr=0.08,  # 8% CPR
-    is_agency=True,
-    agency="FNMA",
-    wac=0.04,  # 4% WAC
-    wam=340,  # 340 months WAM
-    is_long=True
-)
-
-# Price with prepayment model
-result = mbs.price(market_data)
-print(f"WAL: {result.components['wal']:.2f} years")
-print(f"CPR: {result.components['cpr']:.1%}")
+mbs = MBS("MBS-001", d0, d0, date(2056, 10, 9), 5_000_000, Currency.USD, "AGENCY", coupon=0.055)
+abs_note = ABS("ABS-001", d0, d0, date(2031, 10, 9), 5_000_000, Currency.USD, "TRUST", coupon=0.05, cpr=0.12)
+clo = CLO("CLO-BBB", d0, d0, date(2033, 10, 9), 5_000_000, Currency.USD, "CLO-MGR", pool="GLOBEX")
+for p in (mbs, abs_note, clo):
+    r = p.price(md)
+    print(p.trade_id, round(r.npv, 2), {k: round(v, 4) for k, v in r.components.items()})
 ```
 
 ---

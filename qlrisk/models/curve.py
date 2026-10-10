@@ -16,8 +16,8 @@ from enum import Enum
 import math
 
 from .base import ModelBase
-# from ..core.exceptions import CurveError  # Removed - self-contained
-# from ..core.numeric_utils import NumericUtils  # Removed - self-contained
+from ..core.exceptions import CurveError
+from ..core.numeric_utils import NumericUtils
 
 
 class CurveType(Enum):

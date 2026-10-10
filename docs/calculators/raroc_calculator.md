@@ -1,9 +1,5 @@
 # RAROC Calculator Documentation v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The RAROC (Risk-Adjusted Return on Capital) Calculator computes the risk-adjusted profitability of trades and portfolios, comparing returns to the capital at risk.
@@ -63,17 +59,16 @@ calculator = RAROCCalculator()
 result = calculator.calculate(RAROCInput(
     revenue=5_000_000,
     expected_loss=500_000,
-    operating_costs=1_000_000,
-    funding_costs=500_000,
+    operating_cost=1_000_000,
+    funding_cost=500_000,
     economic_capital=20_000_000,
     hurdle_rate=0.12,
     tax_rate=0.25
-))
+)).value
 
 print(f"RAROC: {result.raroc:.2%}")
-print(f"Risk-Adjusted Return: ${result.risk_adjusted_return:,.2f}")
-print(f"Economic Capital: ${result.economic_capital:,.2f}")
-print(f"Value Added: ${result.value_added:,.2f}")
+print(f"Risk-Adjusted Revenue: ${result.risk_adjusted_revenue:,.2f}")
+print(f"Economic Profit: ${result.economic_profit:,.2f}")
 print(f"Exceeds Hurdle: {result.exceeds_hurdle}")
 ```
 

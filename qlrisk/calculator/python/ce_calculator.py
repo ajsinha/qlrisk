@@ -63,7 +63,7 @@ class CurrentExposureCalculator(ExposureCalculator):
     - Netting set aggregation
     """
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize Current Exposure calculator.
         
@@ -74,6 +74,8 @@ class CurrentExposureCalculator(ExposureCalculator):
                 - apply_collateral: Whether to apply collateral
                 - include_threshold: Whether to include threshold in calculation
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._apply_netting = config.get("apply_netting", True)

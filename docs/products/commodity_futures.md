@@ -1,14 +1,10 @@
 # Commodity Futures
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 3 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 Commodity futures are standardized exchange-traded contracts obligating the buyer to purchase (or seller to sell) a specific quantity of a commodity at a predetermined price on a specified future date.
 
-## QLRisk - Commodity Futures v2.2.0
+## QLRisk - Commodity Futures v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -123,7 +119,7 @@ future = CommodityFuture(
     trade_id="WTI-FUT-001",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2025, 6, 30),
+    maturity_date=date(2027, 6, 30),
     notional=750_000,  # 10 contracts × 1000 barrels × $75
     currency=Currency.USD,
     counterparty_id="CME",
@@ -148,7 +144,7 @@ gold_future = CommodityFuture(
     trade_id="GOLD-FUT-001",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2025, 8, 31),
+    maturity_date=date(2027, 8, 31),
     notional=1_950_000,  # 10 contracts × 100 oz × $1950
     currency=Currency.USD,
     counterparty_id="CME",
@@ -168,7 +164,7 @@ gold_future = CommodityFuture(
 ### Pricing and Exposure Calculation
 
 ```python
-from qlrisk.models import MarketData
+from qlrisk.products.base import MarketData
 
 # Create market data
 market_data = MarketData(
@@ -193,7 +189,7 @@ print(f"Peak Exposure: ${exposure.peak_exposure:,.2f}")
 # Calculate SA-CCR EAD
 saccr = future.calculate_saccr(market_data)
 print(f"EAD: ${saccr.ead:,.2f}")
-print(f"Supervisory Factor: {saccr.details['supervisory_factor']:.0%}")
+print(f"Supervisory Factor: {saccr.metadata['supervisory_factor']:.0%}")
 ```
 
 ---
@@ -258,4 +254,4 @@ Where σ is the commodity-specific volatility.
 
 ---
 
-*QLRisk v2.2.0*
+*QLRisk v2.2.1*

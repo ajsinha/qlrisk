@@ -46,6 +46,14 @@ from .interest_rate import to_ql_date, from_ql_date, build_yield_curve, get_ql_c
 # Fixed Rate Bond (QuantLib)
 # =============================================================================
 
+
+def bond_yield(bond, clean_price, day_count, compounding, frequency):
+    """Yield from a clean price; QuantLib >= 1.34 takes a BondPrice, older versions a float."""
+    try:
+        return bond.bondYield(ql.BondPrice(clean_price, ql.BondPrice.Clean), day_count, compounding, frequency)
+    except (AttributeError, TypeError):
+        return bond.bondYield(clean_price, day_count, compounding, frequency)
+
 class FixedRateBondQL(BaseProduct):
     """
     Fixed Rate Bond using QuantLib pricing engine.
@@ -152,12 +160,8 @@ class FixedRateBondQL(BaseProduct):
         accrued = self._ql_bond.accruedAmount()
         
         # Yield to maturity
-        ytm = self._ql_bond.bondYield(
-            dirty_price,
-            get_ql_day_count(self.day_count),
-            ql.Compounded,
-            get_ql_frequency(self.coupon_frequency)
-        )
+        ytm = bond_yield(self._ql_bond, clean_price, get_ql_day_count(self.day_count),
+                         ql.Compounded, get_ql_frequency(self.coupon_frequency))
         
         # Duration and convexity
         flat_rate = ql.InterestRate(
@@ -573,12 +577,7 @@ class ZeroCouponBondQL(BaseProduct):
         remaining_maturity = self.get_remaining_maturity(valuation_date)
         
         # YTM
-        ytm = zcb.bondYield(
-            clean_price,
-            ql.Actual365Fixed(),
-            ql.Compounded,
-            ql.Annual
-        )
+        ytm = bond_yield(zcb, clean_price, ql.Actual365Fixed(), ql.Compounded, ql.Annual)
         
         # Duration equals maturity for zero coupon
         duration = remaining_maturity

@@ -299,6 +299,11 @@ class PropertiesConfigurator:
             except Exception as e:
                 print(f"Error in auto-reload: {e}")
 
+    def set(self, key: str, value: Any) -> None:
+        """Set a property at runtime (overrides files until the next reload)."""
+        with self._properties_lock:
+            self._properties[key] = str(value)
+    
     def get(self, key: str, default_value: Optional[str] = None) -> Optional[str]:
         """
         Get a property value by key

@@ -1,14 +1,10 @@
 # Securities Financing Transactions (SFT)
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (6 of 6 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 Securities Financing Transactions (SFT) are collateralized transactions used for financing and securities borrowing/lending purposes. These transactions involve the temporary exchange of securities for cash or other securities, with an agreement to reverse the exchange at a future date.
 
-## QLRisk - SFT Products v2.2.0
+## QLRisk - SFT Products v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -75,7 +71,7 @@ loan = StockLoan(
     trade_id="SL-001",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2025, 12, 31),
+    maturity_date=date(2027, 12, 31),
     notional=5_000_000,  # $5M market value
     currency=Currency.USD,
     counterparty_id="HEDGE_FUND_001",
@@ -95,7 +91,7 @@ loan = StockLoan(
 )
 
 # Price the loan
-from qlrisk.models import MarketData
+from qlrisk.products.base import MarketData
 
 market_data = MarketData(
     valuation_date=date.today(),
@@ -133,7 +129,7 @@ borrowing = SecuritiesBorrowing(
     trade_id="SB-001",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2025, 6, 30),
+    maturity_date=date(2027, 6, 30),
     notional=2_000_000,
     currency=Currency.USD,
     counterparty_id="LENDER-001",
@@ -175,15 +171,16 @@ margin_loan = MarginLoan(
     trade_id="ML-001",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2025, 12, 31),
+    maturity_date=date(2027, 12, 31),
     notional=1_000_000,  # $1M loan amount
     currency=Currency.USD,
     counterparty_id="INVESTOR-001",
     terms=MarginLoanTerms(
-        loan_type=MarginLoanType.STANDARD,
-        interest_rate=0.065,  # 6.5% interest
-        initial_margin_ratio=0.50,  # 50% LTV
-        maintenance_margin_ratio=0.70  # 70% maintenance
+        loan_type=MarginLoanType.REG_T_MARGIN,
+        loan_amount=1_000_000,
+        interest_spread=0.015,  # spread over the reference rate
+        initial_margin_pct=0.50,  # 50% initial margin
+        maintenance_margin_pct=0.30  # 30% maintenance margin
     )
 )
 ```
@@ -209,20 +206,22 @@ coll_swap = CollateralSwap(
     trade_id="CS-001",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2025, 6, 30),
+    maturity_date=date(2027, 6, 30),
     notional=50_000_000,
     currency=Currency.USD,
     counterparty_id="CPTY-001",
     # Exchange corporate bonds for Treasuries
     deliver_leg=CollateralLeg(
-        security_type="corporate_bond",
-        quality=CollateralQuality.INVESTMENT_GRADE,
-        market_value=50_000_000
+        collateral_type="corporate_bond",
+        quality=CollateralQuality.HQLA_LEVEL_2A,
+        market_value=50_000_000,
+        haircut=0.08
     ),
     receive_leg=CollateralLeg(
-        security_type="treasury",
-        quality=CollateralQuality.HQLA_L1,
-        market_value=48_000_000  # Net of transformation fee
+        collateral_type="treasury",
+        quality=CollateralQuality.HQLA_LEVEL_1,
+        market_value=48_000_000,  # Net of transformation fee
+        haircut=0.02
     )
 )
 ```
@@ -259,15 +258,15 @@ repo = TriPartyRepo(
     trade_id="TPR-001",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2025, 3, 31),
+    maturity_date=date(2027, 3, 31),
     notional=100_000_000,  # $100M repo
     currency=Currency.USD,
     counterparty_id="DEALER-001",
     terms=TriPartyRepoTerms(
-        agent=TriPartyAgent.BNYM,
+        agent=TriPartyAgent.BNY_MELLON,
         repo_rate=0.045,  # 4.5% repo rate
         haircut=0.02,  # 2% haircut
-        collateral_schedule=CollateralSchedule.TREASURY_ONLY
+        collateral_schedule=CollateralSchedule.GOVERNMENT_ONLY
     )
 )
 ```
@@ -304,19 +303,19 @@ pb = PrimeBrokerage(
     trade_id="PB-001",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2025, 12, 31),
+    maturity_date=date(2027, 12, 31),
     notional=500_000_000,  # $500M facility
     currency=Currency.USD,
     counterparty_id="HEDGE_FUND_001",
     terms=PrimeBrokerageTerms(
-        services=[
-            PBServiceType.MARGIN,
+        service_types=[
+            PBServiceType.MARGIN_FINANCING,
             PBServiceType.SECURITIES_LENDING,
             PBServiceType.CUSTODY
         ],
-        account_type=PBAccountType.PORTFOLIO_MARGIN,
-        margin_rate=0.055,  # 5.5% margin rate
-        stock_borrow_rate=0.0050  # 50 bps stock borrow
+        account_type=PBAccountType.MARGIN,
+        financing_rate_spread=0.005,  # financing spread over benchmark
+        short_rebate_spread=0.0050  # 50 bps short rebate spread
     )
 )
 ```
@@ -383,4 +382,4 @@ Settlement failures, corporate action processing, dividend handling.
 
 ---
 
-*QLRisk v2.2.0*
+*QLRisk v2.2.1*

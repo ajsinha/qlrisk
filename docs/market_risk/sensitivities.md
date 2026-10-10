@@ -1,4 +1,4 @@
-# QLRisk - Sensitivities v2.2.0
+# QLRisk - Sensitivities v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -21,7 +21,8 @@ For each risk factor, the engine builds the bumped market data **once** and repr
 from qlrisk.data import create_sample_market_data
 from qlrisk.sensitivities import SensitivityEngine, FRTB_GIRR_VERTICES
 
-md = create_sample_market_data()
+from qlrisk.demos import demo_book
+trades, md, *_ = demo_book()
 result = SensitivityEngine().compute(trades, md, reporting_currency="USD", include_theta=True)
 
 result.aggregate(("risk_class", "measure"))          # e.g. {(IR, DV01): 4513.4, (FX, DELTA): 10569.0, ...}
@@ -150,9 +151,9 @@ The test suite (`tests/test_sensitivities.py`) checks the engine against closed-
 
 ## 8. Model Coverage
 
-Since v2.2.0 every product prices off market data (see [pricers.md](pricers.md)), so every product has
+Since v2.2.1 every product prices off market data (see [pricers.md](pricers.md)), so every product has
 meaningful sensitivities. Model simplifications are listed in pricers.md.
 
 ---
 
-*QLRisk v2.2.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.2.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

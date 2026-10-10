@@ -1,5 +1,5 @@
 """
-QLRisk - Products Module v2.2.0
+QLRisk - Products Module v2.2.1
 ==============================================
 
 Copyright © 2025-2030, All Rights Reserved
@@ -36,7 +36,7 @@ QuantLib Implementations (13 products):
 - Fixed Income: Fixed Rate Bond, Floating Rate Bond, Zero Coupon Bond
 """
 
-__version__ = "2.2.0"
+__version__ = "2.2.1"
 
 from .base import (
     BaseProduct, AssetClass, Currency,

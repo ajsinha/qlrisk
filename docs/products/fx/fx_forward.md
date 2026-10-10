@@ -1,9 +1,5 @@
 # FX Forward v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 <!-- generated:implementation -->
 > **Implementation:** `FXForward` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.FXForward)`).
 >
@@ -99,8 +95,8 @@ from qlrisk.products.qlib.fx import FXForwardQL
 
 fx_fwd_ql = FXForwardQL(
     trade_id="FXFWD-QL-001",
-    trade_date=date(2024, 1, 15),
-    settlement_date=date(2024, 7, 15),
+    trade_date=date(2026, 1, 15),
+    settlement_date=date(2026, 7, 15),
     base_currency=Currency.EUR,
     quote_currency=Currency.USD,
     base_notional=10000000,

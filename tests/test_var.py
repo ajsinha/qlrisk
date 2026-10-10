@@ -160,3 +160,12 @@ def test_option_book_es_exceeds_var_and_stressed_var(market):
     assert start <= 330 and end >= 330                                                    # overlaps the stress
     summary = eng.summary(book, md, hist)
     assert set(summary) == {"var_1d_99", "es_1d_975", "var_10d_99", "parametric_var_1d_99", "stressed_var_10d_99"}
+
+
+def test_factory_cache_respects_config():
+    from qlrisk.calculator import CalculatorFactory
+    f = CalculatorFactory()
+    a = f.get_pd_calculator(config={"model": "structural"})
+    b = f.get_pd_calculator(config={"model": "transition_matrix"})
+    assert a is not b and b.calculate({"credit_rating": "BBB"}).value == pytest.approx(0.004)
+    assert f.get_pd_calculator(config={"model": "transition_matrix"}) is b

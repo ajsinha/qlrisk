@@ -101,7 +101,7 @@ class InitialMarginCalculator(BaseCalculator[IMResult]):
         "commodity": {(0, 1): 0.10, (1, 5): 0.12, (5, float('inf')): 0.15}
     }
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize Initial Margin calculator.
         
@@ -112,6 +112,8 @@ class InitialMarginCalculator(BaseCalculator[IMResult]):
                 - confidence_level: VaR confidence level (default 0.99)
                 - mpor_scaling: Whether to scale for MPOR
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._method = config.get("method", "schedule")

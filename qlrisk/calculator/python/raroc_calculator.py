@@ -83,7 +83,7 @@ class RAROCCalculator(BaseCalculator[RAROCResult]):
     - Make go/no-go decisions on trades
     """
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize RAROC calculator.
         
@@ -94,6 +94,8 @@ class RAROCCalculator(BaseCalculator[RAROCResult]):
                 - include_xva: Whether to include XVA adjustments
                 - use_regulatory_capital: Use regulatory instead of EC
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._hurdle_rate = config.get("hurdle_rate", 0.15)

@@ -1,5 +1,5 @@
 """
-QLRisk - Backtesting Module v2.2.0
+QLRisk - Backtesting Module v2.2.1
 ==================================
 
 Copyright © 2025-2030, All Rights Reserved

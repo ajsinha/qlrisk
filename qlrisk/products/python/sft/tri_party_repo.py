@@ -1,5 +1,5 @@
 """
-QLRisk - Tri-Party Repo v2.2.0
+QLRisk - Tri-Party Repo v2.2.1
 =============================================
 
 Tri-Party Repurchase Agreement implementation with full CCR analytics.
@@ -282,7 +282,7 @@ class TriPartyRepo(BaseProduct):
             pfe_add_on=0.0,
             ead=max(0, rc),
             asset_class=AssetClass.SFT,
-            details={
+            metadata={
                 "agent": self.terms.agent.value,
                 "schedule": self.terms.collateral_schedule.value,
                 "haircut": self.get_haircut()

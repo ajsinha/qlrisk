@@ -80,7 +80,7 @@ class PDCalculator(CreditRiskCalculator):
         "CC": 0.5000, "C": 0.7000, "D": 1.0000
     }
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize PD calculator.
         
@@ -90,6 +90,8 @@ class PDCalculator(CreditRiskCalculator):
                 - model: PDModel type (default: STRUCTURAL)
                 - time_horizon: Time horizon in years (default: 1.0)
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._model = PDModel(config.get("model", PDModel.STRUCTURAL.value))
@@ -110,6 +112,8 @@ class PDCalculator(CreditRiskCalculator):
             Probability of default (0 to 1)
         """
         if isinstance(data, dict):
+            if "rating" in data and "credit_rating" not in data:      # accepted alias
+                data = {**data, "credit_rating": data["rating"]}
             filtered_data = filter_dict_for_dataclass(data, PDInput)
             pd_input = PDInput(**filtered_data)
         else:

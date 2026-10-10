@@ -1,8 +1,4 @@
-# QLRisk - Quickstart Guide v2.2.0
-
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (11 of 24 fail). Use the [user guides](guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
+# QLRisk - Quickstart Guide v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -44,8 +40,8 @@ pip install -e ".[dev]"
 
 # Or build a local wheel and install it into any other project/virtualenv
 pip install build
-python -m build --wheel                       # -> dist/qlrisk-2.2.0-py3-none-any.whl
-pip install /path/to/qlrisk/dist/qlrisk-2.2.0-py3-none-any.whl
+python -m build --wheel                       # -> dist/qlrisk-2.2.1-py3-none-any.whl
+pip install /path/to/qlrisk/dist/qlrisk-2.2.1-py3-none-any.whl
 ```
 
 ### 1.3 Verify Installation
@@ -60,7 +56,7 @@ print(f'Author: {qlrisk.__author__}')
 
 Expected output:
 ```
-QLRisk v2.2.0
+QLRisk v2.2.1
 Author: Ashutosh Sinha
 ```
 
@@ -232,8 +228,8 @@ lgd_result = lgd_calc.calculate({
 ead_calc = factory.get_calculator(CalculatorType.EAD)
 ead_result = ead_calc.calculate({
     'current_exposure': 250_000,
-    'undrawn_commitment': 750_000,
-    'ccf': 0.5
+    'notional': 1_000_000,
+    'credit_conversion_factor': 0.5
 })
 
 # Expected Loss
@@ -241,13 +237,13 @@ el_calc = factory.get_calculator(CalculatorType.EL)
 el_result = el_calc.calculate({
     'pd': pd_result.value,
     'lgd': lgd_result.value,
-    'ead': ead_result.value
+    'ead': ead_result.value.ead
 })
 
 print(f"PD:  {pd_result.value:.4%}")
 print(f"LGD: {lgd_result.value:.2%}")
-print(f"EAD: ${ead_result.value:,.2f}")
-print(f"EL:  ${el_result.value:,.2f}")
+print(f"EAD: ${ead_result.value.ead:,.2f}")
+print(f"EL:  ${el_result.value.expected_loss:,.2f}")
 ```
 
 ---
@@ -273,7 +269,7 @@ print(f"Rating-based PD (BBB): {result.value:.4%}")
 result = pd_calc.calculate({
     'method': 'merton',
     'asset_value': 100_000_000,
-    'debt': 60_000_000,
+    'debt_value': 60_000_000,
     'asset_volatility': 0.25,
     'time_horizon': 1.0,
     'risk_free_rate': 0.03
@@ -297,7 +293,7 @@ result = cva_calc.calculate({
     'risk_free_rate': 0.03
 })
 
-print(f"CVA: ${result.value:,.2f}")
+print(f"CVA: ${result.value.cva:,.2f}")
 ```
 
 ### 4.3 Potential Future Exposure (PFE)
@@ -317,7 +313,7 @@ result = pfe_calc.calculate({
     'product_type': 'irs'
 })
 
-print(f"PFE (95%): ${result.value:,.2f}")
+print(f"PFE (95%): ${result.value.pfe:,.2f}")
 ```
 
 ### 4.4 Economic Capital
@@ -336,7 +332,7 @@ result = ec_calc.calculate({
     'confidence_level': 0.999
 })
 
-print(f"Economic Capital: ${result.value:,.2f}")
+print(f"Economic Capital: ${result.value.economic_capital:,.2f}")
 ```
 
 ### 4.5 Stress Testing
@@ -349,7 +345,10 @@ stress_calc = factory.get_calculator(CalculatorType.STRESSED_EXPOSURE)
 
 # Historical stress scenario
 result = stress_calc.calculate({
-    'base_exposure': 10_000_000,
+    'current_mtm': 500_000,
+    'notional': 10_000_000,
+    'remaining_maturity': 5.0,
+    'volatility': 0.20,
     'stress_type': 'historical',
     'stress_scenario': '2008_crisis',
     'product_type': 'irs',
@@ -362,7 +361,7 @@ result = stress_calc.calculate({
 })
 
 print(f"Base Exposure: $10,000,000")
-print(f"Stressed Exposure: ${result.value:,.2f}")
+print(f"Stressed Exposure: ${result.value.stressed_exposure:,.2f}")
 ```
 
 ---
@@ -490,10 +489,10 @@ params = PathGenerationParams(
     maturity=5.0,         # 5 years
     num_steps=60,         # Monthly
     num_paths=5000,
-    mean_reversion=0.5    # Mean reversion speed (kappa)
+    mean_reversion_speed=0.5    # Mean reversion speed (kappa)
 )
 
-result = path_gen.generate_paths(params, ProcessType.ORNSTEIN_UHLENBECK)
+result = path_gen.generate_paths(params, ProcessType.OU)
 print(f"OU Process - Final mean: {result.paths[:, -1].mean():.4f}")
 ```
 
@@ -512,7 +511,7 @@ params = PathGenerationParams(
     maturity=10.0,        # 10 years
     num_steps=120,        # Monthly
     num_paths=5000,
-    mean_reversion=0.3
+    mean_reversion_speed=0.3
 )
 
 result = path_gen.generate_paths(params, ProcessType.CIR)
@@ -532,9 +531,9 @@ from qlrisk.core import PropertiesConfigurator
 config = PropertiesConfigurator('config/application.properties')
 
 # Get values with type conversion
-max_workers = config.get_int('engine.max_workers', default=8)
-confidence = config.get_float('calculator.confidence_level', default=0.99)
-implementation = config.get('engine.default_implementation', default='python')
+max_workers = config.get_int('engine.max_workers', 8)
+confidence = config.get_float('calculator.confidence_level', 0.99)
+implementation = config.get('engine.default_implementation', 'python')
 
 print(f"Max Workers: {max_workers}")
 print(f"Confidence Level: {confidence}")
@@ -682,6 +681,6 @@ for i in range(0, total_paths, batch_size):
 
 ---
 
-*Document Version: 2.2.0*  
+*Document Version: 2.2.1*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

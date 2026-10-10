@@ -1,5 +1,5 @@
 """
-QLRisk - Bond Total Return Swap (TRS) v2.2.0
+QLRisk - Bond Total Return Swap (TRS) v2.2.1
 ============================================================
 
 Bond Total Return Swap implementation with full CCR analytics support.
@@ -496,7 +496,7 @@ class BondTRS(BaseProduct):
             pfe_add_on=pfe_addon,
             ead=ead,
             asset_class=self.asset_class,
-            details={
+            metadata={
                 "supervisory_factor": sf,
                 "maturity_factor": mf,
                 "delta": delta,

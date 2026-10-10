@@ -1,9 +1,5 @@
 # Economic Capital (EC) Calculator
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (2 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Economic Capital (EC) Calculator estimates the capital required to absorb unexpected losses from credit risk at a specified confidence level. EC is the difference between Value-at-Risk (VaR) and Expected Loss, representing the capital buffer needed beyond provisions.
@@ -112,9 +108,9 @@ print(f"Capital Ratio: {result.value.capital_ratio:.2%}")
 
 ```python
 result = ec_calc.calculate({
-    "ead": 10_000_000,
-    "pd": 0.02,
-    "lgd": 0.45,
+    "exposures": [10_000_000],
+    "pds": [0.02],
+    "lgds": [0.45],
     "asset_correlation": 0.15,
     "confidence_level": 0.999
 })
@@ -144,15 +140,19 @@ result = ec_calc.calculate({
 ## Output Structure
 
 ```python
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
+
 @dataclass
 class ECResult:
-    economic_capital: float       # Unexpected Loss (UL)
-    expected_loss: float          # Portfolio EL
-    unexpected_loss: float        # Same as EC
-    var: float                    # VaR at confidence level
-    es: float                     # Expected Shortfall / CVaR
-    capital_ratio: float          # EC / Total EAD
-    components: Dict[str, Any]    # Method details
+    """Result of Economic Capital calculation."""
+    economic_capital: float
+    expected_loss: float
+    unexpected_loss: float
+    var: float  # Value at Risk
+    es: float  # Expected Shortfall
+    capital_ratio: float  # EC / Total EAD
+    components: Dict[str, Any]
 ```
 
 ## Asset Correlation

@@ -1,9 +1,5 @@
 # Counterparty Model Documentation v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Counterparty module provides models for managing counterparty information, netting sets, and collateral agreements essential for CCR calculations.
@@ -18,17 +14,23 @@ Represents a trading counterparty.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `counterparty_id` | str | Auto-generated | Unique identifier |
-| `name` | str | "" | Legal name |
-| `short_name` | str | "" | Trading name |
-| `lei` | str | "" | Legal Entity Identifier |
-| `country` | str | "" | Country of incorporation |
-| `sector` | str | "" | Industry sector |
-| `rating` | str | "BBB" | Credit rating |
-| `pd` | float | 0.01 | Probability of default |
-| `lgd` | float | 0.45 | Loss given default |
-| `is_financial` | bool | True | Financial institution flag |
-| `is_central_counterparty` | bool | False | CCP flag |
+| `id` | str | auto-generated |  |
+| `created_at` | datetime | now() |  |
+| `updated_at` | datetime | now() |  |
+| `metadata` | Dict | dict() |  |
+| `counterparty_id` | str | auto-generated | Unique identifier |
+| `name` | str | '' | Legal name |
+| `legal_name` | str | '' |  |
+| `counterparty_type` | CounterpartyType | CounterpartyType.CORPORATE |  |
+| `ratings` | List | list() |  |
+| `probability_of_default` | float | 0.01 |  |
+| `loss_given_default` | float | 0.45 |  |
+| `lei` | Union | None | Legal Entity Identifier |
+| `ticker` | Union | None |  |
+| `country` | str | 'US' | Country of incorporation |
+| `sector` | str | '' | Industry sector |
+| `parent_id` | Union | None |  |
+| `netting_set_ids` | List | list() |  |
 
 #### Methods
 
@@ -45,15 +47,19 @@ Legal netting agreement for exposure aggregation.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `netting_set_id` | str | Auto-generated | Unique identifier |
-| `counterparty_id` | str | "" | Parent counterparty |
-| `agreement_type` | str | "ISDA" | Agreement type |
-| `is_margined` | bool | False | Collateralized flag |
-| `threshold` | float | 0.0 | Collateral threshold |
-| `minimum_transfer_amount` | float | 0.0 | MTA |
-| `margin_period_of_risk` | float | 10.0 | MPOR in days |
-| `independent_amount` | float | 0.0 | Initial margin |
-| `trade_ids` | List[str] | [] | Trades in netting set |
+| `id` | str | auto-generated |  |
+| `created_at` | datetime | now() |  |
+| `updated_at` | datetime | now() |  |
+| `metadata` | Dict | dict() |  |
+| `netting_set_id` | str | auto-generated | Unique identifier |
+| `name` | str | '' |  |
+| `counterparty_id` | str | '' | Parent counterparty |
+| `trade_ids` | List | list() | Trades in netting set |
+| `collateral_agreement` | Union | None |  |
+| `has_netting_agreement` | bool | True |  |
+| `gross_exposure` | float | 0.0 |  |
+| `net_exposure` | float | 0.0 |  |
+| `collateralized_exposure` | float | 0.0 |  |
 
 #### Methods
 
@@ -71,56 +77,37 @@ Credit Support Annex (CSA) details.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `agreement_id` | str | Auto-generated | Unique identifier |
-| `netting_set_id` | str | "" | Associated netting set |
-| `agreement_type` | str | "CSA" | Type (CSA, VM, IM) |
-| `currency` | str | "USD" | Collateral currency |
-| `threshold_party` | float | 0.0 | Our threshold |
+| `id` | str | auto-generated |  |
+| `created_at` | datetime | now() |  |
+| `updated_at` | datetime | now() |  |
+| `metadata` | Dict | dict() |  |
+| `agreement_id` | str | auto-generated | Unique identifier |
+| `netting_set_id` | str | '' | Associated netting set |
+| `threshold_self` | float | 0.0 |  |
 | `threshold_counterparty` | float | 0.0 | CP threshold |
-| `mta_party` | float | 0.0 | Our MTA |
-| `mta_counterparty` | float | 0.0 | CP MTA |
-| `rounding` | float | 0.0 | Rounding amount |
-| `eligible_collateral` | List[str] | [] | Eligible types |
-| `haircuts` | Dict[str, float] | {} | Collateral haircuts |
-| `valuation_frequency` | str | "daily" | Valuation freq |
-| `dispute_resolution_days` | int | 2 | Dispute period |
+| `minimum_transfer_amount` | float | 0.0 |  |
+| `independent_amount_self` | float | 0.0 |  |
+| `independent_amount_counterparty` | float | 0.0 |  |
+| `margin_period_of_risk` | int | 10 |  |
+| `eligible_collateral` | List | auto-generated | Eligible types |
+| `haircuts` | Dict | dict() | Collateral haircuts |
+| `posted_collateral` | float | 0.0 |  |
+| `received_collateral` | float | 0.0 |  |
 
 ## Usage Examples
 
 ```python
 from qlrisk.models import Counterparty, NettingSet, CollateralAgreement
 
-# Create counterparty
-cp = Counterparty(
-    name="Global Bank Ltd",
-    short_name="GBL",
-    lei="549300ABCDEF123456",
-    country="US",
-    sector="Banking",
-    rating="A",
-    pd=0.005,
-    lgd=0.45
-)
+cp = Counterparty(counterparty_id="CP-GBL", name="Global Bank Ltd", legal_name="Global Bank Limited",
+                  lei="549300ABCDEF12345678", country="US", sector="Banking",
+                  probability_of_default=0.005, loss_given_default=0.45)
 
-# Create netting set
-ns = NettingSet(
-    counterparty_id=cp.counterparty_id,
-    agreement_type="ISDA",
-    is_margined=True,
-    threshold=10_000_000,
-    minimum_transfer_amount=500_000,
-    margin_period_of_risk=10
-)
-
-# Create collateral agreement
-csa = CollateralAgreement(
-    netting_set_id=ns.netting_set_id,
-    currency="USD",
-    threshold_party=10_000_000,
-    threshold_counterparty=10_000_000,
-    eligible_collateral=["cash", "treasury"],
-    haircuts={"cash": 0.0, "treasury": 0.02}
-)
+csa = CollateralAgreement(agreement_id="CSA-001", netting_set_id="NS-GBL-1", threshold_counterparty=1_000_000,
+                          minimum_transfer_amount=250_000, margin_period_of_risk=10)
+ns = NettingSet(netting_set_id="NS-GBL-1", counterparty_id="CP-GBL", trade_ids=["IRS-1", "IRS-2"],
+                collateral_agreement=csa)
+print(cp.name, cp.probability_of_default, ns.trade_ids, csa.threshold_counterparty)
 ```
 
 ---

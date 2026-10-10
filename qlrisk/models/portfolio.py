@@ -35,6 +35,15 @@ class AggregationLevel(Enum):
     ENTITY = "entity"
 
 
+
+
+def _asset_class(trade) -> str:
+    """Asset class of a trade: explicit attribute if present, else the trade type."""
+    explicit = getattr(trade, "asset_class", None)
+    if explicit:
+        return getattr(explicit, "value", explicit)
+    return getattr(trade.trade_type, "value", str(trade.trade_type))
+
 @dataclass
 class PortfolioSummary:
     """Summary statistics for a portfolio."""
@@ -102,7 +111,7 @@ class Portfolio:
     
     def get_trades_by_asset_class(self, asset_class: str) -> List[Trade]:
         """Get all trades for an asset class."""
-        return [t for t in self.trades if t.asset_class == asset_class]
+        return [t for t in self.trades if _asset_class(t) == asset_class]
     
     def get_trades_by_currency(self, currency: str) -> List[Trade]:
         """Get all trades for a currency."""
@@ -130,7 +139,7 @@ class Portfolio:
                 summary.negative_mtm += mtm
             
             summary.currencies.add(trade.currency)
-            summary.asset_classes.add(trade.asset_class)
+            summary.asset_classes.add(_asset_class(trade))
             summary.counterparties.add(trade.counterparty_id)
         
         summary.netting_sets = len(self.netting_sets)

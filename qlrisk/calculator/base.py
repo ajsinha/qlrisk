@@ -46,6 +46,7 @@ class CalculatorType(Enum):
     FVA = "funding_valuation_adjustment"
     KVA = "capital_valuation_adjustment"
     MVA = "margin_valuation_adjustment"
+    SACCR = "sa_ccr"
     
     # Market Risk
     VAR = "value_at_risk"

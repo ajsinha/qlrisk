@@ -1,9 +1,5 @@
 # Exposure at Default (EAD) Calculator
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Exposure at Default (EAD) Calculator estimates the total exposure amount at the time of default. For derivatives and off-balance sheet items, EAD includes both current exposure and potential future exposure. EAD is a key component in Expected Loss and regulatory capital calculations.
@@ -138,14 +134,18 @@ print(f"Netted EAD: ${result.value.ead:,.2f}")
 The calculator returns an `EADResult` dataclass:
 
 ```python
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
+
 @dataclass
 class EADResult:
-    ead: float                    # Final EAD amount
-    gross_exposure: float         # Pre-netting exposure
-    net_exposure: float           # Post-netting exposure
-    collateral_adjusted: float    # After collateral adjustment
-    method: str                   # Calculation method used
-    components: Dict[str, Any]    # Breakdown details
+    """Result of EAD calculation."""
+    ead: float
+    gross_exposure: float
+    net_exposure: float
+    collateral_adjusted: float
+    method: str
+    components: Dict[str, float]
 ```
 
 ## Credit Conversion Factors (CCF)

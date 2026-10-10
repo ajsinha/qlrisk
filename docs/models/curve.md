@@ -1,9 +1,5 @@
 # Curve Model Documentation v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Curve module provides models for yield curves, credit curves, and volatility surfaces used in pricing and risk calculations.
@@ -14,14 +10,15 @@ The Curve module provides models for yield curves, credit curves, and volatility
 
 Types of market curves.
 
-| Value | Description |
-|-------|-------------|
-| `YIELD` | Interest rate yield curve |
-| `DISCOUNT` | Discount factor curve |
-| `FORWARD` | Forward rate curve |
-| `CREDIT` | Credit spread curve |
-| `HAZARD` | Hazard rate curve |
-| `VOLATILITY` | Volatility curve/surface |
+| Value | Name | Description |
+|-------|------|-------------|
+| `yield` | `YIELD` | Interest rate yield curve |
+| `discount` | `DISCOUNT` | Discount factor curve |
+| `zero` | `ZERO` |  |
+| `forward` | `FORWARD` | Forward rate curve |
+| `credit` | `CREDIT` | Credit spread curve |
+| `hazard` | `HAZARD` | Hazard rate curve |
+| `volatility` | `VOLATILITY` | Volatility curve/surface |
 
 ### Curve (Dataclass)
 
@@ -31,14 +28,17 @@ Base curve representation.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `curve_id` | str | Auto-generated | Unique identifier |
-| `curve_type` | CurveType | YIELD | Type of curve |
-| `currency` | str | "USD" | Curve currency |
-| `reference_date` | date | today | Valuation date |
-| `tenors` | List[float] | [] | Tenor points (years) |
-| `values` | List[float] | [] | Curve values |
-| `interpolation` | str | "linear" | Interpolation method |
-| `day_count` | str | "ACT/365" | Day count convention |
+| `id` | str | auto-generated |  |
+| `created_at` | datetime | now() |  |
+| `updated_at` | datetime | now() |  |
+| `metadata` | Dict | dict() |  |
+| `curve_id` | str | '' | Unique identifier |
+| `curve_type` | CurveType | CurveType.YIELD | Type of curve |
+| `currency` | str | 'USD' | Curve currency |
+| `curve_date` | date | today() |  |
+| `tenors` | List | list() | Tenor points (years) |
+| `values` | List | list() | Curve values |
+| `interpolation` | InterpolationMethod | InterpolationMethod.LOG_LINEAR | Interpolation method |
 
 #### Methods
 
@@ -58,11 +58,17 @@ Interest rate yield curve.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `index_name` | str | "SOFR" | Reference index |
-| `compounding` | str | "continuous" | Compounding method |
-| `spot_rates` | List[float] | [] | Spot rates |
-| `forward_rates` | List[float] | [] | Forward rates |
-| `discount_factors` | List[float] | [] | Discount factors |
+| `id` | str | auto-generated |  |
+| `created_at` | datetime | now() |  |
+| `updated_at` | datetime | now() |  |
+| `metadata` | Dict | dict() |  |
+| `curve_id` | str | '' |  |
+| `curve_type` | CurveType | CurveType.YIELD |  |
+| `currency` | str | 'USD' |  |
+| `curve_date` | date | today() |  |
+| `tenors` | List | list() |  |
+| `values` | List | list() |  |
+| `interpolation` | InterpolationMethod | InterpolationMethod.LOG_LINEAR |  |
 
 #### Methods
 
@@ -81,12 +87,18 @@ Credit spread/hazard rate curve.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `entity_id` | str | "" | Reference entity |
-| `seniority` | str | "SENIOR" | Debt seniority |
-| `recovery_rate` | float | 0.40 | Recovery assumption |
-| `spreads` | List[float] | [] | Credit spreads |
-| `hazard_rates` | List[float] | [] | Hazard rates |
-| `survival_probs` | List[float] | [] | Survival probabilities |
+| `id` | str | auto-generated |  |
+| `created_at` | datetime | now() |  |
+| `updated_at` | datetime | now() |  |
+| `metadata` | Dict | dict() |  |
+| `curve_id` | str | '' |  |
+| `curve_type` | CurveType | CurveType.HAZARD |  |
+| `currency` | str | 'USD' |  |
+| `curve_date` | date | today() |  |
+| `tenors` | List | list() |  |
+| `values` | List | list() |  |
+| `interpolation` | InterpolationMethod | InterpolationMethod.LOG_LINEAR |  |
+| `recovery_rate` | float | 0.4 | Recovery assumption |
 
 #### Methods
 
@@ -105,12 +117,19 @@ Volatility surface for options.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `underlying` | str | "" | Underlying asset |
-| `surface_type` | str | "implied" | Vol type |
-| `strikes` | List[float] | [] | Strike levels |
-| `expiries` | List[float] | [] | Expiry times |
-| `volatilities` | List[List[float]] | [] | Vol matrix |
-| `atm_vols` | List[float] | [] | ATM volatilities |
+| `id` | str | auto-generated |  |
+| `created_at` | datetime | now() |  |
+| `updated_at` | datetime | now() |  |
+| `metadata` | Dict | dict() |  |
+| `surface_id` | str | '' |  |
+| `underlying` | str | '' | Underlying asset |
+| `currency` | str | 'USD' |  |
+| `surface_date` | date | today() |  |
+| `expiries` | List | list() | Expiry times |
+| `strikes` | List | list() | Strike levels |
+| `volatilities` | List | list() | Vol matrix |
+| `atm_tenors` | List | list() |  |
+| `atm_vols` | List | list() | ATM volatilities |
 
 #### Methods
 
@@ -122,32 +141,23 @@ Volatility surface for options.
 ## Usage Examples
 
 ```python
-from qlrisk.models import YieldCurve, CreditCurve, VolatilitySurface
 from datetime import date
+from qlrisk.models import YieldCurve, CreditCurve, VolatilitySurface
 
-# Create yield curve
-yield_curve = YieldCurve(
-    currency="USD",
-    index_name="SOFR",
-    reference_date=date.today(),
-    tenors=[0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 30.0],
-    spot_rates=[0.045, 0.046, 0.047, 0.048, 0.05, 0.052, 0.055]
-)
+yield_curve = YieldCurve(curve_id="USD-SOFR", currency="USD", curve_date=date.today(),
+                         tenors=[0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 30.0],
+                         values=[0.045, 0.046, 0.047, 0.048, 0.05, 0.052, 0.055])
+print("3y zero rate", yield_curve.zero_rate(3.0), "DF(5y)", yield_curve.discount_factor(5.0),
+      "1y-2y fwd", yield_curve.forward_rate(1.0, 2.0))
 
-# Get interpolated rate
-rate_3y = yield_curve.get_spot_rate(3.0)
-df_5y = yield_curve.get_discount_factor(5.0)
+credit_curve = CreditCurve(curve_id="ACME-CDS", currency="USD", curve_date=date.today(),
+                           tenors=[1.0, 3.0, 5.0], values=[0.010, 0.012, 0.015], recovery_rate=0.4)
+print("5y survival", credit_curve.survival_probability(5.0), "5y PD", credit_curve.default_probability(5.0))
 
-# Create credit curve
-credit_curve = CreditCurve(
-    entity_id="CORP-001",
-    recovery_rate=0.40,
-    tenors=[1.0, 3.0, 5.0, 7.0, 10.0],
-    spreads=[0.005, 0.008, 0.012, 0.015, 0.018]
-)
-
-# Get survival probability
-surv_5y = credit_curve.get_survival_prob(5.0)
+surface = VolatilitySurface(surface_id="SPX-VOL", underlying="SPX", currency="USD", surface_date=date.today(),
+                            expiries=[0.5, 1.0], strikes=[90.0, 100.0, 110.0],
+                            volatilities=[[0.24, 0.20, 0.18], [0.23, 0.20, 0.185]])
+print("vol(0.75y, 100)", surface.get_volatility(0.75, 100.0))
 ```
 
 ---

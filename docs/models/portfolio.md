@@ -1,9 +1,5 @@
 # Portfolio Model Documentation v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Portfolio model provides aggregation and management capabilities for collections of trades, supporting various risk aggregation levels and netting set grouping.
@@ -14,40 +10,40 @@ The Portfolio model provides aggregation and management capabilities for collect
 
 Portfolio classification.
 
-| Value | Description |
-|-------|-------------|
-| `TRADING` | Trading book |
-| `BANKING` | Banking book |
-| `HEDGING` | Hedging portfolio |
-| `INVESTMENT` | Investment portfolio |
+| Value | Name | Description |
+|-------|------|-------------|
+| `trading` | `TRADING` | Trading book |
+| `banking` | `BANKING` | Banking book |
+| `hedging` | `HEDGING` | Hedging portfolio |
+| `investment` | `INVESTMENT` | Investment portfolio |
 
 ### AggregationLevel (Enum)
 
 Aggregation hierarchy for exposure calculation.
 
-| Value | Description |
-|-------|-------------|
-| `TRADE` | Individual trade level |
-| `NETTING_SET` | Netting set level |
-| `COUNTERPARTY` | Counterparty level |
-| `PORTFOLIO` | Portfolio level |
-| `ENTITY` | Legal entity level |
+| Value | Name | Description |
+|-------|------|-------------|
+| `trade` | `TRADE` | Individual trade level |
+| `netting_set` | `NETTING_SET` | Netting set level |
+| `counterparty` | `COUNTERPARTY` | Counterparty level |
+| `portfolio` | `PORTFOLIO` | Portfolio level |
+| `entity` | `ENTITY` | Legal entity level |
 
 ### PortfolioSummary (Dataclass)
 
 Summary statistics for a portfolio.
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `total_trades` | int | Number of trades |
-| `total_notional` | float | Sum of notionals |
-| `total_mtm` | float | Net MTM |
-| `positive_mtm` | float | Sum of positive MTMs |
-| `negative_mtm` | float | Sum of negative MTMs |
-| `currencies` | Set[str] | Unique currencies |
-| `asset_classes` | Set[str] | Unique asset classes |
-| `counterparties` | Set[str] | Unique counterparties |
-| `netting_sets` | int | Number of netting sets |
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `total_trades` | int | 0 | Number of trades |
+| `total_notional` | float | 0.0 | Sum of notionals |
+| `total_mtm` | float | 0.0 | Net MTM |
+| `positive_mtm` | float | 0.0 | Sum of positive MTMs |
+| `negative_mtm` | float | 0.0 | Sum of negative MTMs |
+| `currencies` | Set | set() | Unique currencies |
+| `asset_classes` | Set | set() | Unique asset classes |
+| `counterparties` | Set | set() | Unique counterparties |
+| `netting_sets` | int | 0 | Number of netting sets |
 
 ### Portfolio (Dataclass)
 
@@ -57,13 +53,14 @@ Main portfolio container.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `portfolio_id` | str | Auto-generated | Unique identifier |
-| `name` | str | "" | Portfolio name |
-| `portfolio_type` | PortfolioType | TRADING | Classification |
-| `base_currency` | str | "USD" | Base currency |
-| `owner_entity` | str | "" | Owning entity |
-| `trades` | List[Trade] | [] | Trade collection |
-| `netting_sets` | Dict | {} | Netting set mappings |
+| `portfolio_id` | str | auto-generated | Unique identifier |
+| `name` | str | '' | Portfolio name |
+| `portfolio_type` | PortfolioType | PortfolioType.TRADING | Classification |
+| `base_currency` | str | 'USD' | Base currency |
+| `owner_entity` | str | '' | Owning entity |
+| `trades` | List | list() | Trade collection |
+| `netting_sets` | Dict | dict() | Netting set mappings |
+| `created_at` | datetime | now() |  |
 
 #### Methods
 
@@ -83,31 +80,32 @@ Main portfolio container.
 
 Point-in-time portfolio state.
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `snapshot_id` | str | Unique identifier |
-| `portfolio_id` | str | Source portfolio |
-| `snapshot_date` | datetime | Snapshot timestamp |
-| `summary` | PortfolioSummary | Summary at snapshot |
-| `exposures` | Dict[str, float] | Exposure metrics |
-| `risk_metrics` | Dict[str, float] | Risk metrics |
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `snapshot_id` | str | auto-generated | Unique identifier |
+| `portfolio_id` | str | '' | Source portfolio |
+| `snapshot_date` | datetime | now() | Snapshot timestamp |
+| `summary` | Union | None | Summary at snapshot |
+| `exposures` | Dict | dict() | Exposure metrics |
+| `risk_metrics` | Dict | dict() | Risk metrics |
 
 ## Usage Examples
 
 ```python
-from qlrisk.models import Portfolio, PortfolioType, Trade
+from qlrisk.models import Portfolio, PortfolioType, Trade, TradeType
 from datetime import date
 
 # Create portfolio
 portfolio = Portfolio(
+    portfolio_id="PF-ALPHA",
     name="Trading Book Alpha",
     portfolio_type=PortfolioType.TRADING,
     base_currency="USD"
 )
 
 # Add trades
-trade1 = Trade(product_type="IRS", notional=10e6, counterparty_id="CP-001")
-trade2 = Trade(product_type="FXF", notional=5e6, counterparty_id="CP-002")
+trade1 = Trade(trade_id="T1", trade_type=TradeType.INTEREST_RATE_SWAP, notional=10e6, counterparty_id="CP-001")
+trade2 = Trade(trade_id="T2", trade_type=TradeType.FX_FORWARD, notional=5e6, counterparty_id="CP-002")
 
 portfolio.add_trade(trade1)
 portfolio.add_trade(trade2)

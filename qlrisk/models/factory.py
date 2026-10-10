@@ -26,7 +26,8 @@ from .products import (
     CreditDefaultSwap,
     EquityOption
 )
-# from ..core.exceptions import ModelError  # Removed - self-contained
+from ..core.exceptions import ModelError
+from ..core.date_utils import DateUtils
 
 
 class ModelFactory:

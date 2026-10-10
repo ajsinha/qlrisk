@@ -75,7 +75,7 @@ class ExpectedExposureCalculator(ExposureCalculator):
     EPE = (1/T) × ∫EEE(t)dt
     """
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize Expected Exposure calculator.
         
@@ -86,6 +86,8 @@ class ExpectedExposureCalculator(ExposureCalculator):
                 - num_simulations: Number of MC simulations
                 - calculate_effective: Whether to calculate EEE
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._method = config.get("method", "monte_carlo")

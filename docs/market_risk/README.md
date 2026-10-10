@@ -1,4 +1,4 @@
-# QLRisk - Market Risk Roadmap v2.2.0
+# QLRisk - Market Risk Roadmap v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -186,7 +186,7 @@ money market, repo, cash equities and funds, equity options and forwards, FX van
 barrier options and NDFs, CDS and CDS indices, commodity forwards, swaps and options, and
 cross-currency swaps). See [pricers.md](pricers.md).
 
-**v2.2.0 completed the set:** IR / bond / VIX futures, variance and dividend swaps, equity swap and TRS,
+**v2.2.1 completed the set:** IR / bond / VIX futures, variance and dividend swaps, equity swap and TRS,
 convertible bond, MBS (rate-dependent prepayment), ABS and CDO / CLO tranches now have compact models too.
 
 ## 4. Usage (as delivered)
@@ -228,4 +228,4 @@ print(report)
 
 ---
 
-*QLRisk v2.2.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.2.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

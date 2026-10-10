@@ -1,9 +1,5 @@
 # Expected Loss (EL) Calculator
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (2 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Expected Loss (EL) Calculator computes the average loss expected from credit events over a specified time horizon. EL is the primary measure for credit risk provisioning and is fundamental to loan loss reserves, IFRS 9 ECL, and CECL calculations.
@@ -123,13 +119,17 @@ print(f"Expected Loss: ${result.value.expected_loss:,.2f}")
 ## Output Structure
 
 ```python
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
+
 @dataclass
 class ELResult:
-    expected_loss: float          # Absolute EL amount
-    expected_loss_rate: float     # EL / EAD
-    annualized_el: float          # EL per year
-    components: Dict[str, Any]    # PD, LGD, EAD used
-    term_structure: Optional[List[float]]  # Period-by-period EL
+    """Result of Expected Loss calculation."""
+    expected_loss: float
+    expected_loss_rate: float
+    annualized_el: float
+    components: Dict[str, float]
+    term_structure: Optional[Dict[str, List[float]]] = None
 ```
 
 ## EL Interpretation

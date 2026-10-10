@@ -1,9 +1,5 @@
 # Potential Future Exposure (PFE) Calculator
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Potential Future Exposure (PFE) Calculator estimates the maximum expected credit exposure at a specified confidence level over a time horizon. PFE captures the potential increase in exposure due to market movements and is critical for credit limit management and regulatory capital.
@@ -136,15 +132,19 @@ print(f"PFE (99%): ${result_99.value.pfe:,.2f}")
 ## Output Structure
 
 ```python
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
+
 @dataclass
 class PFEResult:
-    pfe: float                    # PFE at maturity
-    pfe_profile: List[float]      # PFE at each time point
-    time_points: List[float]      # Time grid
-    peak_pfe: float               # Maximum PFE over life
-    average_pfe: float            # Average PFE over life
-    confidence_level: float       # Confidence level used
-    components: Dict[str, Any]    # Calculation details
+    """Result of PFE calculation."""
+    pfe: float  # PFE at specified confidence level
+    pfe_profile: List[float]  # PFE over time
+    time_points: List[float]
+    peak_pfe: float
+    average_pfe: float
+    confidence_level: float
+    components: Dict[str, Any]
 ```
 
 ## PFE Profile Shapes

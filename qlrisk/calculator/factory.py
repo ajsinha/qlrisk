@@ -84,6 +84,7 @@ class CalculatorFactory:
             DVACalculator as PyDVACalculator, FVACalculator as PyFVACalculator,
             KVACalculator as PyKVACalculator, MVACalculator as PyMVACalculator,
         )
+        from .python.saccr_calculator import SACCRCalculator as PySACCRCalculator
         from .python.var_calculators import (
             VaRCalculator as PyVaRCalculator,
             ExpectedShortfallCalculator as PyESCalculator,
@@ -108,6 +109,7 @@ class CalculatorFactory:
             CalculatorType.FVA: PyFVACalculator,
             CalculatorType.KVA: PyKVACalculator,
             CalculatorType.MVA: PyMVACalculator,
+            CalculatorType.SACCR: PySACCRCalculator,
             CalculatorType.VAR: PyVaRCalculator,
             CalculatorType.EXPECTED_SHORTFALL: PyESCalculator,
         }
@@ -212,7 +214,7 @@ class CalculatorFactory:
         impl = implementation or self._default_implementation
         
         # Check cache first
-        cache_key = f"{calculator_type.value}:{impl.value}:{name}"
+        cache_key = f"{calculator_type.value}:{impl.value}:{name}:{sorted((config or {}).items(), key=str)!r}"
         if use_cache and cache_key in self._cache:
             return self._cache[cache_key]
         

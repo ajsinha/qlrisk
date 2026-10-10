@@ -1,5 +1,5 @@
 """
-QLRisk - CommodityFuture v2.2.0
+QLRisk - CommodityFuture v2.2.1
 ==============================================
 
 Commodity Futures contract implementation with full CCR analytics support.
@@ -570,7 +570,7 @@ class CommodityFuture(BaseProduct):
             pfe_add_on=pfe_addon,
             ead=ead,
             asset_class=AssetClass.COMMODITY,
-            details={
+            metadata={
                 "supervisory_factor": sf,
                 "maturity_factor": mf,
                 "delta": delta,
