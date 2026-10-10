@@ -1,5 +1,4 @@
-# Counterparty Model Documentation v1.2.0
-
+# Counterparty Model Documentation
 ## Overview
 
 The Counterparty module provides models for managing counterparty information, netting sets, and collateral agreements essential for CCR calculations.

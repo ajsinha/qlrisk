@@ -111,4 +111,33 @@ cps[0].hedges.append(CVAHedge(notional=1e6, maturity=5.0, correlation=1.0))
 print("with hedges:", round(ba_cva(cps, [CVAIndexHedge(2e6, 5.0)])["capital"]))
 ```
 
+## 5. CVA capital (SA-CVA)
+
+SA-CVA needs a CVA that responds to market data. `cva_from_profile` builds one from an exposure profile and the
+counterparty's credit curve; eligible hedges (e.g. a CDS on the counterparty) reduce the charge:
+
+```python
+from qlrisk.regulatory import sa_cva_capital, cva_from_profile
+
+ee_profile = [2e6, 3e6, 3.5e6, 3e6, 2e6, 1e6]
+cva_fn = cva_from_profile("ACME", time_grid=[0.5, 1, 2, 3, 4, 5], expected_exposure=ee_profile)
+print(f"CVA {cva_fn(md):,.0f}")
+
+bare = sa_cva_capital(cva_fn, md, counterparty_buckets={"ACME": ("3", True)})      # MAR50 bucket 3, IG
+cds = P.CreditDefaultSwap("ACME-HEDGE", d0, d0, date(2031, 12, 20), 3e6, Currency.USD, "DEALER", reference="ACME")
+hedged = sa_cva_capital(cva_fn, md, counterparty_buckets={"ACME": ("3", True)}, hedges=[cds])
+print(f"SA-CVA {bare.total:,.0f} -> {hedged.total:,.0f} with hedge")
+print({f"{rc} {rt}": round(v) for (rc, rt), v in bare.by_component.items() if v})
+```
+
+## 6. SA-CCR with netting and collateral
+
+```python
+from qlrisk.regulatory.saccr_netting import saccr_netting_sets, CSATerms
+
+sets = saccr_netting_sets(book, md, csa={"RATES": CSATerms(margined=True, collateral=0.0)})
+for name, ns in sets.items():
+    print(f"{name:7} EAD {ns.ead:>13,.0f}  add-on {ns.addon:>12,.0f}  {dict((k, round(v)) for k, v in ns.addon_by_class.items())}")
+```
+
 Methodology, parameters and simplifications: [market_risk/frtb.md](../../market_risk/frtb.md).

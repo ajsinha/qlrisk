@@ -1,4 +1,4 @@
-# German Bund v1.2.0
+# German Bund
 
 <!-- generated:implementation -->
 > **Implementation:** `GermanBund` is priced by `price_fixed_bond` in `products/python/_pricing.py`. Product terms are keyword arguments: `coupon`, `frequency` (2), `issuer` (credit curve), `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

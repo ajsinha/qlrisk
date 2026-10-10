@@ -1,4 +1,4 @@
-# Cross-Currency Swap v1.2.0
+# Cross-Currency Swap
 
 <!-- generated:implementation -->
 > **Implementation:** `CrossCurrencySwap` is priced by `price_xccy_swap` in `products/python/_pricing.py`. Product terms are keyword arguments: `pair`, `foreign_curve`, `domestic_coupon`, `foreign_coupon`, `frequency`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

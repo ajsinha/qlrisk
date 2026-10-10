@@ -1,4 +1,4 @@
-# Commodity Forward v1.2.0
+# Commodity Forward
 
 <!-- generated:implementation -->
 > **Implementation:** `CommodityForward` is priced by `price_commodity_forward` in `products/python/_pricing.py`. Product terms are keyword arguments: `commodity` (commodity_prices key), `strike`, `quantity`, `convenience_yield`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

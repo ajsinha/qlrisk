@@ -1,4 +1,4 @@
-# Exchange-Traded Fund (ETF) v1.2.0
+# Exchange-Traded Fund (ETF)
 
 <!-- generated:implementation -->
 > **Implementation:** `ETF` is priced by `price_cash_equity` in `products/python/_pricing.py`. Product terms are keyword arguments: `ticker` (equity_prices key), `quantity` (default notional / price), `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

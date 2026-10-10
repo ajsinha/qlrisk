@@ -1,4 +1,4 @@
-# Securities Lending v1.2.0
+# Securities Lending
 
 <!-- generated:implementation -->
 > **Implementation:** `SecuritiesLending` is priced by `price_deposit` in `products/python/_pricing.py`. Product terms are keyword arguments: `rate`, `issuer`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

@@ -1,4 +1,4 @@
-# Mortgage-Backed Securities (MBS) v1.2.0
+# Mortgage-Backed Securities (MBS)
 
 <!-- generated:implementation -->
 > **Implementation:** `MBS` is priced by `price_mbs` in `products/python/_pricing.py`. Product terms are keyword arguments: `coupon`, `wac`, `base_cpr`, `refi_multiplier`, `oas`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

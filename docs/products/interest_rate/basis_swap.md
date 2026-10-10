@@ -1,4 +1,4 @@
-# Basis Swap v1.2.0
+# Basis Swap
 
 <!-- generated:implementation -->
 > **Implementation:** `BasisSwap` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.BasisSwap)`).

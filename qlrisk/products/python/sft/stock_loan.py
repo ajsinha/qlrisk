@@ -1,5 +1,5 @@
 """
-QLRisk - Stock Loan v2.2.1
+QLRisk - Stock Loan v2.3.0
 =========================================
 
 Stock Loan product implementation for Securities Financing Transactions.

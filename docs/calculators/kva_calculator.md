@@ -1,5 +1,4 @@
-# KVA Calculator Documentation v1.2.0
-
+# KVA Calculator Documentation
 ## Overview
 
 The KVA (Capital Valuation Adjustment) Calculator computes the cost of holding regulatory capital against counterparty credit risk over the life of a derivative.

@@ -1,4 +1,4 @@
-# Convertible Bond v1.2.0
+# Convertible Bond
 
 <!-- generated:implementation -->
 > **Implementation:** `ConvertibleBond` is priced by `price_convertible` in `products/python/_pricing.py`. Product terms are keyword arguments: `coupon`, `issuer`, `ticker`, `conversion_ratio`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

@@ -1,4 +1,4 @@
-# Equity Forward v1.2.0
+# Equity Forward
 
 <!-- generated:implementation -->
 > **Implementation:** `EquityForward` is priced by `price_equity_forward` in `products/python/_pricing.py`. Product terms are keyword arguments: `ticker`, `strike` (fair forward), `quantity`, `is_future`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

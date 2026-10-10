@@ -1,4 +1,4 @@
-# Variance Swap v1.2.0
+# Variance Swap
 
 <!-- generated:implementation -->
 > **Implementation:** `VarianceSwap` is priced by `price_variance_swap` in `products/python/_pricing.py`. Product terms are keyword arguments: `ticker`, `strike` (vol), `vega_notional`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

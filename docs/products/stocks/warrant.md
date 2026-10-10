@@ -1,4 +1,4 @@
-# Warrant v1.2.0
+# Warrant
 
 <!-- generated:implementation -->
 > **Implementation:** `Warrant` is priced by `price_equity_option` in `products/python/_pricing.py`. Product terms are keyword arguments: `ticker`, `strike` (ATM), `is_call`, `quantity`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

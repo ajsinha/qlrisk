@@ -1,5 +1,4 @@
-# DVA Calculator Documentation v1.2.0
-
+# DVA Calculator Documentation
 ## Overview
 
 The DVA (Debit Valuation Adjustment) Calculator computes the benefit from own default risk. DVA represents the expected gain to the institution if it defaults on its obligations.

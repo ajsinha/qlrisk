@@ -1,4 +1,4 @@
-# Collateralized Loan Obligation (CLO) v1.2.0
+# Collateralized Loan Obligation (CLO)
 
 <!-- generated:implementation -->
 > **Implementation:** `CLO` is priced by `price_clo_tranche` in `products/python/_pricing.py`. Product terms are keyword arguments: `pool`, `attachment` (7%), `detachment` (10%), `correlation` (25%), `recovery`, `coupon`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

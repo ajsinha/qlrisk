@@ -1,4 +1,4 @@
-# QLRisk - Products Documentation v2.2.1
+# QLRisk - Products Documentation v2.3.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -222,6 +222,6 @@ print(f"NPV: {result.npv:,.2f} {result.currency}")
 
 ---
 
-*Document Version: 2.2.1*  
+*Document Version: 2.3.0*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

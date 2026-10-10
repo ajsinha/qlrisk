@@ -1,4 +1,4 @@
-# Medium Term Note (MTN) v1.2.0
+# Medium Term Note (MTN)
 
 <!-- generated:implementation -->
 > **Implementation:** `MediumTermNote` is priced by `price_fixed_bond` in `products/python/_pricing.py`. Product terms are keyword arguments: `coupon`, `frequency` (2), `issuer` (credit curve), `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

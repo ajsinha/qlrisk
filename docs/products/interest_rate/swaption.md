@@ -1,4 +1,4 @@
-# Swaption v1.2.0
+# Swaption
 
 <!-- generated:implementation -->
 > **Implementation:** `Swaption` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.Swaption)`).

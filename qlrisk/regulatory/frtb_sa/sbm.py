@@ -240,8 +240,12 @@ def _gamma(rc: str, b: Any, c: Any, csr_sector_gamma: float) -> float:
     if rc == "CSR":
         if p.CSR_OTHER_BUCKET in (b, c):
             return 0.0
-        rating = 1.0 if ((b in p.CSR_IG_BUCKETS) == (c in p.CSR_IG_BUCKETS)) else p.CSR_GAMMA_RATING
-        return rating * (1.0 if _csr_sector(b) == _csr_sector(c) else csr_sector_gamma)
+        both_rated = b <= 15 and c <= 15
+        rating = p.CSR_GAMMA_RATING if both_rated and ((b in p.CSR_IG_BUCKETS) != (c in p.CSR_IG_BUCKETS)) else 1.0
+        sb, sc = _csr_sector(b), _csr_sector(c)
+        if csr_sector_gamma is not None and sb != sc:
+            return rating * csr_sector_gamma
+        return rating * p.csr_sector_gamma(sb, sc)
     raise ValueError(rc)
 
 
@@ -411,7 +415,7 @@ def sbm_capital(
     reporting_currency: str = "USD",
     curve_currency: Optional[Mapping[str, str]] = None,
     credit_buckets: Optional[Mapping[str, int]] = None,
-    csr_sector_gamma: float = p.CSR_SECTOR_GAMMA_DEFAULT,
+    csr_sector_gamma: Optional[float] = p.CSR_SECTOR_GAMMA_DEFAULT,
     skipped: Optional[List[str]] = None,
 ) -> SBMResult:
     """

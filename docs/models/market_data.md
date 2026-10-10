@@ -1,5 +1,4 @@
-# Market Data Model Documentation v1.2.0
-
+# Market Data Model Documentation
 ## Overview
 
 The Market Data module provides models for market data snapshots, quotes, and real-time market information.

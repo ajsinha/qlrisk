@@ -1,4 +1,4 @@
-# Forward Rate Agreement (FRA) v1.2.0
+# Forward Rate Agreement (FRA)
 
 <!-- generated:implementation -->
 > **Implementation:** `ForwardRateAgreement` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.ForwardRateAgreement)`).

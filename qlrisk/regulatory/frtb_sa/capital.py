@@ -51,7 +51,7 @@ def frtb_sa_capital(
     seniority: Optional[Mapping[str, str]] = None,
     exotic: Iterable[str] = (),
     other_residual: Iterable[str] = (),
-    csr_sector_gamma: float = p.CSR_SECTOR_GAMMA_DEFAULT,
+    csr_sector_gamma: Optional[float] = p.CSR_SECTOR_GAMMA_DEFAULT,
     include_curvature: bool = True,
 ) -> FRTBSAResult:
     """Full FRTB SA capital: SBM (delta, vega, curvature) + DRC (non-securitisation) + RRAO."""

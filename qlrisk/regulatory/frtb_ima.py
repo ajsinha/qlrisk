@@ -15,8 +15,7 @@ Capital (MAR33.41): max(IMCC + SES, m_c * avg60(IMCC) + avg60(SES)) + DRC
 
 Simplifications: the stress period is searched with Taylor P&L on the full factor set and
 shared by all IMCC components; each NMRF's SES is the 97.5% ES of its own stressed 10-day
-moves scaled by sqrt(LH / 10); IMA DRC uses a one-factor Gaussian copula (MAR33.26+ asks
-for two systematic factors).
+moves scaled by sqrt(LH / 10); IMA DRC uses a two-factor (global + sector) Gaussian copula.
 
 Copyright © 2025-2030, All Rights Reserved
 Ashutosh Sinha | Email: ajsinha@gmail.com
@@ -206,17 +205,31 @@ def ima_capital(imcc_value: float, ses_value: float, drc: float = 0.0, multiplie
     return max(imcc_value + ses_value, multiplier * a_imcc + a_ses) + drc
 
 
-def ima_drc(positions: Sequence[DRCPosition], n_sims: int = 200_000, correlation: float = 0.25,
+def ima_drc(positions: Sequence[DRCPosition], n_sims: int = 200_000, global_correlation: float = 0.15,
+            sector_correlation: float = 0.10, sectors: Optional[Mapping[str, str]] = None,
             confidence: float = 0.999, seed: Optional[int] = 0, pd_floor: float = 0.0003) -> Dict[str, float]:
-    """1-year 99.9% default loss from a one-factor Gaussian copula (PD from rating; JTD from DRCPosition)."""
+    """
+    1-year 99.9% default loss with two types of systematic factors (MAR33.26): a global factor and one
+    factor per sector. Asset value of obligor i in sector s:
+        A_i = sqrt(rho_g) G + sqrt(rho_s) S_s + sqrt(1 - rho_g - rho_s) e_i
+    PD from the rating table (floored at 3bp); JTD from DRCPosition (not maturity-scaled; 1-year horizon).
+    `sectors` maps obligor -> sector (default: the position's DRC bucket).
+    """
+    if global_correlation + sector_correlation >= 1:
+        raise ValueError("global + sector correlation must be < 1")
     pds = PDCalculator.RATING_PDS
     pos = list(positions)
+    sector_of = [(sectors or {}).get(p.obligor, p.bucket) for p in pos]
+    names = sorted(set(sector_of))
+    col = {s: i for i, s in enumerate(names)}
     thresholds = np.array([norm.ppf(max(pds.get(p.rating.upper(), 0.015), pd_floor)) for p in pos])
-    jtd = np.array([p.jtd / min(max(p.maturity, 0.25), 1.0) for p in pos])      # 1-year horizon, no scaling
+    jtd = np.array([p.jtd / min(max(p.maturity, 0.25), 1.0) for p in pos])
     rng = np.random.default_rng(seed)
-    z = rng.standard_normal((n_sims, 1))
+    g = rng.standard_normal((n_sims, 1))
+    s = rng.standard_normal((n_sims, len(names)))[:, [col[x] for x in sector_of]]
     eps = rng.standard_normal((n_sims, len(pos)))
-    assets = math.sqrt(correlation) * z + math.sqrt(1 - correlation) * eps
+    idio = math.sqrt(1 - global_correlation - sector_correlation)
+    assets = math.sqrt(global_correlation) * g + math.sqrt(sector_correlation) * s + idio * eps
     losses = (assets < thresholds) @ jtd
     return {"drc": float(np.quantile(losses, confidence)), "expected_loss": float(losses.mean())}
 

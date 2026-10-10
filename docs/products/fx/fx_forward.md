@@ -1,4 +1,4 @@
-# FX Forward v1.2.0
+# FX Forward
 
 <!-- generated:implementation -->
 > **Implementation:** `FXForward` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.FXForward)`).

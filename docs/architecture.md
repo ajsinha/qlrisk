@@ -1,4 +1,4 @@
-# QLRisk - Architecture Documentation v2.2.1
+# QLRisk - Architecture Documentation v2.3.0
 
 <!-- legacy-examples -->
 > ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (6 of 7 fail). Use the [user guides](guides/README.md), whose examples are executed by the test suite, until this page is revised.
@@ -75,7 +75,7 @@ QLRisk is a high-performance, multi-threaded system for unified trading-book ris
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           QLRisk v2.2.1                           │
+│                           QLRisk v2.3.0                           │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                  │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │

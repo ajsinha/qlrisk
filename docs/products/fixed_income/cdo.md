@@ -1,4 +1,4 @@
-# Collateralized Debt Obligation (CDO) v1.2.0
+# Collateralized Debt Obligation (CDO)
 
 <!-- generated:implementation -->
 > **Implementation:** `CDO` is priced by `price_tranche` in `products/python/_pricing.py`. Product terms are keyword arguments: `pool`, `attachment`, `detachment`, `correlation`, `recovery`, `coupon`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

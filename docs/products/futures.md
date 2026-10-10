@@ -1,5 +1,4 @@
-# Futures Products v1.1.0
-
+# Futures Products
 ## Overview
 
 Exchange-traded standardized contracts for future delivery.

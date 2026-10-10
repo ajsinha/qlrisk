@@ -1,4 +1,4 @@
-# FX Swap v1.2.0
+# FX Swap
 
 <!-- generated:implementation -->
 > **Implementation:** `FXSwap` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.FXSwap)`).

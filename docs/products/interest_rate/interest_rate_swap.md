@@ -1,4 +1,4 @@
-# Interest Rate Swap (IRS) v1.2.0
+# Interest Rate Swap (IRS)
 
 <!-- generated:implementation -->
 > **Implementation:** `InterestRateSwap` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.InterestRateSwap)`).

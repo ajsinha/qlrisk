@@ -1,4 +1,4 @@
-# Floating Rate Note (FRN) v1.2.0
+# Floating Rate Note (FRN)
 
 <!-- generated:implementation -->
 > **Implementation:** `FloatingRateNote` is priced by `price_frn` in `products/python/_pricing.py`. Product terms are keyword arguments: `index`, `spread`, `frequency` (4), `issuer`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

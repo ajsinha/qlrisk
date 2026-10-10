@@ -136,3 +136,49 @@ def test_basel25_and_ba_cva():
     assert reduced["capital"] == pytest.approx(0.65 * scva)               # single counterparty: K = SCVA
     hedged = ba_cva([CVACounterparty("BANK", "financial", True, [(10e6, 5.0)], [CVAHedge(5e6, 5.0)])])
     assert hedged["capital"] < reduced["capital"]
+
+
+# ------------------------------------------------------------------ SA-CVA (MAR50)
+
+from qlrisk.regulatory.sa_cva import CVASensitivity, cva_from_profile, sa_cva_aggregate, sa_cva_capital
+
+
+def test_sa_cva_ir_bucket_and_hedge_disallowance():
+    s = [CVASensitivity("IR", "delta", "USD", 1.0, 1e6, 0.0, 0.0111), CVASensitivity("IR", "delta", "USD", 5.0, 1e6, 0.0, 0.0074)]
+    w1, w5 = 0.0111e6, 0.0074e6
+    assert sa_cva_aggregate(s).total == pytest.approx(math.sqrt(w1 ** 2 + w5 ** 2 + 2 * 0.72 * w1 * w5))
+    hedged = [CVASensitivity("IR", "delta", "USD", 1.0, 1e6, -1e6, 0.0111)]
+    assert sa_cva_aggregate(hedged).total == pytest.approx(math.sqrt(0.01) * 0.0111e6)     # only R x hedge^2 left
+
+
+def test_sa_cva_correlations():
+    a = CVASensitivity("CCS", "delta", "3", ("A", 5.0), 1e6, 0, 0.03, {"ig": True})
+    b = CVASensitivity("CCS", "delta", "3", ("B", 1.0), 1e6, 0, 0.03, {"ig": False})
+    rho = 0.9 * 0.5 * 0.8
+    assert sa_cva_aggregate([a, b]).total == pytest.approx(math.sqrt(2 * 0.03e6 ** 2 * (1 + rho)))
+    x = CVASensitivity("RCS", "delta", 1, None, 1e6, 0, 0.005)
+    y = CVASensitivity("RCS", "delta", 9, None, 1e6, 0, 0.04)            # HY local government vs IG sovereign
+    wx, wy = 0.005e6, 0.04e6
+    assert sa_cva_aggregate([x, y]).total == pytest.approx(math.sqrt(wx ** 2 + wy ** 2 + 2 * (0.75 / 2) * wx * wy))
+
+
+def test_sa_cva_end_to_end_hedge_reduces_capital():
+    md = create_sample_market_data(VALUATION_DATE)
+    d0 = md.valuation_date
+    fn = cva_from_profile("ACME", [0.5, 1, 2, 3, 4, 5], [2e6, 3e6, 3.5e6, 3e6, 2e6, 1e6])
+    bare = sa_cva_capital(fn, md, {"ACME": ("3", True)})
+    hedge = P.CreditDefaultSwap("H", d0, d0, date(2031, 10, 9), 3e6, Currency.USD, "DEALER", reference="ACME")
+    hedged = sa_cva_capital(fn, md, {"ACME": ("3", True)}, hedges=[hedge])
+    assert bare.by_component[("CCS", "delta")] > 0 and bare.by_component[("IR", "delta")] > 0
+    assert hedged.total < bare.total
+
+
+def test_csr_sector_table_and_two_factor_drc():
+    from qlrisk.regulatory.frtb_sa.sbm import _gamma
+    assert _gamma("CSR", 1, 2, None) == 0.75 and _gamma("CSR", 3, 11, None) == 0.5        # same sector, IG vs HY
+    assert _gamma("CSR", 1, 10, None) == pytest.approx(0.375) and _gamma("CSR", 17, 18, None) == 0.75
+    assert _gamma("CSR", 4, 16, None) == 0.0 and _gamma("CSR", 4, 5, 0.2) == 0.2            # flat override
+    names = [DRCPosition(f"N{i}", "B", 1e6, 1e6, 1.0) for i in range(30)]
+    one_sector = ima_drc(names, n_sims=40_000, sectors={p.obligor: "S" for p in names})["drc"]
+    spread = ima_drc(names, n_sims=40_000, sectors={p.obligor: f"S{i % 10}" for i, p in enumerate(names)})["drc"]
+    assert one_sector > spread

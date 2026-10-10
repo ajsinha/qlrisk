@@ -1,4 +1,4 @@
-# Bond Future v1.2.0
+# Bond Future
 
 <!-- generated:implementation -->
 > **Implementation:** `BondFuture` is priced by `price_bond_future` in `products/python/_pricing.py`. Product terms are keyword arguments: `bond_coupon`, `bond_maturity_years`, `conversion_factor`, `strike`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

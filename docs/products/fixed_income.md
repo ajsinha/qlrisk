@@ -1,5 +1,4 @@
-# Fixed Income Products v1.1.0
-
+# Fixed Income Products
 ## Overview
 
 QLRisk provides comprehensive support for fixed income products across all major categories including government bonds, corporate bonds, and asset-backed securities.

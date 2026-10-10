@@ -1,4 +1,4 @@
-# QLRisk - Regulatory Market Risk Capital v2.2.1
+# QLRisk - Regulatory Market Risk Capital v2.3.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -7,8 +7,8 @@ Ashutosh Sinha | Email: ajsinha@gmail.com
 
 ---
 
-Package `qlrisk.regulatory` covers FRTB SA (MAR21–23), FRTB IMA (MAR31/33), Basel 2.5, BA-CVA (MAR50) and
-SA-CCR (a re-export). Parameters follow the Basel MAR text and live in `regulatory/frtb_sa/parameters.py`.
+Package `qlrisk.regulatory` covers FRTB SA (MAR21–23), FRTB IMA (MAR31/33), Basel 2.5, SA-CVA and BA-CVA (MAR50)
+and SA-CCR with netting-set aggregation (CRE52). Parameters follow the Basel MAR text and live in `regulatory/frtb_sa/parameters.py`.
 **Simplifications are listed explicitly below.** Validate against your regulator's implementation before
 using any figure for reporting.
 
@@ -36,7 +36,7 @@ Dividend curves, bond prices and ad-hoc scalar factors have no FRTB delta factor
   - CM: per bucket.
   - Vega: × e^{−1%·|ΔT|/min T}.
 - **"Other" buckets:** CSR bucket 16 and EQ bucket 11 use Σ|WS|, with no diversification.
-- **Across buckets:** √(Σ K_b² + ΣΣ γ S_b S_c), where S_b = ΣWS is clipped to ±K_b, with the unclipped fallback when the radicand is negative. The cross-bucket correlations γ are:
+- **Across buckets:** √(Σ K_b² + ΣΣ γ S_b S_c) — CSR uses γ = γ_rating (50% across IG/HY) × γ_sector (MAR21.57 Table 5), where S_b = ΣWS is clipped to ±K_b, with the unclipped fallback when the radicand is negative. The cross-bucket correlations γ are:
   - GIRR 50% and FX 60%.
   - EQ: 15%, 75% between buckets 12 and 13, 45% between an index bucket and the others, and 0 for bucket 11.
   - CM 20%.
@@ -75,7 +75,29 @@ Dividend curves, bond prices and ad-hoc scalar factors have no FRTB delta factor
 
 capital = max(VaR, m·avg60 VaR) + max(SVaR, m·avg60 SVaR), with m = 3 + the backtesting plus factor.
 
-## 5. BA-CVA (`cva_capital`)
+## 5. SA-CVA (`sa_cva`, MAR50.42–77)
+
+| Risk class | Factors | Shift | Risk weights | Correlations |
+|-----------|---------|-------|--------------|--------------|
+| IR delta | specified ccy (USD, EUR, GBP, AUD, CAD, SEK, JPY, reporting): 1y/2y/5y/10y/30y; others: parallel | +1bp | 1.11 / 0.93 / 0.74 / 0.74 / 0.74%; other ccy 1.58% | tenor table (e.g. 1y–2y 91%, 1y–30y 31%); γ = 50% |
+| FX delta | each currency vs reporting | +1% | 11% | γ = 60% |
+| Counterparty credit spread | name × 0.5/1/3/5/10y | +1bp | buckets 1a–8, IG / HY (e.g. financials 5% / 12%) | ρ = tenor (90%) × name (50%; indices 80%) × quality (80%); γ Table 6 |
+| Reference credit spread | one per bucket (1–7 IG, 8–14 HY, 15 other, 16–17 indices) | +1bp | 0.5% … 12% | γ by sector, halved across IG/HY; indices 45% / 75% |
+| Equity / commodity | one per bucket | +1% | as FRTB SA | γ 15/45/75% (EQ), 20% (CM); "other" buckets 0 |
+| Vega | one per bucket, all vols | +1% relative | 100% (large-cap equity 78%) | — |
+
+K_b = √(ΣΣ ρ WS_k WS_l + R Σ (WS_k^Hdg)²), R = 0.01; K = m_CVA √(Σ K_b² + ΣΣ γ S_b S_c), m_CVA = 1.
+`cva_from_profile(counterparty, grid, EE)` gives a market-data-driven CVA (credit and discounting); pass your own
+callable to include exposure sensitivities. Hedge sensitivities are −∂MV/∂x so eligible hedges offset.
+
+## 6. SA-CCR netting sets (`saccr_netting`, CRE52)
+
+Trade add-ons are signed by the trade's primary-risk direction and aggregated in hedging sets: IR by currency over
+<1y / 1–5y / >5y buckets (√(D₁² + D₂² + D₃² + 1.4D₁D₂ + 1.4D₂D₃ + 0.6D₁D₃)), FX by pair (|ΣD|), credit and equity by
+entity (ρ 50%, indices 80%), commodity by type within energy / metals / agricultural / other (ρ 40%). Margined sets
+use MF = 1.5√(MPOR/250) and RC = max(V − C, TH + MTA − NICA, 0); multiplier and α = 1.4 as usual.
+
+## 7. BA-CVA (`cva_capital`)
 
 - **Reduced version:** K_reduced = √((ρ ΣSCVA)² + (1−ρ²) ΣSCVA²), with SCVA_c = RW_c/1.4 · Σ M·EAD·DF and ρ = 50%.
 - **Full version:** applies single-name hedges (r = 100%, 80% or 50%) and index hedges (0.7 × RW); then K = 0.25·K_reduced + 0.75·K_hedged.
@@ -85,16 +107,16 @@ capital = max(VaR, m·avg60 VaR) + max(SVaR, m·avg60 SVaR), with m = 3 + the ba
 
 | Area | Simplification |
 |------|----------------|
-| CSR cross-bucket | The MAR21.57 sector table is replaced by one cross-sector γ (default 20%, `csr_sector_gamma=`); γ_rating is applied exactly |
 | CSR | Securitisation (CTP / non-CTP) and the bond–CDS basis are not modelled |
 | GIRR | No inflation or cross-currency-basis factors |
 | CM | Delta by commodity only (no tenor or location dimensions) |
 | Curvature | FX and EQ use the delta RW without the optional scalar; GIRR uses 1.7% |
 | DRC | Netting ignores seniority; securitisation DRC is not modelled |
 | IMA | One stress window is shared across IMCC components, and SES is ES-based |
-| IMA DRC | One systematic factor (Basel requires two) and fixed correlation |
+| IMA DRC | Two systematic factors (global + sector) with fixed correlations (15% / 10% by default, configurable) |
 | Inputs | Bucket maps, ratings and vol underlyings must be supplied; unmapped names default to the conservative "other" buckets |
-| SA-CVA | **Not implemented**; BA-CVA only |
+| SA-CVA | Inflation factors not modelled; the 1a/1b counterparty buckets share a cross-bucket correlation row; a legally related name correlation (90%) needs explicit grouping (not inferred) |
+| SA-CCR | Trade add-ons come from each product's `calculate_saccr`; options use the product's supervisory delta |
 
 ## Validation (`tests/test_regulatory.py`)
 
@@ -109,4 +131,4 @@ capital = max(VaR, m·avg60 VaR) + max(SVaR, m·avg60 SVaR), with m = 3 + the ba
 
 ---
 
-*QLRisk v2.2.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.3.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

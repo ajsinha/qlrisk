@@ -1,5 +1,4 @@
-# Curve Model Documentation v1.2.0
-
+# Curve Model Documentation
 ## Overview
 
 The Curve module provides models for yield curves, credit curves, and volatility surfaces used in pricing and risk calculations.

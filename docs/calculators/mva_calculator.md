@@ -1,5 +1,4 @@
-# MVA Calculator Documentation v1.2.0
-
+# MVA Calculator Documentation
 ## Overview
 
 The MVA (Margin Valuation Adjustment) Calculator computes the cost of funding Initial Margin (IM) posted to CCPs or bilateral counterparties under margin requirements.

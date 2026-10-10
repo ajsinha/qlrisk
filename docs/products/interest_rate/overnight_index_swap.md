@@ -1,4 +1,4 @@
-# Overnight Index Swap (OIS) v1.2.0
+# Overnight Index Swap (OIS)
 
 <!-- generated:implementation -->
 > **Implementation:** `OvernightIndexSwap` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.OvernightIndexSwap)`).

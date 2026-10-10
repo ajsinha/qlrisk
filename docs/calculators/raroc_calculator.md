@@ -1,5 +1,4 @@
-# RAROC Calculator Documentation v1.2.0
-
+# RAROC Calculator Documentation
 ## Overview
 
 The RAROC (Risk-Adjusted Return on Capital) Calculator computes the risk-adjusted profitability of trades and portfolios, comparing returns to the capital at risk.

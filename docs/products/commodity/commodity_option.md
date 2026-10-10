@@ -1,4 +1,4 @@
-# Commodity Option v1.2.0
+# Commodity Option
 
 <!-- generated:implementation -->
 > **Implementation:** `CommodityOption` is priced by `price_commodity_option` in `products/python/_pricing.py`. Product terms are keyword arguments: `commodity`, `strike`, `is_call`, `quantity`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

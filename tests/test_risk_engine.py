@@ -121,8 +121,26 @@ def test_netting_set_exposure(setup):
     recv = P.InterestRateSwap("REC", d0, d0, date(2031, 10, 9), 10e6, Currency.USD, "CP", fixed_rate=0.043, is_payer=False)
     rep = RiskEngine().run([payer, recv], md, measures=("EXPOSURE",))
     ns = rep.results["netting_sets"]["CP"]
-    assert ns["mtm"] == pytest.approx(0.0, abs=1e-6) and ns["replacement_cost"] == pytest.approx(0.0, abs=1e-6)
+    assert ns.mtm == pytest.approx(0.0, abs=1e-6) and ns.replacement_cost == pytest.approx(0.0, abs=1e-6)
+    assert ns.addon == pytest.approx(0.0, abs=1e-6)                     # payer and receiver offset fully
     assert rep.metrics["exposure.saccr_ead_netted"] < rep.metrics["exposure.saccr_ead_trade_sum"]
+
+
+def test_saccr_hedging_sets_and_margining(setup):
+    from qlrisk.regulatory.saccr_netting import CSATerms, saccr_netting_sets
+    md = setup[0]
+    d0 = md.valuation_date
+    pay = P.InterestRateSwap("P", d0, d0, date(2031, 10, 9), 10e6, Currency.USD, "CP", fixed_rate=0.043)
+    short = P.InterestRateSwap("S", d0, d0, date(2027, 4, 9), 10e6, Currency.USD, "CP", fixed_rate=0.043, is_payer=False)
+    res = saccr_netting_sets([pay, short], md)["CP"]
+    d = {t.trade_id: t.signed_addon for t in res.trades}
+    d1, d2 = d["S"], d["P"]                                     # buckets <1y and 1-5y
+    assert res.addon_by_class["IR"] == pytest.approx((d1 ** 2 + d2 ** 2 + 1.4 * d1 * d2) ** 0.5)
+    unmargined = saccr_netting_sets([pay], md)["CP"].ead
+    margined = saccr_netting_sets([pay], md, csa={"CP": CSATerms(margined=True)})["CP"].ead
+    assert margined < unmargined
+    collateralised = saccr_netting_sets([pay], md, csa={"CP": CSATerms(collateral=1e9)})["CP"]
+    assert collateralised.replacement_cost == 0.0 and collateralised.multiplier < 1.0
 
 
 def test_xva_calculators_via_factory():

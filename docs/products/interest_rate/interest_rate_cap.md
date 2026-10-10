@@ -1,4 +1,4 @@
-# Interest Rate Cap v1.2.0
+# Interest Rate Cap
 
 <!-- generated:implementation -->
 > **Implementation:** `InterestRateCap` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.InterestRateCap)`).

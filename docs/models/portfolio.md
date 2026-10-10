@@ -1,5 +1,4 @@
-# Portfolio Model Documentation v1.2.0
-
+# Portfolio Model Documentation
 ## Overview
 
 The Portfolio model provides aggregation and management capabilities for collections of trades, supporting various risk aggregation levels and netting set grouping.

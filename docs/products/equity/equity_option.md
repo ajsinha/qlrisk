@@ -1,4 +1,4 @@
-# Equity Option v1.2.0
+# Equity Option
 
 <!-- generated:implementation -->
 > **Implementation:** `EquityOption` is priced by `price_equity_option` in `products/python/_pricing.py`. Product terms are keyword arguments: `ticker`, `strike` (ATM), `is_call`, `quantity`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

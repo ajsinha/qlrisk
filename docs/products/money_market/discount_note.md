@@ -1,4 +1,4 @@
-# Discount Note v1.2.0
+# Discount Note
 
 <!-- generated:implementation -->
 > **Implementation:** `DiscountNote` is priced by `price_deposit` in `products/python/_pricing.py`. Product terms are keyword arguments: `rate`, `issuer`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).

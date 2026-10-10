@@ -2,7 +2,7 @@
   <img src="assets/branding/hero.svg" alt="qlrisk — Every risk. One engine." width="100%">
 </p>
 
-<h1 align="center">QLRisk v2.2.1</h1>
+<h1 align="center">QLRisk v2.3.0</h1>
 
 <p align="center"><strong>Every risk. One engine.</strong><br>
 Market risk, counterparty credit risk and XVA — priced, shocked and measured on one QuantLib-powered core.</p>
@@ -50,7 +50,7 @@ whether it is being shocked for VaR, simulated for PFE or bumped for FRTB sensit
 | Market-driven pricers for all 71 formerly-placeholder products (bonds, options, CDS, XCCY, futures, MBS/ABS, CDO/CLO, ...) | ✅ Available (Phase 1.5, completed in v2.1) |
 | Historical / age-weighted / filtered / Monte Carlo / parametric VaR, Expected Shortfall, Stressed VaR, VaR decomposition | ✅ Available (Phase 2) |
 | VaR/ES backtesting, P&L explain, FRTB PLA test, stress-scenario library, reverse stress testing, liquidity VaR | ✅ Available (Phase 3) |
-| FRTB SA (SBM delta/vega/curvature, DRC, RRAO), FRTB IMA (LH-ES, IMCC, RFET/SES, IMA DRC), Basel 2.5, BA-CVA | ✅ Available (Phase 4; SA-CVA pending) |
+| FRTB SA (SBM delta/vega/curvature, DRC, RRAO), FRTB IMA (LH-ES, IMCC, RFET/SES, IMA DRC), Basel 2.5, SA-CVA, BA-CVA | ✅ Available (Phase 4) |
 | Unified `RiskEngine`, reporting hierarchy (non-additive VaR roll-up), JSON/CSV reports, limit monitoring, wrong-way risk | ✅ Available (Phase 5) |
 
 The market-risk build-out is described module by module in
@@ -142,7 +142,7 @@ The market-risk build-out is described module by module in
 | **Stress** ✅ | Library / reverse | 9 historical crises (1987–2023); minimum-Mahalanobis reverse stress |
 | **Regulatory** ✅ | FRTB SA | Sensitivities-based method (delta, vega, curvature, 3 correlation scenarios), DRC, RRAO |
 | ✅ | FRTB IMA | Liquidity-horizon ES, stress calibration, IMCC, RFET, SES, IMA DRC, capital |
-| ✅ | Basel 2.5 / BA-CVA | VaR + SVaR with multiplier; BA-CVA reduced and full (SA-CVA planned) |
+| ✅ | Basel 2.5 / CVA | VaR + SVaR with multiplier; SA-CVA and BA-CVA (reduced / full) |
 
 ### Domain Models (55+ Types)
 
@@ -201,17 +201,17 @@ scripts/drill.sh "message" --main           # ... then merge to main and tag the
 ### Run the Tests
 
 ```bash
-pytest                                  # 296 tests, incl. closed-form checks and every python example in README and docs/
+pytest                                  # 300 tests, incl. closed-form checks and every python example in README and docs/
 ```
 
 ### Build a Local Wheel
 
 ```bash
 pip install build
-python -m build --wheel          # -> dist/qlrisk-2.2.1-py3-none-any.whl
+python -m build --wheel          # -> dist/qlrisk-2.3.0-py3-none-any.whl
 
 # then, in any other project / virtualenv:
-pip install /path/to/qlrisk/dist/qlrisk-2.2.1-py3-none-any.whl
+pip install /path/to/qlrisk/dist/qlrisk-2.3.0-py3-none-any.whl
 ```
 
 ### Running the Demo
@@ -342,7 +342,7 @@ print(f"Final mean: {result.paths[:, -1].mean():.2f}")
 
 ```
 qlrisk/
-├── __init__.py              # Package initialization (v2.2.1)
+├── __init__.py              # Package initialization (v2.3.0)
 ├── __main__.py              # Entry point for python -m
 ├── main.py                  # Main demonstration script
 ├── core/                    # Core utilities (9 files)
@@ -380,7 +380,7 @@ assets/branding/             # Logo, favicon, hero banner
 dist/                        # Built wheel
 ```
 
-All five roadmap phases are delivered; remaining work (e.g. SA-CVA) is tracked in the
+All five roadmap phases are delivered; the few remaining items are tracked in the
 [roadmap](docs/market_risk/README.md).
 
 Brand assets (logo, favicon, hero banner) live in [`assets/branding/`](assets/branding/BRAND.md).
@@ -433,7 +433,8 @@ See the `docs/` directory for comprehensive documentation:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| **v2.2.1** | Oct 2026 | Every python example in README and docs/ now runs in the test suite (product pages regenerated, class/enum/attribute tables synced from code by `scripts/sync_doc_listings.py`, all reference pages repaired). Bugs fixed on the way: models package missing core imports (Counterparty, curves, factory unusable), `Portfolio.calculate_summary`, factory cache ignoring config, `SACCRCalculator` not instantiable, SA-CCR crash in 10 SFT / TRS / commodity-future products, QuantLib bond yield (API + dirty/clean price), QuantLib curve pillars on business days, seasoned QuantLib swaps missing fixings; calculators constructible without arguments; PD accepts `rating`; `ELInput.lgd` optional; `PropertiesConfigurator.set()`; SFT / calculator I/O classes exported |
+| **v2.3.0** | Oct 2026 | SA-CVA (MAR50: IR, FX, counterparty and reference credit spread, equity, commodity delta and vega; hedges); FRTB CSR cross-bucket sector table (MAR21.57); two-factor IMA DRC; FRTB commodity buckets fixed (livestock 9, softs 10); SA-CCR netting sets per CRE52 (hedging sets: IR currency x maturity bucket, FX pair, credit / equity entities, commodity types; margined MF, collateral, threshold / MTA; `RiskEngine.run(csa=...)`); stale v1.x labels removed from 102 doc pages |
+| v2.2.1 | Oct 2026 | Every python example in README and docs/ now runs in the test suite (product pages regenerated, class/enum/attribute tables synced from code by `scripts/sync_doc_listings.py`, all reference pages repaired). Bugs fixed on the way: models package missing core imports (Counterparty, curves, factory unusable), `Portfolio.calculate_summary`, factory cache ignoring config, `SACCRCalculator` not instantiable, SA-CCR crash in 10 SFT / TRS / commodity-future products, QuantLib bond yield (API + dirty/clean price), QuantLib curve pillars on business days, seasoned QuantLib swaps missing fixings; calculators constructible without arguments; PD accepts `rating`; `ELInput.lgd` optional; `PropertiesConfigurator.set()`; SFT / calculator I/O classes exported |
 | v2.2.0 | Oct 2026 | DVA / FVA / KVA / MVA calculators fixed (could not be instantiated) and registered as `CalculatorType.DVA/FVA/KVA/MVA`; XVA curves interpolated; `RiskEngine` EXPOSURE nets SA-CCR EAD per netting set (`results["netting_sets"]`, `exposure.saccr_ead_netted`) |
 | v2.1.0 | Oct 2026 | Real models for the last 12 placeholder products: IR / bond / VIX futures, variance and dividend swaps, equity swap and TRS (funded total return), convertible (bond + option), MBS (rate-dependent prepayment), ABS, CDO / CLO tranches (Vasicek large pool) |
 | v2.0.1 | Oct 2026 | Fixes: CCR pipeline uses supplied PD/LGD (or rating / recovery), EL / economic capital no longer zero, RAROC computed; `get_calculator("raroc")` returned the EC calculator; PD calculator auto-selects rating / hazard model when no Merton inputs; `CalculatorFactory.get_instance()`, `MathFactory.get_instance()`, `get_calculator(CalculatorType)`. Docs: 82 product pages regenerated from code with implementation banners and tested examples (`scripts/gen_product_docs.py`); README and roadmap examples tested; 37 legacy reference pages flagged where samples predate v2 |
@@ -456,4 +457,4 @@ PROPRIETARY AND CONFIDENTIAL
 
 ---
 
-*QLRisk v2.2.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.3.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

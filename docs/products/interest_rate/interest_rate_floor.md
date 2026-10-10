@@ -1,4 +1,4 @@
-# Interest Rate Floor v1.2.0
+# Interest Rate Floor
 
 <!-- generated:implementation -->
 > **Implementation:** `InterestRateFloor` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.InterestRateFloor)`).

@@ -1,5 +1,4 @@
-# Money Market Products v1.1.0
-
+# Money Market Products
 ## Overview
 
 Short-term debt instruments with high liquidity and low risk.

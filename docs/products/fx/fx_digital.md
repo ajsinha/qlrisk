@@ -1,4 +1,4 @@
-# FX Digital Option v1.2.0
+# FX Digital Option
 
 <!-- generated:implementation -->
 > **Implementation:** `FXDigitalOption` is priced by `price_fx_digital` in `products/python/_pricing.py`. Product terms are keyword arguments: `pair`, `strike`, `is_call`, `payout`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
