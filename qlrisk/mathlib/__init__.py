@@ -1,5 +1,5 @@
 """
-QLRisk - Math Module v2.0.1
+QLRisk - Math Module v2.1.0
 ==========================================
 
 Copyright © 2025-2030, All Rights Reserved
@@ -49,7 +49,7 @@ Usage:
     result = generator.generate_paths(params, ProcessType.GBM)
 """
 
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 from .base import (
     ProcessType,

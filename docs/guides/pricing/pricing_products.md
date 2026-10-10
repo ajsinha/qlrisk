@@ -87,5 +87,12 @@ from qlrisk.riskfactors import apply_shocks, ShockType
 print("P&L on +5%", round(atm.price(apply_shocks(md, {"EQ.AAPL": 0.05}, ShockType.RELATIVE)).npv - before))
 ```
 
-12 complex products (MBS, ABS, CDO, CLO, convertible, variance/dividend/equity swaps, TRS, bond/IR/VIX
-futures) still use placeholder pricing.
+Structured and exotic products have compact models too:
+
+```python
+show(P.MBS("MBS", d0, d0, date(2056, 10, 9), 1e6, Currency.USD, "AGENCY", coupon=0.06))
+show(P.CDO("MEZZ", d0, d0, date(2031, 10, 9), 1e6, Currency.USD, "CP", pool="GLOBEX", attachment=0.03, detachment=0.07))
+show(P.ConvertibleBond("CB", d0, d0, date(2031, 10, 9), 1e6, Currency.USD, "ACME", coupon=0.02, issuer="ACME", ticker="AAPL"))
+show(P.VarianceSwap("VS", d0, d0, date(2027, 10, 9), 1e6, Currency.USD, "CP", ticker="SPX", strike=0.18))
+show(P.InterestRateFuture("SR3", d0, d0, date(2027, 3, 17), 1e6, Currency.USD, "CME", strike=96.0))
+```

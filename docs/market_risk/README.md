@@ -1,4 +1,4 @@
-# QLRisk - Market Risk Roadmap v2.0.1
+# QLRisk - Market Risk Roadmap v2.1.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -18,7 +18,7 @@ strictly prohibited without explicit written permission from the copyright holde
 | Phase | Status | Docs |
 |-------|--------|------|
 | 1 — Risk factors and sensitivities | ✅ Delivered | [risk_factors.md](risk_factors.md), [sensitivities.md](sensitivities.md) |
-| 1.5 — Real pricers for placeholder products | ✅ Delivered (59 of 71) | [pricers.md](pricers.md) |
+| 1.5 — Real pricers for placeholder products | ✅ Delivered (59 in v2.0, remaining 12 in v2.1) | [pricers.md](pricers.md) |
 | 2 — VaR / ES | ✅ Delivered | [var_es.md](var_es.md), [guide](../guides/market_risk/var_and_es.md) |
 | 3 — Validation and stress | ✅ Delivered | [validation.md](validation.md), [guide](../guides/market_risk/validation_and_stress.md) |
 | 4 — Regulatory capital | ✅ Delivered (SA-CVA pending) | [frtb.md](frtb.md), [guide](../guides/regulatory/capital.md) |
@@ -157,8 +157,6 @@ market-risk members on `models.limit.LimitType` (limit checks reuse `LimitStatus
 ### Outstanding after Phase 5
 
 - SA-CVA (BA-CVA is implemented)
-- Real pricers for MBS, ABS, CDO, CLO, convertible bonds, variance / dividend / equity swaps, TRS,
-  bond / IR / VIX futures (still placeholders)
 - FRTB simplifications listed in [frtb.md](frtb.md) (CSR sector table, securitisations, inflation /
   xccy-basis factors, two-factor IMA DRC)
 - Netting-set level aggregation of exposure in `RiskEngine` (trade-level PFE / EAD are summed today)
@@ -188,9 +186,8 @@ money market, repo, cash equities and funds, equity options and forwards, FX van
 barrier options and NDFs, CDS and CDS indices, commodity forwards, swaps and options, and
 cross-currency swaps). See [pricers.md](pricers.md).
 
-**Still placeholders (12)**, because each needs a bespoke model: MBS, ABS, CDO, CLO (prepayment and
-tranching), convertible bond, variance swap, dividend swap, equity swap, total return swap, bond
-future, interest-rate future and VIX future.
+**v2.1.0 completed the set:** IR / bond / VIX futures, variance and dividend swaps, equity swap and TRS,
+convertible bond, MBS (rate-dependent prepayment), ABS and CDO / CLO tranches now have compact models too.
 
 ## 4. Usage (as delivered)
 
@@ -231,4 +228,4 @@ print(report)
 
 ---
 
-*QLRisk v2.0.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.1.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

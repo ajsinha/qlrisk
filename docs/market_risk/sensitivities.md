@@ -1,4 +1,4 @@
-# QLRisk - Sensitivities v2.0.1
+# QLRisk - Sensitivities v2.1.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -148,13 +148,11 @@ The test suite (`tests/test_sensitivities.py`) checks the engine against closed-
 
 ---
 
-## 8. Caveat: Remaining Placeholder Products
+## 8. Model Coverage
 
-Sensitivities can only be as good as the pricers. **12 product modules are still placeholders** that
-return `notional × DF × 1%`: MBS, ABS, CDO, CLO, convertible bond, variance swap, dividend swap,
-equity swap, total return swap, bond future, IR future and VIX future. They show a small rate
-sensitivity only. All other products price off market data; see [pricers.md](pricers.md).
+Since v2.1.0 every product prices off market data (see [pricers.md](pricers.md)), so every product has
+meaningful sensitivities. Model simplifications are listed in pricers.md.
 
 ---
 
-*QLRisk v2.0.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.1.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

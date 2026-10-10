@@ -939,7 +939,7 @@ Ashutosh Sinha | Email: ajsinha@gmail.com
     
     print("""
 ╔═══════════════════════════════════════════════════════════════════════════════╗
-║                         QLRisk v2.0.1                          ║
+║                         QLRisk v2.1.0                          ║
 ║                                                                               ║
 ║  Copyright © 2025-2030, All Rights Reserved                                  ║
 ║  Ashutosh Sinha | Email: ajsinha@gmail.com                                   ║

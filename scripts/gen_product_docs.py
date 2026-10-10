@@ -39,6 +39,17 @@ PRICER_TERMS = {
     "price_commodity_swap": ('commodity="BRENT", strike=80.0', "`commodity`, `strike` (fair), `quantity`, `convenience_yield`, `is_long`"),
     "price_commodity_option": ('commodity="GOLD", strike=2400.0, is_call=True', "`commodity`, `strike`, `is_call`, `quantity`, `is_long`"),
     "price_xccy_swap": ('pair="EURUSD", foreign_curve="ESTR"', "`pair`, `foreign_curve`, `domestic_coupon`, `foreign_coupon`, `frequency`, `is_long`"),
+    "price_ir_future": ('index="SOFR", tenor=0.25', "`index`, `tenor` (0.25), `strike` (traded price), `is_long`"),
+    "price_bond_future": ("bond_coupon=0.06, bond_maturity_years=10.0", "`bond_coupon`, `bond_maturity_years`, `conversion_factor`, `strike`, `is_long`"),
+    "price_vix_future": ('ticker="SPX"', "`ticker`, `strike` (fair forward VIX), `quantity`, `is_long`"),
+    "price_variance_swap": ('ticker="SPX", vega_notional=100_000', "`ticker`, `strike` (vol), `vega_notional`, `is_long`"),
+    "price_dividend_swap": ('ticker="SPX"', "`ticker`, `strike` (fair), `quantity`, `is_long`"),
+    "price_total_return": ('ticker="AAPL", spread=0.005', "`ticker` (equity) or `issuer` + `coupon` (bond), `spread`, `initial_price`, `is_long`"),
+    "price_convertible": ('coupon=0.02, issuer="ACME", ticker="AAPL"', "`coupon`, `issuer`, `ticker`, `conversion_ratio`, `is_long`"),
+    "price_mbs": ("coupon=0.055", "`coupon`, `wac`, `base_cpr`, `refi_multiplier`, `oas`, `is_long`"),
+    "price_abs": ('coupon=0.05, cpr=0.10, issuer="ACME"', "`coupon`, `cpr`, `issuer` / `spread`, `is_long`"),
+    "price_tranche": ('pool="GLOBEX", attachment=0.03, detachment=0.07, correlation=0.30', "`pool`, `attachment`, `detachment`, `correlation`, `recovery`, `coupon`, `is_long`"),
+    "price_clo_tranche": ('pool="GLOBEX"', "`pool`, `attachment` (7%), `detachment` (10%), `correlation` (25%), `recovery`, `coupon`, `is_long`"),
 }
 COMMON = 'md.valuation_date, md.valuation_date, date({y}, 10, 9), {notional}, Currency.{ccy}, "CP-1"'
 CUSTOM = {
@@ -80,7 +91,9 @@ def example(cls, module: str, pricer: str) -> str:
     else:
         ccy = "EUR" if pricer in ("price_fx_option", "price_fx_digital", "price_fx_barrier") else "USD"
         year = 2099 if module in LONG_DATED else (2031 if pricer in ("price_fixed_bond", "price_frn", "price_cds",
-                                                                     "price_xccy_swap", "PLACEHOLDER") else 2027)
+                                                                     "price_xccy_swap", "price_convertible", "price_abs", "price_tranche",
+                                                                     "price_clo_tranche", "price_total_return") else
+                                                 2056 if pricer == "price_mbs" else 2027)
         terms = PRICER_TERMS.get(pricer, ("", ""))[0]
         ctor = f'{name}("{module.upper().replace("_", "-")}-1", ' + COMMON.format(y=year, notional="5_000_000", ccy=ccy) \
             + (f", {terms}" if terms else "") + ")"

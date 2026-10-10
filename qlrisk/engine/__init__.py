@@ -1,5 +1,5 @@
 """
-QLRisk - Engine Module v2.0.1
+QLRisk - Engine Module v2.1.0
 ============================================
 
 Copyright © 2025-2030, All Rights Reserved
@@ -40,7 +40,7 @@ Usage:
         metrics = engine.calculate_ccr_metrics(trade_data)
 """
 
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 from .ccr_engine import (
     CCREngine,

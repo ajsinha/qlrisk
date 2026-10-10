@@ -1,4 +1,4 @@
-# QLRisk - Analytic Pricers v2.0.1
+# QLRisk - Analytic Pricers v2.1.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -9,7 +9,8 @@ Ashutosh Sinha | Email: ajsinha@gmail.com
 
 ## Overview
 
-`qlrisk/products/python/_pricing.py` holds the shared pricers behind 59 product classes. Each product keeps
+`qlrisk/products/python/_pricing.py` holds the shared pricers behind 71 product classes (every product without
+a bespoke pricer). Each product keeps
 its constructor `(trade_id, trade_date, effective_date, maturity_date, notional, currency, counterparty_id, **kwargs)`;
 **product terms go in the kwargs**, and every market input is read from `MarketData`, so the products respond to
 shocks and sensitivities.
@@ -34,6 +35,17 @@ pricing** and stored on the product. Later revaluations then show P&L against th
 | `price_cds` | CreditDefaultSwap, CDSIndex | `reference`, `coupon` (1%), `recovery` (0.4), `is_buyer` | Credit-triangle hazard, quarterly premium |
 | `price_commodity_forward` / `_swap` / `_option` | CommodityForward, CommoditySwap, CommodityOption | `commodity` (`WTI`), `strike`, `quantity`, `convenience_yield`, `is_call` | Cost-of-carry forward; monthly-average swap; Black-76 |
 | `price_xccy_swap` | CrossCurrencySwap, CrossCurrencyBasisSwap, MTMCrossCurrencySwap | `pair`, `foreign_curve` (`ESTR`), `domestic_coupon`, `foreign_coupon`, `frequency` | Fixed-fixed with notional exchange (basis/MTM approximated) |
+
+| `price_ir_future` | InterestRateFuture | `index` (`SOFR`), `tenor` (0.25), `strike` | 100 × (1 − forward rate); $25 per bp per 1mm for 3M |
+| `price_bond_future` | BondFuture | `bond_coupon` (6%), `bond_maturity_years` (10), `conversion_factor` (1), `strike` | Forward price of one deliverable bond / CF |
+| `price_vix_future` | VIXFuture | `ticker` (`SPX`), `strike`, `quantity` | 100 × forward 30-day implied vol from the term structure |
+| `price_variance_swap` | VarianceSwap | `ticker`, `strike` (vol), `vega_notional` | N_var × (σ²_imp − K²), N_var = vega notional / 2K |
+| `price_dividend_swap` | DividendSwap | `ticker`, `strike`, `quantity` | S(1 − e^{−qT}) − K, discounted |
+| `price_total_return` | EquitySwap, TotalReturnSwap | `ticker` or `issuer` + `coupon`, `spread`, `initial_price` | qty × (S − S₀) − N × spread × annuity |
+| `price_convertible` | ConvertibleBond | `coupon`, `issuer`, `ticker`, `conversion_ratio` (30% premium) | Bond floor + ratio × Black-Scholes call |
+| `price_mbs` | MBS | `coupon`, `wac`, `base_cpr`, `refi_multiplier`, `oas` | Monthly pass-through, CPR = base + refi × max(WAC − r10y, 0) — negative convexity |
+| `price_abs` | ABS | `coupon`, `cpr`, `issuer` / `spread` | Pass-through with constant CPR |
+| `price_tranche` / `price_clo_tranche` | CDO, CLO | `pool`, `attachment`, `detachment`, `correlation`, `recovery`, `coupon` | Vasicek large-pool expected tranche loss; risky floating-coupon note |
 
 FX option PVs are in the **quote** currency of `pair`. Commodity spots come from the new
 `MarketData.commodity_prices` field (risk factors `CMDTY.<name>`).
@@ -72,11 +84,12 @@ for (rc, measure), value in risk.aggregate(("risk_class", "measure")).items():
 - FX put-call parity holds (1e-6), and barrier in-out parity holds against the vanilla (0.1%).
 - ATM equity forwards, commodity forwards and swaps, and NDFs start at zero PV.
 
-## Still Placeholders
+## Model Limitations
 
-MBS, ABS, CDO, CLO, ConvertibleBond, VarianceSwap, DividendSwap, EquitySwap, TotalReturnSwap, BondFuture,
-InterestRateFuture and VIXFuture.
+These are deliberately compact models. The bond future uses one deliverable (no cheapest-to-deliver switch or
+delivery options), the MBS has a deterministic prepayment rule (no path dependence), tranches use the large
+homogeneous pool approximation, and the convertible ignores call/put features and credit-equity linkage.
 
 ---
 
-*QLRisk v2.0.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.1.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
