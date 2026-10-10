@@ -1,5 +1,5 @@
 """
-QLRisk - Prime Brokerage Agreement v1.3.0
+QLRisk - Prime Brokerage Agreement v2.0.0
 =========================================================
 
 Prime Brokerage agreement implementation with full CCR analytics support.

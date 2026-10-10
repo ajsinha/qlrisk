@@ -1,5 +1,5 @@
 """
-QLRisk - P&L Module v1.3.0
+QLRisk - P&L Module v2.0.0
 ==========================
 
 Copyright © 2025-2030, All Rights Reserved

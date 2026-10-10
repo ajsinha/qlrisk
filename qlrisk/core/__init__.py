@@ -1,5 +1,5 @@
 """
-QLRisk - Core Module v1.3.0
+QLRisk - Core Module v2.0.0
 ==========================================
 
 Copyright © 2025-2030, All Rights Reserved
@@ -24,7 +24,7 @@ Modules:
 - numeric_utils: Numerical computation helpers (interpolation, statistics)
 """
 
-__version__ = "1.3.0"
+__version__ = "2.0.0"
 
 from .properties_configurator import PropertiesConfigurator
 from .logger import Logger, get_logger

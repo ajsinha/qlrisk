@@ -1,5 +1,5 @@
 """
-QLRisk - QuantLib Calculators v1.3.0
+QLRisk - QuantLib Calculators v2.0.0
 ===================================================
 
 Copyright © 2025-2030, All Rights Reserved
@@ -31,7 +31,7 @@ Available Calculators:
 - StressedExposureCalculatorQL: Stress Testing
 """
 
-__version__ = "1.3.0"
+__version__ = "2.0.0"
 
 # Check if QuantLib is available
 try:

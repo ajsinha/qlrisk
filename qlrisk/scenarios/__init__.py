@@ -1,5 +1,5 @@
 """
-QLRisk - Scenarios Module v1.3.0
+QLRisk - Scenarios Module v2.0.0
 ================================
 
 Copyright © 2025-2030, All Rights Reserved

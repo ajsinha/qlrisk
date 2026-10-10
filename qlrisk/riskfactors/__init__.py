@@ -1,5 +1,5 @@
 """
-QLRisk - Risk Factors Module v1.3.0
+QLRisk - Risk Factors Module v2.0.0
 ===================================
 
 Copyright © 2025-2030, All Rights Reserved

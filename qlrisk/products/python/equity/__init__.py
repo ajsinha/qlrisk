@@ -1,5 +1,5 @@
 """
-QLRisk - Equity Derivative Products v1.3.0
+QLRisk - Equity Derivative Products v2.0.0
 =========================================================
 
 Equity derivative products including swaps, options, forwards, and total return swaps.
@@ -20,7 +20,7 @@ and confidential. Unauthorized copying, distribution, modification, or use is
 strictly prohibited without explicit written permission from the copyright holder.
 """
 
-__version__ = "1.3.0"
+__version__ = "2.0.0"
 
 from .equity_swap import EquitySwap
 from .equity_option import EquityOption

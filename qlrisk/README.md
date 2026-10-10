@@ -2,7 +2,7 @@
   <img src="../assets/branding/hero.svg" alt="qlrisk — Every risk. One engine." width="100%">
 </p>
 
-<h1 align="center">QLRisk v1.3.0</h1>
+<h1 align="center">QLRisk v2.0.0</h1>
 
 <p align="center"><strong>Every risk. One engine.</strong><br>
 Market risk, counterparty credit risk and XVA — priced, shocked and measured on one QuantLib-powered core.</p>
@@ -186,6 +186,18 @@ pip install -r requirements.txt        # runtime only
 pip install -r requirements-dev.txt    # development
 ```
 
+### Versioning and Releases
+
+Semantic versioning, single-sourced in `qlrisk/__init__.py`: **major** for breaking changes, **minor** for
+new features, **patch** for fixes. Development happens on `develop`; every merge to `main` is tagged
+`vX.Y.Z` and ships the matching wheel in `dist/`.
+
+```bash
+python scripts/bump_version.py minor        # or patch | major | X.Y.Z — updates every file
+scripts/drill.sh "message"                  # test, rebuild wheel, commit, push develop
+scripts/drill.sh "message" --main           # ... then merge to main and tag the release
+```
+
 ### Run the Tests
 
 ```bash
@@ -196,10 +208,10 @@ pytest                                  # 151 tests, incl. closed-form checks an
 
 ```bash
 pip install build
-python -m build --wheel          # -> dist/qlrisk-1.3.0-py3-none-any.whl
+python -m build --wheel          # -> dist/qlrisk-2.0.0-py3-none-any.whl
 
 # then, in any other project / virtualenv:
-pip install /path/to/qlrisk/dist/qlrisk-1.3.0-py3-none-any.whl
+pip install /path/to/qlrisk/dist/qlrisk-2.0.0-py3-none-any.whl
 ```
 
 ### Running the Demo
@@ -330,7 +342,7 @@ print(f"Final mean: {result.paths[:, -1].mean():.2f}")
 
 ```
 qlrisk/
-├── __init__.py              # Package initialization (v1.3.0)
+├── __init__.py              # Package initialization (v2.0.0)
 ├── __main__.py              # Entry point for python -m
 ├── main.py                  # Main demonstration script
 ├── core/                    # Core utilities (9 files)
@@ -420,8 +432,8 @@ See the `docs/` directory for comprehensive documentation:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| *Unreleased* | Oct 2026 | Phase 5: `RiskEngine` (all measures in one call, from_config), `reporting` (hierarchy, RiskReport JSON/CSV, limits), wrong-way risk, `--market-risk` / `--frtb` CLI, `marketrisk.*` config, market-risk `LimitType`s. Phase 4: `regulatory` — FRTB SA (SBM, DRC, RRAO), FRTB IMA (LH-ES, IMCC, RFET, SES, IMA DRC), Basel 2.5, BA-CVA. Phase 3: `backtesting` (Kupiec, Christoffersen, traffic light, Acerbi-Székely), P&L explain, FRTB PLA test, stress library, reverse stress, liquidity VaR, `MarketRiskEngine.backtest / stress_test / reverse_stress / explain`; bonds exclude coupons before the effective date. Phase 2: `scenarios`, `pnl`, `MarketRiskEngine` — historical / filtered / age-weighted / Monte Carlo / parametric VaR, ES, Stressed VaR, Euler and incremental decomposition, VAR / EXPECTED_SHORTFALL calculator types. Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); user guides with tested examples; SA-CCR supervisory duration / option delta added (IR product SA-CCR previously raised AttributeError); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
-| **v1.3.0** | Dec 2025 | Documentation overhaul, import fixes, version sync |
+| **v2.0.0** | Oct 2026 | Phase 5: `RiskEngine` (all measures in one call, from_config), `reporting` (hierarchy, RiskReport JSON/CSV, limits), wrong-way risk, `--market-risk` / `--frtb` CLI, `marketrisk.*` config, market-risk `LimitType`s. Phase 4: `regulatory` — FRTB SA (SBM, DRC, RRAO), FRTB IMA (LH-ES, IMCC, RFET, SES, IMA DRC), Basel 2.5, BA-CVA. Phase 3: `backtesting` (Kupiec, Christoffersen, traffic light, Acerbi-Székely), P&L explain, FRTB PLA test, stress library, reverse stress, liquidity VaR, `MarketRiskEngine.backtest / stress_test / reverse_stress / explain`; bonds exclude coupons before the effective date. Phase 2: `scenarios`, `pnl`, `MarketRiskEngine` — historical / filtered / age-weighted / Monte Carlo / parametric VaR, ES, Stressed VaR, Euler and incremental decomposition, VAR / EXPECTED_SHORTFALL calculator types. Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); user guides with tested examples; SA-CCR supervisory duration / option delta added (IR product SA-CCR previously raised AttributeError); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
+| v1.3.0 | Dec 2025 | Documentation overhaul, import fixes, version sync |
 | v1.2.0 | Dec 2025 | XVA calculators, SA-CCR, 80 products |
 | v1.1.0 | Dec 2025 | Expanded products, documentation |
 | v1.0.0 | Dec 2025 | Initial release |
@@ -439,4 +451,4 @@ PROPRIETARY AND CONFIDENTIAL
 
 ---
 
-*QLRisk v1.3.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.0.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

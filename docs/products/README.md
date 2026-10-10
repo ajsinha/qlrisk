@@ -1,4 +1,4 @@
-# QLRisk - Products Documentation v1.3.0
+# QLRisk - Products Documentation v2.0.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -223,6 +223,6 @@ npv = irs.calculate_npv(market_data)
 
 ---
 
-*Document Version: 1.3.0*  
+*Document Version: 2.0.0*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

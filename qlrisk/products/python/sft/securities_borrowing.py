@@ -1,5 +1,5 @@
 """
-QLRisk - Securities Borrowing v1.3.0
+QLRisk - Securities Borrowing v2.0.0
 ===================================================
 
 Securities Borrowing product implementation for Securities Financing Transactions.
