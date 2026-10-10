@@ -33,6 +33,7 @@ This guide covers pricing and sensitivities, counterparty credit risk and XVA, a
 | [market_risk/pricers.md](market_risk/pricers.md) | Analytic pricers and product terms |
 | [market_risk/var_es.md](market_risk/var_es.md) | VaR / ES / SVaR methodology, scenarios, decomposition |
 | [market_risk/validation.md](market_risk/validation.md) | Backtesting, P&L explain, PLA, stress library, reverse stress, LVaR |
+| [market_risk/frtb.md](market_risk/frtb.md) | FRTB SA / IMA, Basel 2.5, BA-CVA: methodology, parameters, simplifications |
 | [Brand kit](../assets/branding/BRAND.md) | Logo, favicon, tagline and palette |
 
 ---
@@ -51,7 +52,8 @@ docs/
 │   ├── getting_started/        # installation, first portfolio
 │   ├── market_data/            # building market data, shocks, histories
 │   ├── pricing/                # pricing every product family
-│   ├── market_risk/            # sensitivity reports
+│   ├── market_risk/            # sensitivities, VaR/ES, backtesting and stress
+│   ├── regulatory/             # FRTB SA / IMA, Basel 2.5, BA-CVA
 │   └── counterparty_risk/      # exposure, SA-CCR, CCR metrics
 │
 ├── market_risk/                 # Market-risk roadmap and methodology
@@ -60,7 +62,8 @@ docs/
 │   ├── sensitivities.md        # Bump-and-reprice sensitivities, ladders
 │   ├── pricers.md              # Analytic pricers and product kwargs
 │   ├── var_es.md               # VaR / ES / SVaR methodology
-│   └── validation.md           # Backtesting, PLA, stress, reverse stress
+│   ├── validation.md           # Backtesting, PLA, stress, reverse stress
+│   └── frtb.md                 # Regulatory capital methodology
 │
 ├── calculators/                 # Calculator documentation (18 files)
 │   ├── README.md               # Calculator overview
@@ -157,7 +160,7 @@ docs/
 | Valuation | CVA, DVA, FVA, KVA, MVA |
 | Capital | EC, RAROC, IM |
 | Regulatory | SA-CCR |
-| Market Risk | Sensitivities ✅, VaR (HS/filtered/MC/parametric) ✅, ES ✅, SVaR ✅, decomposition ✅, backtesting ✅, PLA ✅, stress library ✅, reverse stress ✅; planned: FRTB SA/IMA, CVA capital |
+| Market Risk | Sensitivities ✅, VaR (HS/filtered/MC/parametric) ✅, ES ✅, SVaR ✅, decomposition ✅, backtesting ✅, PLA ✅, stress library ✅, reverse stress ✅, FRTB SA/IMA ✅, Basel 2.5 ✅, BA-CVA ✅; planned: SA-CVA |
 
 ---
 

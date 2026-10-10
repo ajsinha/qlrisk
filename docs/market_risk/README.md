@@ -21,8 +21,8 @@ strictly prohibited without explicit written permission from the copyright holde
 | 1.5 — Real pricers for placeholder products | ✅ Delivered (59 of 71) | [pricers.md](pricers.md) |
 | 2 — VaR / ES | ✅ Delivered | [var_es.md](var_es.md), [guide](../guides/market_risk/var_and_es.md) |
 | 3 — Validation and stress | ✅ Delivered | [validation.md](validation.md), [guide](../guides/market_risk/validation_and_stress.md) |
-| 4 — Regulatory capital | 🚧 Next | |
-| 5 — One engine | 🚧 Planned | |
+| 4 — Regulatory capital | ✅ Delivered (SA-CVA pending) | [frtb.md](frtb.md), [guide](../guides/regulatory/capital.md) |
+| 5 — One engine | 🚧 Next | |
 
 ---
 
@@ -124,7 +124,12 @@ rather than the CCR `stress_calculators.py`. Original plan:
 | `qlrisk/calculator/python/stress_calculators.py` | EXTEND | Market-risk stress P&L alongside the existing stressed-exposure CCR calculators |
 | `qlrisk/calculator/python/liquidity_var.py` | NEW | Liquidity-adjusted VaR (exogenous bid-ask spread cost, liquidity-horizon scaling) |
 
-### Phase 4 — Regulatory capital
+### Phase 4 — Regulatory capital ✅ Delivered (except SA-CVA)
+
+As built: `regulatory/frtb_sa/{parameters, sbm, drc, rrao, capital}.py`, `regulatory/frtb_ima.py`
+(single module), `regulatory/basel25.py`, `regulatory/cva_capital.py` (BA-CVA only),
+`regulatory/saccr.py`. FRTB results are returned by `frtb_sa_capital()` / `imcc()` rather than new
+CalculatorType members. Simplifications are listed in [frtb.md](frtb.md). Original plan:
 
 | Module | Status | Contents |
 |--------|--------|----------|

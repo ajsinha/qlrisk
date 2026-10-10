@@ -14,6 +14,7 @@ so examples always match the code.
 | `market_risk/` | [Sensitivity reports](market_risk/sensitivity_reports.md) | Risk by class, ladders, FRTB vertices, gamma, theta, export |
 | | [VaR and Expected Shortfall](market_risk/var_and_es.md) | Historical, filtered, Monte Carlo, parametric VaR; ES; SVaR; contributions |
 | | [Backtesting, P&L explain, stress](market_risk/validation_and_stress.md) | VaR/ES backtests, PLA, stress library, reverse stress, liquidity VaR |
+| `regulatory/` | [Regulatory capital](regulatory/capital.md) | FRTB SA, FRTB IMA, Basel 2.5, BA-CVA end to end |
 | `counterparty_risk/` | [Exposure and capital](counterparty_risk/exposure_and_capital.md) | Exposure profiles, SA-CCR, PD, full CCR pipeline |
 
 Reference material lives alongside: [architecture](../architecture.md), [market-risk roadmap](../market_risk/README.md),
