@@ -1,5 +1,5 @@
 """
-QLRisk - Reporting Module v2.1.0
+QLRisk - Reporting Module v2.2.0
 ================================
 
 Copyright © 2025-2030, All Rights Reserved

@@ -1,9 +1,9 @@
 #!/bin/bash
-# QLRisk v2.1.0 - Installation Script
+# QLRisk v2.2.0 - Installation Script
 # Copyright © 2025-2030, Ashutosh Sinha | Email: ajsinha@gmail.com
 
 echo "=========================================="
-echo " QLRisk v2.1.0 Setup"
+echo " QLRisk v2.2.0 Setup"
 echo "=========================================="
 echo ""
 

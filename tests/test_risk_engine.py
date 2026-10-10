@@ -65,7 +65,7 @@ def test_risk_engine_full_run(setup):
                      limits=[RiskLimit("VaR", "var.1d", 1e9)])
     m = rep.metrics
     for k in ("pv.total", "var.1d", "var.10d", "es.1d", "parametric_var.1d", "svar.10d", "stress.worst",
-              "backtest.exceptions", "frtb_sa.total", "exposure.saccr_ead_sum", "dv01.IR"):
+              "backtest.exceptions", "frtb_sa.total", "exposure.saccr_ead_netted", "dv01.IR"):
         assert k in m, k
     assert m["var.10d"] == pytest.approx(m["var.1d"] * np.sqrt(10))
     desks = sum(rep.by_node[n]["var.1d"] for n in ("Firm/Rates", "Firm/Credit", "Firm/Equity"))
@@ -112,3 +112,34 @@ def test_ccr_pipeline_credit_metrics():
     assert m["economic_capital"] > 0 and m["raroc"] > 0
     assert r["pd"] == pytest.approx(0.004) and r["lgd"] == pytest.approx(0.6)
     assert not [k for k in {**m, **r} if k.endswith("_error")]
+
+
+def test_netting_set_exposure(setup):
+    md, book, _, _ = setup
+    d0 = md.valuation_date
+    payer = P.InterestRateSwap("PAY", d0, d0, date(2031, 10, 9), 10e6, Currency.USD, "CP", fixed_rate=0.043, is_payer=True)
+    recv = P.InterestRateSwap("REC", d0, d0, date(2031, 10, 9), 10e6, Currency.USD, "CP", fixed_rate=0.043, is_payer=False)
+    rep = RiskEngine().run([payer, recv], md, measures=("EXPOSURE",))
+    ns = rep.results["netting_sets"]["CP"]
+    assert ns["mtm"] == pytest.approx(0.0, abs=1e-6) and ns["replacement_cost"] == pytest.approx(0.0, abs=1e-6)
+    assert rep.metrics["exposure.saccr_ead_netted"] < rep.metrics["exposure.saccr_ead_trade_sum"]
+
+
+def test_xva_calculators_via_factory():
+    from qlrisk.calculator import CalculatorType
+    from qlrisk.calculator.factory import get_calculator_factory
+    f = get_calculator_factory()
+    grid, ee = [0.5, 1.0, 2.0, 3.0], [1e6, 1.2e6, 1.1e6, 0.8e6]
+    curve = {1.0: 0.04, 5.0: 0.045}
+    dva = f.create(CalculatorType.DVA, "d", {}).calculate({"exposure_profile": [-x for x in ee], "time_grid": grid,
+                                                           "own_pd_curve": {1.0: 0.01, 5.0: 0.05}, "discount_curve": curve}).value
+    assert dva.dva > 0
+    fva = lambda s: f.create(CalculatorType.FVA, "f", {}).calculate({"exposure_profile": ee, "time_grid": grid,
+                                                                     "funding_spread": s, "discount_curve": curve}).value
+    assert abs(fva(0.02).__dict__[next(iter(fva(0.02).__dict__))]) > abs(fva(0.01).__dict__[next(iter(fva(0.01).__dict__))])
+    for ct, data in [(CalculatorType.KVA, {"ead_profile": ee, "time_grid": grid, "counterparty_pd": 0.01,
+                                            "counterparty_lgd": 0.6, "discount_curve": curve}),
+                     (CalculatorType.MVA, {"initial_margin_profile": ee, "time_grid": grid, "funding_spread": 0.01,
+                                            "discount_curve": curve})]:
+        res = f.create(ct, ct.value, {}).calculate(data).value
+        assert next(iter(res.__dict__.values())) != 0

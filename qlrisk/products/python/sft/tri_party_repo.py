@@ -1,5 +1,5 @@
 """
-QLRisk - Tri-Party Repo v2.1.0
+QLRisk - Tri-Party Repo v2.2.0
 =============================================
 
 Tri-Party Repurchase Agreement implementation with full CCR analytics.
