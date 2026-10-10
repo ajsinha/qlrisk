@@ -1,5 +1,11 @@
 # Forward Rate Agreement (FRA) v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `ForwardRateAgreement` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.ForwardRateAgreement)`).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -48,25 +54,21 @@ Where:
 
 ```python
 from datetime import date
-from products.python.interest_rate import ForwardRateAgreement
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import ForwardRateAgreement
+from qlrisk.sensitivities import SensitivityEngine
 
-fra = ForwardRateAgreement(
-    trade_id="FRA-001",
-    trade_date=date(2024, 1, 15),
-    fixing_date=date(2024, 4, 15),
-    effective_date=date(2024, 4, 17),
-    maturity_date=date(2024, 7, 17),
-    notional=25000000,
-    fra_rate=0.048,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = ForwardRateAgreement("FRA-1", d0, date(2027, 4, 7), date(2027, 4, 9), date(2027, 10, 9), 10_000_000, Currency.USD, "CP-1", fra_rate=0.043)
 
-result = fra.price(market_data)
-print(f"NPV: ${result.npv:,.2f}")
-print(f"Forward Rate: {result.components['forward_rate']:.2%}")
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

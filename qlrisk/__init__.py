@@ -1,5 +1,5 @@
 """
-QLRisk v2.0.0
+QLRisk v2.0.1
 ============================
 
 Unified Market Risk & Counterparty Credit Risk Analytics Platform
@@ -41,14 +41,14 @@ Quick Start:
 For more examples, see docs/quickstart.md
 """
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 __author__ = "Ashutosh Sinha"
 __email__ = "ajsinha@gmail.com"
 __copyright__ = "Copyright © 2025-2030, All Rights Reserved"
 __license__ = "Proprietary"
 
 # Version info tuple
-VERSION = (2, 0, 0)
+VERSION = (2, 0, 1)
 VERSION_STRING = ".".join(map(str, VERSION))
 
 __all__ = [

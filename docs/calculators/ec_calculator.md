@@ -1,5 +1,9 @@
 # Economic Capital (EC) Calculator
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (2 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Economic Capital (EC) Calculator estimates the capital required to absorb unexpected losses from credit risk at a specified confidence level. EC is the difference between Value-at-Risk (VaR) and Expected Loss, representing the capital buffer needed beyond provisions.
@@ -35,7 +39,7 @@ N⁻¹(·) = Inverse standard normal
 
 For complex portfolios with multiple risk factors:
 
-```python
+```text
 for each simulation:
     Generate systematic risk factor Z ~ N(0,1)
     For each obligor i:
@@ -54,7 +58,7 @@ EC = VaR(α) - E[Portfolio Loss]
 
 Full portfolio simulation with rating migrations:
 
-```python
+```text
 for each simulation:
     for each obligor:
         Simulate rating migration

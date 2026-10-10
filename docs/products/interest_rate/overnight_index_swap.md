@@ -1,5 +1,11 @@
 # Overnight Index Swap (OIS) v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `OvernightIndexSwap` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.OvernightIndexSwap)`).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -56,23 +62,21 @@ Same as standard IRS but floating leg uses compounded overnight rates.
 
 ```python
 from datetime import date
-from products.python.interest_rate import OvernightIndexSwap
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import OvernightIndexSwap
+from qlrisk.sensitivities import SensitivityEngine
 
-ois = OvernightIndexSwap(
-    trade_id="OIS-001",
-    trade_date=date(2024, 1, 15),
-    effective_date=date(2024, 1, 17),
-    maturity_date=date(2026, 1, 17),
-    notional=100000000,
-    fixed_rate=0.045,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    pay_fixed=True,
-    overnight_index="SOFR"
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = OvernightIndexSwap("OIS-1", d0, d0, date(2028, 10, 9), 10_000_000, Currency.USD, "CP-1", fixed_rate=0.042)
 
-result = ois.price(market_data)
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

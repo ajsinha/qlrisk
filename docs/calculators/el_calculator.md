@@ -1,5 +1,9 @@
 # Expected Loss (EL) Calculator
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (2 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Expected Loss (EL) Calculator computes the average loss expected from credit events over a specified time horizon. EL is the primary measure for credit risk provisioning and is fundamental to loan loss reserves, IFRS 9 ECL, and CECL calculations.
@@ -26,7 +30,7 @@ EL Rate = EL / EAD = PD × LGD
 
 Uses current economic conditions for PD/LGD estimation.
 
-```python
+```text
 # PIT calculation
 EL_pit = PD_pit × LGD_pit × EAD
 ```
@@ -35,7 +39,7 @@ EL_pit = PD_pit × LGD_pit × EAD
 
 Uses long-term average PD/LGD across economic cycles.
 
-```python
+```text
 # TTC calculation (for regulatory capital)
 EL_ttc = PD_ttc × LGD_ttc × EAD
 ```

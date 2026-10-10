@@ -1,4 +1,4 @@
-# QLRisk - Analytic Pricers v2.0.0
+# QLRisk - Analytic Pricers v2.0.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -79,4 +79,4 @@ InterestRateFuture and VIXFuture.
 
 ---
 
-*QLRisk v2.0.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.0.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

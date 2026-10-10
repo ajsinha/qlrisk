@@ -1,4 +1,8 @@
-# QLRisk - Architecture Documentation v2.0.0
+# QLRisk - Architecture Documentation v2.0.1
+
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (6 of 7 fail). Use the [user guides](guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -71,7 +75,7 @@ QLRisk is a high-performance, multi-threaded system for unified trading-book ris
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           QLRisk v2.0.0                           │
+│                           QLRisk v2.0.1                           │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                  │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
@@ -387,7 +391,7 @@ class CalculatorFactory:
 
 ### 4.2 Strategy Pattern
 
-```python
+```text
 class BaseCalculator(ABC):
     """Strategy interface for calculations."""
     
@@ -686,6 +690,6 @@ logging.format=%(asctime)s | %(levelname)-8s | %(name)s | %(message)s
 
 ---
 
-*Document Version: 2.0.0*  
+*Document Version: 2.0.1*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

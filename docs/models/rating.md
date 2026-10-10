@@ -131,7 +131,7 @@ Creates a standard 1-year transition matrix.
 ## Usage Examples
 
 ```python
-from models import (
+from qlrisk.models import (
     CreditRating, RatingScale, RatingAgency,
     RatingHistory, TransitionMatrix,
     create_default_transition_matrix, RATING_PD_MAP

@@ -113,7 +113,7 @@ Base product class.
 ## Usage Examples
 
 ```python
-from models import (
+from qlrisk.models import (
     InterestRateSwap, FXForward, CreditDefaultSwap,
     PaymentFrequency, OptionType
 )

@@ -1,5 +1,9 @@
 # Fixed Income Products v1.1.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (4 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 QLRisk provides comprehensive support for fixed income products across all major categories including government bonds, corporate bonds, and asset-backed securities.
@@ -31,7 +35,7 @@ QLRisk provides comprehensive support for fixed income products across all major
 ### Usage Example
 
 ```python
-from products.python.fixed_income import TreasuryNote, UKGilt, TIPS
+from qlrisk.products.python.fixed_income import TreasuryNote, UKGilt, TIPS
 
 # Create a 10-year Treasury Note
 t_note = TreasuryNote(
@@ -94,7 +98,7 @@ High yield bonds (rated BB+ or lower) offer higher yields but with greater credi
 ### Usage Example
 
 ```python
-from products.python.fixed_income import CorporateBond, Seniority
+from qlrisk.products.python.fixed_income import CorporateBond, Seniority
 
 # Create a corporate bond
 corp_bond = CorporateBond(
@@ -142,7 +146,7 @@ FRNs may include embedded options:
 ### Usage Example
 
 ```python
-from products.python.fixed_income import FloatingRateNote
+from qlrisk.products.python.fixed_income import FloatingRateNote
 
 frn = FloatingRateNote(
     trade_id="FRN-001",
@@ -200,7 +204,7 @@ frn = FloatingRateNote(
 ### Usage Example
 
 ```python
-from products.python.fixed_income import MBS, ABS, CLO
+from qlrisk.products.python.fixed_income import MBS, ABS, CLO
 
 # Create an MBS
 mbs = MBS(

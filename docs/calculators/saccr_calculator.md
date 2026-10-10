@@ -1,5 +1,9 @@
 # SA-CCR Calculator Documentation v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The SA-CCR (Standardised Approach for Counterparty Credit Risk) Calculator implements the Basel III/IV regulatory framework for calculating Exposure at Default (EAD) for derivatives.
@@ -96,7 +100,7 @@ Each trade dict should contain:
 ## Usage Example
 
 ```python
-from calculator.python import SACCRCalculator, SACCRInput
+from qlrisk.calculator.python import SACCRCalculator, SACCRInput
 
 calculator = SACCRCalculator()
 

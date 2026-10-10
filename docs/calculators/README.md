@@ -1,4 +1,8 @@
-# QLRisk - Calculator Documentation v2.0.0
+# QLRisk - Calculator Documentation v2.0.1
+
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (5 of 5 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -212,6 +216,6 @@ with CCREngine() as engine:
 
 ---
 
-*Document Version: 2.0.0*  
+*Document Version: 2.0.1*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

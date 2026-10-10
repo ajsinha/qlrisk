@@ -1,5 +1,11 @@
 # Non-Deliverable Forward (NDF) v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `NonDeliverableForward` is priced by `price_fx_ndf` in `products/python/_pricing.py`. Product terms are keyword arguments: `pair`, `forward_rate`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -44,24 +50,21 @@ $$Settlement = N \times \frac{F_{contract} - F_{fix}}{F_{fix}}$$
 
 ```python
 from datetime import date
-from products.python.fx import NonDeliverableForward
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import NonDeliverableForward
+from qlrisk.sensitivities import SensitivityEngine
 
-ndf = NonDeliverableForward(
-    trade_id="NDF-001",
-    trade_date=date(2024, 1, 15),
-    fixing_date=date(2024, 7, 13),
-    settlement_date=date(2024, 7, 17),
-    base_currency=Currency.USD,
-    non_deliverable_currency="CNY",
-    notional=10000000,
-    forward_rate=7.25,
-    settlement_currency=Currency.USD,
-    counterparty_id="CPY-001",
-    is_buy_base=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = NonDeliverableForward("NON-DELIVERABLE-FORWARD-1", md.valuation_date, md.valuation_date, date(2027, 10, 9), 5_000_000, Currency.USD, "CP-1", pair="USDJPY", forward_rate=148.0)
 
-result = ndf.price(market_data)
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

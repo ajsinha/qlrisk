@@ -1,5 +1,11 @@
 # Credit Default Swap (CDS) v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `CreditDefaultSwap` is priced by `price_cds` in `products/python/_pricing.py`. Product terms are keyword arguments: `reference` (credit curve), `coupon`, `recovery` (0.4), `is_buyer`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -68,27 +74,21 @@ Credit derivatives use credit supervisory factors:
 
 ```python
 from datetime import date
-from products.python.credit import CreditDefaultSwap
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import CreditDefaultSwap
+from qlrisk.sensitivities import SensitivityEngine
 
-cds = CreditDefaultSwap(
-    trade_id="CDS-001",
-    trade_date=date(2024, 1, 15),
-    effective_date=date(2024, 1, 20),
-    maturity_date=date(2029, 3, 20),
-    notional=10000000,
-    spread=0.01,  # 100 bps
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    reference_entity="ACME Corp",
-    reference_obligation="Senior Unsecured",
-    recovery_rate=0.40,
-    is_protection_buyer=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = CreditDefaultSwap("CREDIT-DEFAULT-SWAP-1", md.valuation_date, md.valuation_date, date(2031, 10, 9), 5_000_000, Currency.USD, "CP-1", reference="ACME", coupon=0.01)
 
-result = cds.price(market_data)
-print(f"NPV: ${result.npv:,.2f}")
-print(f"Risky PV01: ${result.greeks['risky_pv01']:,.2f}")
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

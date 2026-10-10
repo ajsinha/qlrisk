@@ -1,5 +1,9 @@
 # Portfolio Model Documentation v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Portfolio model provides aggregation and management capabilities for collections of trades, supporting various risk aggregation levels and netting set grouping.
@@ -91,7 +95,7 @@ Point-in-time portfolio state.
 ## Usage Examples
 
 ```python
-from models import Portfolio, PortfolioType, Trade
+from qlrisk.models import Portfolio, PortfolioType, Trade
 from datetime import date
 
 # Create portfolio

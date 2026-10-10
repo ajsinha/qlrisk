@@ -1,5 +1,9 @@
 # Exposure Model Documentation v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Exposure module provides models for exposure calculation results, including time-series profiles and regulatory metrics like SA-CCR.
@@ -128,7 +132,7 @@ Aggregated netting set exposure.
 ## Usage Examples
 
 ```python
-from models import (
+from qlrisk.models import (
     ExposureProfile, ExposureResult, ExposureMethod,
     SACCRResult, NettingSetExposure
 )

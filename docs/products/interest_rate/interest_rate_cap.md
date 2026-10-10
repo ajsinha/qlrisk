@@ -1,5 +1,11 @@
 # Interest Rate Cap v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `InterestRateCap` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.InterestRateCap)`).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -62,25 +68,21 @@ $$Cap = \sum_{i=1}^{n} Caplet_i$$
 
 ```python
 from datetime import date
-from products.python.interest_rate import InterestRateCap
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import InterestRateCap
+from qlrisk.sensitivities import SensitivityEngine
 
-cap = InterestRateCap(
-    trade_id="CAP-001",
-    trade_date=date(2024, 1, 15),
-    effective_date=date(2024, 1, 17),
-    maturity_date=date(2027, 1, 17),
-    notional=50000000,
-    strike=0.05,  # 5% cap rate
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    is_long=True,
-    volatility=0.20
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = InterestRateCap("CAP-1", d0, d0, date(2029, 10, 9), 10_000_000, Currency.USD, "CP-1", strike=0.045)
 
-result = cap.price(market_data)
-print(f"Premium: ${result.npv:,.2f}")
-print(f"Vega: ${result.greeks['vega']:,.2f}")
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

@@ -1,5 +1,9 @@
 # Curve Model Documentation v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Curve module provides models for yield curves, credit curves, and volatility surfaces used in pricing and risk calculations.
@@ -118,7 +122,7 @@ Volatility surface for options.
 ## Usage Examples
 
 ```python
-from models import YieldCurve, CreditCurve, VolatilitySurface
+from qlrisk.models import YieldCurve, CreditCurve, VolatilitySurface
 from datetime import date
 
 # Create yield curve

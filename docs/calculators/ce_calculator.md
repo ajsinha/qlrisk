@@ -1,5 +1,9 @@
 # Current Exposure (CE) Calculator
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 5 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Current Exposure (CE) Calculator determines the immediate credit exposure to a counterparty, representing the loss that would occur if the counterparty defaulted today. CE equals the positive mark-to-market value of derivatives after accounting for netting and collateral.

@@ -1,5 +1,9 @@
 # Initial Margin (IM) Calculator
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Initial Margin (IM) Calculator estimates the collateral required upfront to cover potential future exposure over the margin period of risk (MPOR). IM protects against counterparty default during the closeout period and is mandatory for both cleared and uncleared OTC derivatives.

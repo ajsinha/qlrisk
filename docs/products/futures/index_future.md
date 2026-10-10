@@ -1,5 +1,11 @@
 # Index Future v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `IndexFuture` is priced by `price_equity_forward` in `products/python/_pricing.py`. Product terms are keyword arguments: `ticker`, `strike` (fair forward), `quantity`, `is_future`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -57,26 +63,21 @@ $$AddOn = 20\% \times Delta \times Notional \times MF$$
 
 ```python
 from datetime import date
-from products.python.futures import IndexFuture
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import IndexFuture
+from qlrisk.sensitivities import SensitivityEngine
 
-es = IndexFuture(
-    trade_id="ES-001",
-    trade_date=date(2024, 1, 15),
-    underlying_index="SPX",
-    contracts=10,
-    contract_multiplier=50.0,
-    entry_price=4850.0,
-    expiry_date=date(2024, 3, 15),
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = IndexFuture("INDEX-FUTURE-1", md.valuation_date, md.valuation_date, date(2027, 10, 9), 5_000_000, Currency.USD, "CP-1", ticker="SPX")
 
-market_data.forward_curves["SPX"] = {"spot": 4900.0}
-result = es.price(market_data)
-print(f"Notional: ${es.contracts * es.contract_multiplier * es.entry_price:,.0f}")
-print(f"P&L: ${result.npv:,.2f}")
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

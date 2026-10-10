@@ -1,5 +1,11 @@
 # Commercial Paper v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `CommercialPaper` is priced by `price_deposit` in `products/python/_pricing.py`. Product terms are keyword arguments: `rate`, `issuer`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -36,25 +42,21 @@ $$P = \frac{F}{1 + r \times \frac{days}{360}}$$
 
 ```python
 from datetime import date
-from products.python.fixed_income import CommercialPaper
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import CommercialPaper
+from qlrisk.sensitivities import SensitivityEngine
 
-cp = CommercialPaper(
-    trade_id="CP-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2024, 4, 15),
-    face_value=10000000,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    discount_rate=0.0535,
-    issuer_name="ABC Corp",
-    credit_rating="A-1",
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = CommercialPaper("COMMERCIAL-PAPER-1", md.valuation_date, md.valuation_date, date(2027, 10, 9), 5_000_000, Currency.USD, "CP-1", rate=0.045)
 
-result = cp.price(market_data)
-print(f"Price: ${result.npv:,.2f}")
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

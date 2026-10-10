@@ -1,5 +1,15 @@
 # Interest Rate Swap (IRS) v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
+<!-- generated:implementation -->
+> **Implementation:** `InterestRateSwap` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.InterestRateSwap)`).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -113,52 +123,21 @@ Key characteristics:
 
 ```python
 from datetime import date
-from products.python.interest_rate import InterestRateSwap
-from products.base import Currency, MarketData, PaymentFrequency, DayCountConvention
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import InterestRateSwap
+from qlrisk.sensitivities import SensitivityEngine
 
-# Create a 5-year payer swap
-irs = InterestRateSwap(
-    trade_id="IRS-001",
-    trade_date=date(2024, 1, 15),
-    effective_date=date(2024, 1, 17),
-    maturity_date=date(2029, 1, 17),
-    notional=50000000,  # $50M
-    fixed_rate=0.04,  # 4%
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    pay_fixed=True,
-    fixed_frequency=PaymentFrequency.SEMI_ANNUAL,
-    float_frequency=PaymentFrequency.QUARTERLY,
-    fixed_day_count=DayCountConvention.THIRTY_360,
-    float_day_count=DayCountConvention.ACT_360,
-    float_index="SOFR"
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = InterestRateSwap("IRS-1", d0, d0, date(2031, 10, 9), 10_000_000, Currency.USD, "CP-1", fixed_rate=0.043)
 
-# Market data
-market_data = MarketData(
-    valuation_date=date(2024, 6, 15),
-    discount_curve={
-        0.25: 0.048, 0.5: 0.049, 1: 0.050,
-        2: 0.051, 5: 0.052, 10: 0.053
-    }
-)
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
 
-# Price the swap
-result = irs.price(market_data)
-print(f"NPV: ${result.npv:,.2f}")
-print(f"Fixed Leg PV: ${result.components['fixed_leg_pv']:,.2f}")
-print(f"Floating Leg PV: ${result.components['floating_leg_pv']:,.2f}")
-print(f"Par Swap Rate: {result.components['par_rate']:.2%}")
-print(f"DV01: ${result.greeks['dv01']:,.2f}")
-
-# CCR Exposure
-ccr = irs.calculate_ccr_exposure(market_data)
-print(f"EPE: ${ccr.epe:,.2f}")
-print(f"Peak Exposure: ${ccr.peak_exposure:,.2f}")
-
-# SA-CCR
-saccr = irs.calculate_saccr(market_data)
-print(f"EAD: ${saccr.ead:,.2f}")
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---
@@ -166,7 +145,7 @@ print(f"EAD: ${saccr.ead:,.2f}")
 ## QuantLib Implementation
 
 ```python
-from products.qlib.interest_rate import InterestRateSwapQL
+from qlrisk.products.qlib.interest_rate import InterestRateSwapQL
 
 # QuantLib provides:
 # - Exact curve bootstrapping

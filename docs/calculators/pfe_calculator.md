@@ -1,5 +1,9 @@
 # Potential Future Exposure (PFE) Calculator
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Potential Future Exposure (PFE) Calculator estimates the maximum expected credit exposure at a specified confidence level over a time horizon. PFE captures the potential increase in exposure due to market movements and is critical for credit limit management and regulatory capital.
@@ -41,7 +45,7 @@ For α = 99%: z_α = 2.326
 
 Simulates thousands of price paths to build exposure distribution.
 
-```python
+```text
 for each path:
     Simulate risk factors over time grid
     Value portfolio at each time point
@@ -54,7 +58,7 @@ PFE(t) = Percentile(Exposures at t, α)
 
 Uses historical returns to project future exposures.
 
-```python
+```text
 for each historical scenario:
     Apply historical returns to current positions
     Calculate stressed portfolio value

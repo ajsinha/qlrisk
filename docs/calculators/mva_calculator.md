@@ -1,5 +1,9 @@
 # MVA Calculator Documentation v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The MVA (Margin Valuation Adjustment) Calculator computes the cost of funding Initial Margin (IM) posted to CCPs or bilateral counterparties under margin requirements.
@@ -43,7 +47,7 @@ Where:
 ## Usage Example
 
 ```python
-from calculator.python import MVACalculator, MVAInput
+from qlrisk.calculator.python import MVACalculator, MVAInput
 
 calculator = MVACalculator()
 

@@ -1,10 +1,14 @@
 # Securities Financing Transactions (SFT)
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (6 of 6 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 Securities Financing Transactions (SFT) are collateralized transactions used for financing and securities borrowing/lending purposes. These transactions involve the temporary exchange of securities for cash or other securities, with an agreement to reverse the exchange at a future date.
 
-## QLRisk - SFT Products v2.0.0
+## QLRisk - SFT Products v2.0.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -379,4 +383,4 @@ Settlement failures, corporate action processing, dividend handling.
 
 ---
 
-*QLRisk v2.0.0*
+*QLRisk v2.0.1*

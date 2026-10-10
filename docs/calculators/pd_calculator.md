@@ -1,5 +1,9 @@
 # Probability of Default (PD) Calculator
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 2 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Probability of Default (PD) Calculator estimates the likelihood that a counterparty will default on their obligations within a specified time horizon. PD is a fundamental component of credit risk measurement and is used in Expected Loss calculations, CVA, and regulatory capital requirements.

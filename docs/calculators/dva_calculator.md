@@ -1,5 +1,9 @@
 # DVA Calculator Documentation v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The DVA (Debit Valuation Adjustment) Calculator computes the benefit from own default risk. DVA represents the expected gain to the institution if it defaults on its obligations.
@@ -37,7 +41,7 @@ Where:
 ## Usage Example
 
 ```python
-from calculator.python import DVACalculator, DVAInput
+from qlrisk.calculator.python import DVACalculator, DVAInput
 
 calculator = DVACalculator()
 

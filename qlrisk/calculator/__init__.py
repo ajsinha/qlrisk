@@ -1,5 +1,5 @@
 """
-QLRisk - Calculator Module v2.0.0
+QLRisk - Calculator Module v2.0.1
 ================================================
 
 Copyright © 2025-2030, All Rights Reserved
@@ -29,7 +29,7 @@ Additional Calculators:
 - XVA Suite: DVA, FVA, KVA, MVA, ColVA
 """
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 from .base import (
     BaseCalculator,

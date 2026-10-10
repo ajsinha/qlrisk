@@ -1,5 +1,5 @@
 """
-QLRisk - Sensitivities Module v2.0.0
+QLRisk - Sensitivities Module v2.0.1
 ====================================
 
 Copyright © 2025-2030, All Rights Reserved

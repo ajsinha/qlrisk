@@ -1,5 +1,11 @@
 # Convertible Bond v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation status:** `ConvertibleBond` currently uses **placeholder pricing** (`notional × discount factor × 1%`), so its PV and risk are not meaningful yet. It is on the roadmap for a real model.
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -82,34 +88,21 @@ $$V_{convertible} = Bond Floor + Option Value$$
 
 ```python
 from datetime import date
-from products.python.fixed_income import ConvertibleBond
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import ConvertibleBond
+from qlrisk.sensitivities import SensitivityEngine
 
-cb = ConvertibleBond(
-    trade_id="CB-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2029, 1, 15),
-    face_value=1000000,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    coupon_rate=0.02,
-    issuer_name="Tech Corp",
-    underlying_ticker="TECH",
-    conversion_ratio=20.0,
-    conversion_price=50.0,
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = ConvertibleBond("CONVERTIBLE-BOND-1", md.valuation_date, md.valuation_date, date(2031, 10, 9), 5_000_000, Currency.USD, "CP-1")
 
-# Market data with equity info
-market_data.forward_curves["TECH"] = {"spot": 55.0, "div_yield": 0.01}
-market_data.volatility_surfaces["TECH_vol"] = 0.35
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
 
-result = cb.price(market_data)
-print(f"Bond Floor: ${result.components['bond_floor']:,.2f}")
-print(f"Conversion Value: ${result.components['conversion_value']:,.2f}")
-print(f"Conversion Premium: {result.components['conversion_premium']:.1%}")
-print(f"Delta: {result.greeks['delta']:.2f}")
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---
