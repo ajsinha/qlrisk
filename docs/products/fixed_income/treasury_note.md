@@ -1,9 +1,5 @@
 # Treasury Note (T-Note) v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 <!-- generated:implementation -->
 > **Implementation:** `TreasuryNote` is priced by `price_fixed_bond` in `products/python/_pricing.py`. Product terms are keyword arguments: `coupon`, `frequency` (2), `issuer` (credit curve), `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
 >
@@ -164,14 +160,18 @@ print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ## QuantLib Implementation
 
 ```python
+from datetime import date
+from qlrisk.products.base import OptionType
 from qlrisk.products.qlib.fixed_income import FixedRateBondQL
+
+market_data = md  # sample market data from the example above
 
 # Use QuantLib for enhanced accuracy
 tnote_ql = FixedRateBondQL(
     trade_id="TNOTE-QL-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2034, 1, 15),
+    trade_date=date(2026, 1, 15),
+    issue_date=date(2026, 1, 15),
+    maturity_date=date(2036, 1, 15),
     face_value=10000000,
     coupon_rate=0.04,
     currency=Currency.USD,

@@ -36,6 +36,7 @@ except ImportError:
     QUANTLIB_AVAILABLE = False
     print("Warning: QuantLib not available. Install with: pip install QuantLib-Python")
 
+from ..base import curve_value
 from ..base import (
     BaseProduct, AssetClass, Currency,
     DayCountConvention, PaymentFrequency,
@@ -110,7 +111,7 @@ def build_yield_curve(
     rates = [list(discount_curve.values())[0] if discount_curve else 0.05]
     
     for tenor, rate in sorted(discount_curve.items()):
-        future_date = calendar.advance(ql_date, int(tenor * 365), ql.Days)
+        future_date = ql_date + int(round(tenor * 365))          # calendar days, not business days
         dates.append(future_date)
         rates.append(rate)
     
@@ -233,6 +234,17 @@ class InterestRateSwapQL(BaseProduct):
         self._ql_engine = ql.DiscountingSwapEngine(yield_curve_handle)
         self._ql_swap.setPricingEngine(self._ql_engine)
     
+    def _add_past_fixings(self, market_data: MarketData) -> None:
+        """Seasoned swaps need fixings before the evaluation date: use the reference rate (or short curve rate)."""
+        today = ql.Settings.instance().evaluationDate
+        rate = market_data.reference_rates.get(self.float_index) if market_data.reference_rates else None
+        if rate is None:
+            rate = curve_value(market_data.discount_curve, 0.25)
+        for cf in self._ql_swap.floatingLeg():
+            coupon = ql.as_floating_rate_coupon(cf)
+            if coupon is not None and coupon.fixingDate() <= today:
+                coupon.index().addFixing(coupon.fixingDate(), rate, True)
+    
     def price(self, market_data: MarketData) -> PricingResult:
         """Price the swap using QuantLib."""
         if not QUANTLIB_AVAILABLE:
@@ -252,6 +264,7 @@ class InterestRateSwapQL(BaseProduct):
         
         # Build swap
         self._build_ql_swap(yield_curve)
+        self._add_past_fixings(market_data)
         
         # Get results
         npv = self._ql_swap.NPV()

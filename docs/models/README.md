@@ -1,8 +1,4 @@
-# QLRisk - Models Documentation v2.2.0
-
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (7 of 7 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
+# QLRisk - Models Documentation v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -59,32 +55,32 @@ The Models module provides 55+ domain models for representing financial entities
 ### Trade Model
 
 ```python
+from datetime import date
 from qlrisk.models import Trade, TradeType, TradeStatus
 
 trade = Trade(
-    trade_id='IRS-001',
-    trade_type=TradeType.IRS,
-    counterparty_id='CP-001',
+    trade_id="IRS-001",
+    trade_type=TradeType.INTEREST_RATE_SWAP,
+    counterparty_id="CP-001",
     notional=10_000_000,
-    currency='USD',
+    currency="USD",
     effective_date=date(2024, 1, 1),
     maturity_date=date(2029, 1, 1),
-    status=TradeStatus.ACTIVE
+    status=TradeStatus.ACTIVE,
+    mark_to_market=125_000,
 )
+print(trade.is_active(), trade.validate())
 ```
 
 ### Portfolio Model
 
 ```python
-from qlrisk.models import Portfolio
+from qlrisk.models import Portfolio, PortfolioType
 
-portfolio = Portfolio(
-    portfolio_id='PF-001',
-    name='Trading Book',
-    owner='Desk A'
-)
+portfolio = Portfolio(portfolio_id="PF-001", name="Trading Book", portfolio_type=PortfolioType.TRADING,
+                      owner_entity="Desk A")
 portfolio.add_trade(trade)
-summary = portfolio.get_summary()
+print(portfolio.calculate_summary())
 ```
 
 ### Counterparty Model
@@ -92,71 +88,47 @@ summary = portfolio.get_summary()
 ```python
 from qlrisk.models import Counterparty, NettingSet
 
-counterparty = Counterparty(
-    counterparty_id='CP-001',
-    name='ABC Corp',
-    rating='BBB',
-    pd=0.02,
-    lgd=0.45
-)
-
-netting_set = NettingSet(
-    netting_set_id='NS-001',
-    counterparty_id='CP-001',
-    trades=['IRS-001', 'FX-001']
-)
+counterparty = Counterparty(counterparty_id="CP-001", name="ABC Corp", probability_of_default=0.02,
+                            loss_given_default=0.45, country="US", sector="Industrials")
+netting_set = NettingSet(netting_set_id="NS-001", counterparty_id="CP-001", trade_ids=["IRS-001", "FX-001"])
+print(counterparty.name, netting_set.trade_ids)
 ```
 
 ### Curve Models
 
 ```python
+from datetime import date
 from qlrisk.models import YieldCurve, CreditCurve
 
-yield_curve = YieldCurve(
-    curve_id='USD-SOFR',
-    currency='USD',
-    reference_date=date.today(),
-    tenors=[0.25, 0.5, 1, 2, 5, 10],
-    rates=[0.03, 0.032, 0.035, 0.038, 0.042, 0.045]
-)
+yield_curve = YieldCurve(curve_id="USD-SOFR", currency="USD", curve_date=date.today(),
+                         tenors=[0.25, 0.5, 1, 2, 5, 10], values=[0.03, 0.032, 0.035, 0.038, 0.042, 0.045])
+print(yield_curve.discount_factor(2.0), yield_curve.forward_rate(1.0, 2.0))
 
-df = yield_curve.discount_factor(2.0)
-fwd = yield_curve.forward_rate(1.0, 2.0)
+credit_curve = CreditCurve(curve_id="ABC-CDS", currency="USD", curve_date=date.today(),
+                           tenors=[1, 3, 5], values=[0.010, 0.012, 0.015], recovery_rate=0.4)
+print(credit_curve.survival_probability(5.0))
 ```
 
 ### Scenario Models
 
 ```python
-from qlrisk.models import Scenario, ScenarioType
+from qlrisk.models import Scenario, ScenarioType, CurveShock, RiskFactorShock
 
-scenario = Scenario(
-    scenario_id='STRESS-001',
-    name='2008 Crisis',
-    scenario_type=ScenarioType.HISTORICAL,
-    shocks={
-        'equity': -0.40,
-        'credit_spread': 0.03,
-        'volatility': 1.5,
-        'rates': -0.02
-    }
-)
+scenario = Scenario(scenario_id="STRESS-001", name="2008 Crisis", scenario_type=ScenarioType.HISTORICAL)
+scenario.add_ir_shock("USD", CurveShock(curve_name="USD", parallel_shift=-200))           # bp
+scenario.add_credit_shock("ABC Corp", RiskFactorShock(risk_factor="credit_spread", shock_value=300, shock_unit="bp"))
+print(scenario.get_shock_summary())
+# To reprice a portfolio under scenarios, use qlrisk.scenarios (ScenarioSet, historical_stress_scenarios)
 ```
 
 ### Exposure Models
 
 ```python
-from qlrisk.models import ExposureProfile, ExposureResult
+from qlrisk.models import ExposureProfile
 
-profile = ExposureProfile(
-    profile_id='EP-001',
-    time_grid=[0.25, 0.5, 1.0, 2.0, 5.0],
-    expected_exposure=[100, 150, 200, 180, 100],
-    pfe_95=[180, 250, 350, 300, 180],
-    pfe_99=[220, 300, 420, 360, 220]
-)
-
-epe = profile.effective_epe()
-peak = profile.peak_exposure()
+profile = ExposureProfile(profile_id="EP-001", time_grid=[0.25, 0.5, 1.0, 2.0, 5.0],
+                          values=[100, 150, 200, 180, 100], currency="USD")
+print(profile.peak(), profile.average())
 ```
 
 ---
@@ -204,14 +176,13 @@ Base
 ## Factory Pattern
 
 ```python
-from qlrisk.models import ModelFactory
+from qlrisk.models import ModelFactory, TradeType
 
-factory = ModelFactory.get_instance()
-
-# Create models via factory
-trade = factory.create_trade('IRS', {...})
-curve = factory.create_curve('yield', {...})
-scenario = factory.create_scenario('historical', {...})
+# class-level factory methods (no instance needed)
+trade = ModelFactory.create_trade(TradeType.INTEREST_RATE_SWAP, counterparty_id="CP-001", notional=10e6)
+curve = ModelFactory.create_yield_curve("USD", tenors=[1, 2, 5, 10], rates=[0.04, 0.041, 0.043, 0.045])
+counterparty = ModelFactory.create_counterparty(name="ABC Corp")
+print(trade.trade_type, curve.zero_rate(3.0), counterparty.name)
 ```
 
 ---
@@ -224,6 +195,6 @@ scenario = factory.create_scenario('historical', {...})
 
 ---
 
-*Document Version: 2.2.0*  
+*Document Version: 2.2.1*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

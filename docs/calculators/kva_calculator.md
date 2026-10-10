@@ -1,9 +1,5 @@
 # KVA Calculator Documentation v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The KVA (Capital Valuation Adjustment) Calculator computes the cost of holding regulatory capital against counterparty credit risk over the life of a derivative.
@@ -60,7 +56,7 @@ from qlrisk.calculator.python import KVACalculator, KVAInput
 
 calculator = KVACalculator()
 
-result = calculator.calculate(KVAInput(
+result = calculator.compute(KVAInput(
     ead_profile=[10e6, 12e6, 11e6, 9e6, 7e6],
     time_grid=[0.0, 1.0, 2.0, 3.0, 4.0],
     counterparty_pd=0.02,

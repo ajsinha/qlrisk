@@ -1,5 +1,5 @@
 """
-QLRisk - Securities Borrowing v2.2.0
+QLRisk - Securities Borrowing v2.2.1
 ===================================================
 
 Securities Borrowing product implementation for Securities Financing Transactions.
@@ -370,7 +370,7 @@ class SecuritiesBorrowing(BaseProduct):
             pfe_add_on=sec_value * sec_haircut,
             ead=ead,
             asset_class=AssetClass.EQUITY,
-            details={
+            metadata={
                 "securities_value": sec_value,
                 "collateral_value": coll_value,
                 "securities_haircut": sec_haircut,

@@ -1,9 +1,5 @@
 # Swaption v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 <!-- generated:implementation -->
 > **Implementation:** `Swaption` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.Swaption)`).
 >
@@ -97,14 +93,18 @@ print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ## QuantLib Implementation
 
 ```python
+from datetime import date
+from qlrisk.products.base import OptionType
 from qlrisk.products.qlib.interest_rate import SwaptionQL
+
+market_data = md  # sample market data from the example above
 
 swaption_ql = SwaptionQL(
     trade_id="SWPTN-QL-001",
-    trade_date=date(2024, 1, 15),
-    option_expiry=date(2025, 1, 15),
-    swap_effective=date(2025, 1, 17),
-    swap_maturity=date(2030, 1, 17),
+    trade_date=date(2026, 1, 15),
+    option_expiry=date(2027, 1, 15),
+    swap_effective=date(2027, 1, 17),
+    swap_maturity=date(2032, 1, 17),
     notional=100000000,
     strike=0.04,
     currency=Currency.USD,

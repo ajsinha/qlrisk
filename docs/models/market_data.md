@@ -1,9 +1,5 @@
 # Market Data Model Documentation v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Market Data module provides models for market data snapshots, quotes, and real-time market information.
@@ -14,16 +10,13 @@ The Market Data module provides models for market data snapshots, quotes, and re
 
 Types of market quotes.
 
-| Value | Description |
-|-------|-------------|
-| `BID` | Bid price |
-| `ASK` | Ask price |
-| `MID` | Mid price |
-| `LAST` | Last traded |
-| `CLOSE` | Close price |
-| `OPEN` | Open price |
-| `HIGH` | High price |
-| `LOW` | Low price |
+| Value | Name | Description |
+|-------|------|-------------|
+| `bid` | `BID` | Bid price |
+| `ask` | `ASK` | Ask price |
+| `mid` | `MID` | Mid price |
+| `last` | `LAST` | Last traded |
+| `close` | `CLOSE` | Close price |
 
 ### Quote (Dataclass)
 
@@ -31,12 +24,13 @@ Single market quote.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `symbol` | str | "" | Instrument symbol |
-| `quote_type` | QuoteType | MID | Quote type |
+| `symbol` | str | required | Instrument symbol |
+| `quote_type` | QuoteType | QuoteType.MID | Quote type |
 | `value` | float | 0.0 | Quote value |
-| `currency` | str | "USD" | Quote currency |
-| `timestamp` | datetime | now | Quote timestamp |
-| `source` | str | "" | Data source |
+| `currency` | str | 'USD' | Quote currency |
+| `timestamp` | datetime | now() | Quote timestamp |
+| `source` | str | 'market' | Data source |
+| `metadata` | Dict | dict() |  |
 
 ### MarketDataSnapshot (Dataclass)
 
@@ -46,22 +40,25 @@ Point-in-time market data snapshot.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `snapshot_id` | str | Auto-generated | Unique identifier |
-| `snapshot_date` | datetime | now | Snapshot timestamp |
-| `quotes` | Dict[str, Quote] | {} | Symbol → Quote |
-| `yield_curves` | Dict[str, YieldCurve] | {} | Currency → Curve |
-| `credit_curves` | Dict[str, CreditCurve] | {} | Entity → Curve |
-| `vol_surfaces` | Dict[str, VolSurface] | {} | Underlying → Surface |
-| `fx_rates` | Dict[str, float] | {} | Pair → Rate |
-| `equity_prices` | Dict[str, float] | {} | Symbol → Price |
-| `commodity_prices` | Dict[str, float] | {} | Symbol → Price |
+| `id` | str | auto-generated |  |
+| `created_at` | datetime | now() |  |
+| `updated_at` | datetime | now() |  |
+| `metadata` | Dict | dict() |  |
+| `snapshot_date` | date | today() | Snapshot timestamp |
+| `snapshot_time` | datetime | now() |  |
+| `quotes` | Dict | dict() | Symbol → Quote |
+| `fx_rates` | Dict | dict() | Pair → Rate |
+| `equity_prices` | Dict | dict() | Symbol → Price |
+| `yield_curves` | Dict | dict() | Currency → Curve |
+| `credit_curves` | Dict | dict() | Entity → Curve |
+| `volatility_surfaces` | Dict | dict() |  |
 
 #### Methods
 
 | Method | Returns | Description |
 |--------|---------|-------------|
 | `get_quote(symbol)` | Quote | Get quote by symbol |
-| `get_fx_rate(pair)` | float | Get FX rate |
+| `get_fx_rate(base, quote)` | float | Get FX rate (inverts if only the reverse pair is stored) |
 | `get_yield_curve(ccy)` | YieldCurve | Get yield curve |
 | `get_credit_curve(entity)` | CreditCurve | Get credit curve |
 
@@ -73,10 +70,13 @@ Real-time market data container.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `data_id` | str | Auto-generated | Unique identifier |
-| `as_of_date` | date | today | Valuation date |
-| `snapshots` | List[MarketDataSnapshot] | [] | Historical snapshots |
-| `live_quotes` | Dict[str, Quote] | {} | Live quotes |
+| `id` | str | auto-generated |  |
+| `created_at` | datetime | now() |  |
+| `updated_at` | datetime | now() |  |
+| `metadata` | Dict | dict() |  |
+| `market_data_id` | str | '' |  |
+| `current_snapshot` | Union | None |  |
+| `historical_snapshots` | Dict | dict() |  |
 
 #### Methods
 
@@ -89,10 +89,8 @@ Real-time market data container.
 ## Usage Examples
 
 ```python
-from qlrisk.models import (
-    MarketData, MarketDataSnapshot, Quote, QuoteType,
-    YieldCurve
-)
+from qlrisk.models import MarketData, MarketDataSnapshot, Quote, YieldCurve
+from qlrisk.models.market_data import QuoteType
 from datetime import datetime
 
 # Create quotes
@@ -120,7 +118,7 @@ snapshot = MarketDataSnapshot(
 snapshot.quotes["EURUSD"] = fx_quote
 
 # Get data
-eur_rate = snapshot.get_fx_rate("EURUSD")
+eur_rate = snapshot.get_fx_rate("EUR", "USD")
 aapl_price = snapshot.equity_prices.get("AAPL")
 ```
 

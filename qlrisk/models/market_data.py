@@ -16,7 +16,7 @@ from enum import Enum
 
 from .base import ModelBase
 from .curve import YieldCurve, CreditCurve, VolatilitySurface
-# from ..core.exceptions import DataError  # Removed - self-contained
+from ..core.exceptions import DataError
 
 
 class QuoteType(Enum):

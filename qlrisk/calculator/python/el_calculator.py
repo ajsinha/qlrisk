@@ -28,8 +28,8 @@ from ..base import (
 class ELInput:
     """Input data for Expected Loss calculation."""
     pd: float  # Probability of Default (0-1)
-    lgd: float  # Loss Given Default (0-1)
-    ead: float  # Exposure at Default (currency units)
+    lgd: Optional[float] = None  # Loss Given Default (0-1); or give recovery_rate
+    ead: float = 0.0  # Exposure at Default (currency units)
     time_horizon: float = 1.0  # Time horizon in years
     
     # Optional components
@@ -64,7 +64,7 @@ class ExpectedLossCalculator(CreditRiskCalculator):
     - Cumulative expected loss
     """
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize Expected Loss calculator.
         
@@ -75,6 +75,8 @@ class ExpectedLossCalculator(CreditRiskCalculator):
                 - annualize: Whether to annualize results
                 - use_term_structure: Whether to calculate term structure
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._time_horizon = config.get("time_horizon", 1.0)

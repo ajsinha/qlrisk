@@ -1,9 +1,5 @@
 # Expected Exposure (EE) Calculator
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Expected Exposure (EE) Calculator computes the average expected positive credit exposure at future dates. EE is the risk-neutral expectation of exposure and is fundamental to CVA calculations and regulatory capital under the Internal Model Method (IMM).
@@ -144,15 +140,19 @@ print(f"Margined EE: ${result.value.ee:,.2f}")
 ## Output Structure
 
 ```python
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
+
 @dataclass
 class EEResult:
-    ee: float                     # EE at final time
-    ee_profile: List[float]       # EE at each time point
-    eee_profile: List[float]      # Effective EE profile
-    time_points: List[float]      # Time grid
-    effective_epe: float          # Average of EEE
-    peak_ee: float                # Maximum EE
-    components: Dict[str, Any]    # Simulation details
+    """Result of Expected Exposure calculation."""
+    ee: float  # Expected Exposure at maturity
+    ee_profile: List[float]  # EE over time
+    eee_profile: List[float]  # Effective EE (non-decreasing)
+    time_points: List[float]
+    effective_epe: float  # Time-weighted average of EEE
+    peak_ee: float
+    components: Dict[str, Any]
 ```
 
 ## EE Profile Characteristics

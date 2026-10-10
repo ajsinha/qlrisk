@@ -1,5 +1,5 @@
 """
-QLRisk - Securities Financing Transactions (SFT) v2.2.0
+QLRisk - Securities Financing Transactions (SFT) v2.2.1
 ======================================================================
 
 Securities Financing Transactions product implementations.
@@ -27,7 +27,7 @@ and confidential. Unauthorized copying, distribution, modification, or use is
 strictly prohibited without explicit written permission from the copyright holder.
 """
 
-__version__ = "2.2.0"
+__version__ = "2.2.1"
 
 from .margin_loan import (
     MarginLoan, 
@@ -65,7 +65,7 @@ from .prime_brokerage import (
     PBPosition
 )
 
-from .securities_borrowing import SecuritiesBorrowing
+from .securities_borrowing import SecuritiesBorrowing, CollateralType, SecuritiesType, BorrowedSecurity
 
 from .stock_loan import (
     StockLoan,
@@ -104,7 +104,7 @@ __all__ = [
     "PBCollateralType",
     "PBPosition",
     # Securities Borrowing
-    "SecuritiesBorrowing",
+    "SecuritiesBorrowing", "CollateralType", "SecuritiesType", "BorrowedSecurity",
     # Stock Loan
     "StockLoan",
     "StockLoanType",

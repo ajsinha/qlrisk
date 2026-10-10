@@ -142,7 +142,7 @@ class StressedExposureCalculator(ExposureCalculator):
         }
     }
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize Stressed Exposure calculator.
         
@@ -152,6 +152,8 @@ class StressedExposureCalculator(ExposureCalculator):
                 - stress_type: Type of stress to apply
                 - default_scenario: Default scenario name
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._stress_type = config.get("stress_type", "historical")
@@ -339,7 +341,7 @@ class PeakExposureCalculator(ExposureCalculator):
     Peak PFE = max(PFE(t)) for all t in [0, T]
     """
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize Peak Exposure calculator.
         
@@ -350,6 +352,8 @@ class PeakExposureCalculator(ExposureCalculator):
                 - num_simulations: For Monte Carlo
                 - confidence_level: For PFE-based peak
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._method = config.get("method", "pfe_based")

@@ -5,6 +5,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 msg="$1"; to_main="${2:-}"
 [ "$(git branch --show-current)" = "develop" ] || { echo "not on develop"; exit 1; }
+.venv/bin/python scripts/gen_product_docs.py
+.venv/bin/python scripts/sync_doc_listings.py
 .venv/bin/python -m pytest -q
 find qlrisk tests -name __pycache__ -prune -exec rm -rf {} +
 rm -rf build && git rm -q --ignore-unmatch dist/*.whl && rm -f dist/*.whl

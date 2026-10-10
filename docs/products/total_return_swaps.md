@@ -1,14 +1,10 @@
 # Total Return Swaps (TRS)
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 A Total Return Swap (TRS) is a derivative contract where one party (total return payer) pays the total return of an underlying asset (including price appreciation, dividends/coupons, and any principal changes) while receiving a financing rate (typically SOFR + spread) from the counterparty.
 
-## QLRisk - TRS v2.2.0
+## QLRisk - TRS v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -92,7 +88,7 @@ equity_trs = EquityTRS(
     trade_id="EQ-TRS-001",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2025, 12, 31),
+    maturity_date=date(2027, 12, 31),
     notional=10_000_000,  # $10M notional
     currency=Currency.USD,
     counterparty_id="CPTY-001",
@@ -121,7 +117,7 @@ index_trs = EquityTRS(
     trade_id="EQ-TRS-002",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2026, 6, 30),
+    maturity_date=date(2028, 6, 30),
     notional=50_000_000,  # $50M notional
     currency=Currency.USD,
     counterparty_id="CPTY-002",
@@ -152,7 +148,7 @@ bond_trs = BondTRS(
     trade_id="BOND-TRS-001",
     trade_date=date.today(),
     effective_date=date.today(),
-    maturity_date=date(2026, 12, 31),
+    maturity_date=date(2028, 12, 31),
     notional=25_000_000,  # $25M notional
     currency=Currency.USD,
     counterparty_id="CPTY-003",
@@ -176,7 +172,7 @@ bond_trs = BondTRS(
 ### Pricing and Risk Calculation
 
 ```python
-from qlrisk.models import MarketData
+from qlrisk.products.base import MarketData
 
 # Create market data
 market_data = MarketData(
@@ -204,7 +200,7 @@ print(f"CVA: ${exposure.cva:,.2f}")
 # Calculate SA-CCR EAD
 saccr = equity_trs.calculate_saccr(market_data)
 print(f"EAD: ${saccr.ead:,.2f}")
-print(f"Supervisory Factor: {saccr.details['supervisory_factor']:.0%}")
+print(f"Supervisory Factor: {saccr.metadata['supervisory_factor']:.0%}")
 ```
 
 ---
@@ -310,4 +306,4 @@ Adjusted_Notional = Notional × Duration / 5.0
 
 ---
 
-*QLRisk v2.2.0*
+*QLRisk v2.2.1*

@@ -79,7 +79,7 @@ class PFECalculator(ExposureCalculator):
     PFE_α(t) = Quantile_α(max(0, V(t)))
     """
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize PFE calculator.
         
@@ -91,6 +91,8 @@ class PFECalculator(ExposureCalculator):
                 - num_simulations: Number of MC simulations
                 - time_horizon: Maximum time horizon
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._method = config.get("method", "parametric")

@@ -1,9 +1,5 @@
 # Current Exposure (CE) Calculator
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 5 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Current Exposure (CE) Calculator determines the immediate credit exposure to a counterparty, representing the loss that would occur if the counterparty defaulted today. CE equals the positive mark-to-market value of derivatives after accounting for netting and collateral.
@@ -119,13 +115,17 @@ print(f"Exposure after CSA: ${result.value.collateralized_ce:,.2f}")
 ## Output Structure
 
 ```python
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
+
 @dataclass
 class CEResult:
-    gross_ce: float           # Before netting and collateral
-    net_ce: float             # After netting
-    collateralized_ce: float  # After collateral adjustment
-    exposure_type: str        # "positive", "negative", or "zero"
-    components: Dict[str, Any]  # Breakdown of calculation
+    """Result of Current Exposure calculation."""
+    gross_ce: float
+    net_ce: float
+    collateralized_ce: float
+    exposure_type: str  # 'positive', 'negative', 'zero'
+    components: Dict[str, float]
 ```
 
 ## CE vs Other Exposure Metrics

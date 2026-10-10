@@ -1,5 +1,5 @@
 """
-QLRisk - Margin Lending v2.2.0
+QLRisk - Margin Lending v2.2.1
 =============================================
 
 Margin Lending product implementation for Securities Financing Transactions.
@@ -352,7 +352,7 @@ class MarginLending(BaseProduct):
             pfe_add_on=loan_value * 0.10,
             ead=ead,
             asset_class=AssetClass.EQUITY,
-            details={
+            metadata={
                 "loan_value": loan_value,
                 "adjusted_collateral": adjusted_coll,
                 "average_haircut": avg_haircut,

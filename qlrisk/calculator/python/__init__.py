@@ -1,5 +1,5 @@
 """
-QLRisk - Python Calculators v2.2.0
+QLRisk - Python Calculators v2.2.1
 =================================================
 
 Copyright © 2025-2030, All Rights Reserved
@@ -39,7 +39,7 @@ Regulatory Calculators:
 - SACCRCalculator: SA-CCR EAD (Basel III/IV)
 """
 
-__version__ = "2.2.0"
+__version__ = "2.2.1"
 
 from .pd_calculator import PDCalculator
 from .lgd_calculator import LGDCalculator
@@ -55,6 +55,12 @@ from .im_calculator import InitialMarginCalculator as IMCalculator
 from .stress_calculators import StressedExposureCalculator, PeakExposureCalculator
 from .xva_calculators import DVACalculator, FVACalculator, KVACalculator, MVACalculator
 from .saccr_calculator import SACCRCalculator
+from .xva_calculators import DVAInput, DVAResult, FVAInput, FVAResult, KVAInput, KVAResult, MVAInput, MVAResult
+from .raroc_calculator import RAROCInput
+from .saccr_calculator import SACCRInput, SACCRResult
+from .el_calculator import ELInput, ELResult
+from .cva_calculator import CVAInput
+from .ec_calculator import ECInput
 
 __all__ = [
     "__version__",
@@ -81,4 +87,6 @@ __all__ = [
     "IMCalculator",
     # Regulatory
     "SACCRCalculator",
+    "DVAInput", "DVAResult", "FVAInput", "FVAResult", "KVAInput", "KVAResult", "MVAInput", "MVAResult",
+    "RAROCInput", "SACCRInput", "SACCRResult", "ELInput", "ELResult", "CVAInput", "ECInput",
 ]

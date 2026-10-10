@@ -1,4 +1,4 @@
-# QLRisk - Analytic Pricers v2.2.0
+# QLRisk - Analytic Pricers v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -92,4 +92,4 @@ homogeneous pool approximation, and the convertible ignores call/put features an
 
 ---
 
-*QLRisk v2.2.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.2.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

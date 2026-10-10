@@ -1,5 +1,5 @@
 """
-QLRisk - Stock Loan v2.2.0
+QLRisk - Stock Loan v2.2.1
 =========================================
 
 Stock Loan product implementation for Securities Financing Transactions.
@@ -432,7 +432,7 @@ class StockLoan(BaseProduct):
             pfe_add_on=stock_value * stock_haircut,
             ead=ead,
             asset_class=AssetClass.EQUITY,
-            details={
+            metadata={
                 "stock_value": stock_value,
                 "collateral_value": coll_value,
                 "stock_haircut": stock_haircut,

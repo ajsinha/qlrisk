@@ -77,7 +77,7 @@ class EconomicCapitalCalculator(BaseCalculator[ECResult]):
     EC = LGD × N[(1/√(1-ρ)) × N^(-1)(PD) + √(ρ/(1-ρ)) × N^(-1)(α)] - EL
     """
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize Economic Capital calculator.
         
@@ -88,6 +88,8 @@ class EconomicCapitalCalculator(BaseCalculator[ECResult]):
                 - confidence_level: VaR confidence level (default 0.999)
                 - num_simulations: For MC method
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._method = config.get("method", "vasicek")

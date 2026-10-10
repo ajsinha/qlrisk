@@ -1,9 +1,5 @@
 # Interest Rate Swap (IRS) v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 <!-- generated:implementation -->
 > **Implementation:** `InterestRateSwap` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.InterestRateSwap)`).
 >
@@ -145,7 +141,10 @@ print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ## QuantLib Implementation
 
 ```python
+from datetime import date
 from qlrisk.products.qlib.interest_rate import InterestRateSwapQL
+
+market_data = md  # sample market data from the example above
 
 # QuantLib provides:
 # - Exact curve bootstrapping
@@ -154,9 +153,9 @@ from qlrisk.products.qlib.interest_rate import InterestRateSwapQL
 
 irs_ql = InterestRateSwapQL(
     trade_id="IRS-QL-001",
-    trade_date=date(2024, 1, 15),
-    effective_date=date(2024, 1, 17),
-    maturity_date=date(2029, 1, 17),
+    trade_date=date(2026, 1, 15),
+    effective_date=date(2026, 1, 17),
+    maturity_date=date(2031, 1, 17),
     notional=50000000,
     fixed_rate=0.04,
     currency=Currency.USD,

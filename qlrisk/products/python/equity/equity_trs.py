@@ -1,5 +1,5 @@
 """
-QLRisk - Equity Total Return Swap (TRS) v2.2.0
+QLRisk - Equity Total Return Swap (TRS) v2.2.1
 =============================================================
 
 Equity Total Return Swap implementation with full CCR analytics support.
@@ -387,7 +387,7 @@ class EquityTRS(BaseProduct):
             pfe_add_on=pfe_addon,
             ead=ead,
             asset_class=AssetClass.EQUITY,
-            details={
+            metadata={
                 "supervisory_factor": sf,
                 "maturity_factor": mf,
                 "delta": delta,

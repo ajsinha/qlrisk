@@ -64,7 +64,7 @@ class EADCalculator(ExposureCalculator):
     EAD represents the total value at risk at the time of default.
     """
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize EAD calculator.
         
@@ -75,6 +75,8 @@ class EADCalculator(ExposureCalculator):
                 - alpha: Multiplier for IMM (default 1.4)
                 - include_margin: Whether to include margin in calculation
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._method = config.get("method", "cem")

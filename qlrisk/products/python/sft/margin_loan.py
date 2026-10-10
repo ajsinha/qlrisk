@@ -1,5 +1,5 @@
 """
-QLRisk - Margin Loan v2.2.0
+QLRisk - Margin Loan v2.2.1
 ==========================================
 
 Margin Loan (securities-based lending) implementation with full CCR analytics.
@@ -330,7 +330,7 @@ class MarginLoan(BaseProduct):
             pfe_add_on=pfe_addon,
             ead=ead,
             asset_class=AssetClass.SFT,
-            details={
+            metadata={
                 "loan_amount": self.terms.loan_amount,
                 "collateral_value": self.get_collateral_value(apply_haircuts=True),
                 "ltv": self.get_ltv()

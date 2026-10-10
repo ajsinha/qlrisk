@@ -1,8 +1,4 @@
-# SA-CCR Implementation Guide v2.2.0
-
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
+# SA-CCR Implementation Guide v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -385,6 +381,6 @@ EAD = 1.4 × (550,000 + 2,000,000) = $3,570,000
 
 ---
 
-*Document Version: 2.2.0*  
+*Document Version: 2.2.1*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

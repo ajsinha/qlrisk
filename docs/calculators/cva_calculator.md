@@ -1,9 +1,5 @@
 # Credit Valuation Adjustment (CVA) Calculator
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (3 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Credit Valuation Adjustment (CVA) Calculator computes the market value of counterparty credit risk. CVA represents the expected loss due to counterparty default and is both an accounting adjustment (fair value) and a regulatory capital requirement.
@@ -95,14 +91,10 @@ result = cva_calc.calculate({
     "ee_profile": ee_profile,
     "time_grid": time_grid,
     "credit_spread": 0.01,
-    "own_credit_spread": 0.005,  # 50 bps
     "recovery_rate": 0.40,
-    "bilateral": True
 })
-
 print(f"CVA: ${result.value.cva:,.2f}")
-print(f"DVA: ${result.value.dva:,.2f}")
-print(f"BCVA (Net): ${result.value.bcva:,.2f}")
+# Bilateral CVA = CVA - DVA: compute DVA with CalculatorType.DVA (see dva_calculator.md)
 ```
 
 ### With Term Structure of Spreads
@@ -114,6 +106,7 @@ spread_term = [0.008, 0.009, 0.010, 0.012, 0.014, 0.015]
 result = cva_calc.calculate({
     "ee_profile": ee_profile,
     "time_grid": time_grid,
+    "credit_spread": spread_term[0],
     "spread_term_structure": spread_term,
     "recovery_rate": 0.40
 })
@@ -124,14 +117,18 @@ print(f"CVA (term structure): ${result.value.cva:,.2f}")
 ## Output Structure
 
 ```python
-@dataclass
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
+
+@dataclass 
 class CVAResult:
-    cva: float                    # Unilateral CVA amount
-    cva_pct: float                # CVA as % of notional
-    dva: Optional[float]          # Debit Valuation Adjustment
-    bcva: Optional[float]         # Bilateral CVA
-    marginal_cva: List[float]     # CVA by time bucket
-    components: Dict[str, Any]    # Survival probs, discounts
+    """Result of CVA calculation."""
+    cva: float  # Unilateral CVA
+    cva_pct: float  # CVA as percentage of notional
+    dva: Optional[float]  # Debt Valuation Adjustment (if bilateral)
+    bcva: Optional[float]  # Bilateral CVA = CVA - DVA
+    marginal_cva: List[float]  # CVA contribution by time bucket
+    components: Dict[str, Any]
 ```
 
 ## CVA Decomposition

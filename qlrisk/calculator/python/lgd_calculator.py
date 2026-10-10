@@ -118,7 +118,7 @@ class LGDCalculator(CreditRiskCalculator):
         ("subordinated", "unsecured"): 0.75
     }
     
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
         """
         Initialize LGD calculator.
         
@@ -130,6 +130,8 @@ class LGDCalculator(CreditRiskCalculator):
                 - floor: Minimum LGD
                 - cap: Maximum LGD
         """
+        config = config or {}
+        name = name or self.__class__.__name__
         super().__init__(name, config)
         self._implementation_type = ImplementationType.PYTHON
         self._model = LGDModel(config.get("model", LGDModel.COLLATERAL.value))

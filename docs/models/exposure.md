@@ -1,9 +1,5 @@
 # Exposure Model Documentation v1.2.0
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Exposure module provides models for exposure calculation results, including time-series profiles and regulatory metrics like SA-CCR.
@@ -14,25 +10,22 @@ The Exposure module provides models for exposure calculation results, including 
 
 Types of exposure measures.
 
-| Value | Description |
-|-------|-------------|
-| `CURRENT` | Current Exposure (CE) |
-| `POTENTIAL_FUTURE` | Potential Future Exposure (PFE) |
-| `EXPECTED` | Expected Exposure (EE) |
-| `EFFECTIVE_EXPECTED` | Effective Expected Exposure (EEE) |
-| `PEAK` | Peak Exposure |
-| `STRESSED` | Stressed Exposure |
+| Value | Name | Description |
+|-------|------|-------------|
+| `gross` | `GROSS` |  |
+| `net` | `NET` |  |
+| `collateralized` | `COLLATERALIZED` |  |
 
 ### ExposureMethod (Enum)
 
 Exposure calculation methods.
 
-| Value | Description |
-|-------|-------------|
-| `CURRENT_EXPOSURE` | Current Exposure Method (CEM) |
-| `STANDARDISED` | SA-CCR |
-| `INTERNAL_MODEL` | Internal Model Method (IMM) |
-| `MONTE_CARLO` | Monte Carlo simulation |
+| Value | Name | Description |
+|-------|------|-------------|
+| `cem` | `CURRENT_EXPOSURE` | Current Exposure Method (CEM) |
+| `sa_ccr` | `STANDARDISED` | SA-CCR |
+| `imm` | `INTERNAL_MODEL` | Internal Model Method (IMM) |
+| `monte_carlo` | `MONTE_CARLO` | Monte Carlo simulation |
 
 ### ExposureProfile (Dataclass)
 
@@ -42,11 +35,11 @@ Time-series of exposure values.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `profile_id` | str | Auto-generated | Unique identifier |
-| `exposure_type` | ExposureType | EXPECTED | Type of exposure |
-| `time_grid` | List[float] | [] | Time points (years) |
-| `values` | List[float] | [] | Exposure values |
-| `currency` | str | "USD" | Currency |
+| `profile_id` | str | auto-generated | Unique identifier |
+| `exposure_type` | ExposureType | ExposureType.EXPECTED | Type of exposure |
+| `time_grid` | List | list() | Time points (years) |
+| `values` | List | list() | Exposure values |
+| `currency` | str | 'USD' | Currency |
 | `confidence_level` | float | 0.95 | Confidence for PFE |
 
 #### Methods
@@ -66,21 +59,21 @@ Complete exposure calculation result.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `result_id` | str | Auto-generated | Unique identifier |
-| `calculation_date` | datetime | now | Calculation timestamp |
-| `reference_id` | str | "" | Trade/NS/Portfolio ID |
-| `reference_type` | str | "" | Reference type |
-| `method` | ExposureMethod | MONTE_CARLO | Method used |
+| `result_id` | str | auto-generated | Unique identifier |
+| `calculation_date` | datetime | now() | Calculation timestamp |
+| `reference_id` | str | '' | Trade/NS/Portfolio ID |
+| `reference_type` | str | '' | Reference type |
+| `method` | ExposureMethod | ExposureMethod.MONTE_CARLO | Method used |
 | `current_exposure` | float | 0.0 | CE |
 | `potential_future_exposure` | float | 0.0 | PFE |
 | `expected_exposure` | float | 0.0 | EE |
 | `effective_expected_exposure` | float | 0.0 | EEE |
 | `peak_exposure` | float | 0.0 | Peak |
-| `ee_profile` | ExposureProfile | None | EE profile |
-| `pfe_profile` | ExposureProfile | None | PFE profile |
+| `ee_profile` | Union | None | EE profile |
+| `pfe_profile` | Union | None | PFE profile |
 | `ead` | float | 0.0 | Exposure at Default |
 | `eepe` | float | 0.0 | Effective EPE |
-| `currency` | str | "USD" | Currency |
+| `currency` | str | 'USD' | Currency |
 | `confidence_level` | float | 0.95 | Confidence level |
 | `time_horizon` | float | 1.0 | Time horizon |
 | `num_scenarios` | int | 10000 | Number of scenarios |
@@ -93,19 +86,18 @@ SA-CCR calculation result per Basel III/IV.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `result_id` | str | Auto-generated | Unique identifier |
-| `calculation_date` | datetime | now | Calculation timestamp |
-| `netting_set_id` | str | "" | Netting set |
+| `netting_set_id` | str | '' | Netting set |
 | `replacement_cost` | float | 0.0 | RC component |
-| `potential_future_exposure` | float | 0.0 | PFE component |
+| `pfe_addon` | float | 0.0 |  |
+| `multiplier` | float | 1.0 | PFE multiplier |
+| `ead` | float | 0.0 | Final EAD |
 | `ir_addon` | float | 0.0 | IR add-on |
 | `fx_addon` | float | 0.0 | FX add-on |
 | `credit_addon` | float | 0.0 | Credit add-on |
 | `equity_addon` | float | 0.0 | Equity add-on |
 | `commodity_addon` | float | 0.0 | Commodity add-on |
-| `multiplier` | float | 1.0 | PFE multiplier |
-| `ead` | float | 0.0 | Final EAD |
-| `collateral_value` | float | 0.0 | Collateral |
+| `hedging_sets` | Dict | dict() |  |
+| `alpha` | float | 1.4 |  |
 
 #### Methods
 
@@ -119,8 +111,8 @@ Aggregated netting set exposure.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `netting_set_id` | str | "" | NS identifier |
-| `counterparty_id` | str | "" | Counterparty |
+| `netting_set_id` | str | '' | NS identifier |
+| `counterparty_id` | str | '' | Counterparty |
 | `num_trades` | int | 0 | Trade count |
 | `gross_positive` | float | 0.0 | Gross positive MTM |
 | `gross_negative` | float | 0.0 | Gross negative MTM |
@@ -136,6 +128,7 @@ from qlrisk.models import (
     ExposureProfile, ExposureResult, ExposureMethod,
     SACCRResult, NettingSetExposure
 )
+from qlrisk.models.exposure import ExposureType
 
 # Create exposure profile
 ee_profile = ExposureProfile(

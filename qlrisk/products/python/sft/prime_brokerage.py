@@ -1,5 +1,5 @@
 """
-QLRisk - Prime Brokerage Agreement v2.2.0
+QLRisk - Prime Brokerage Agreement v2.2.1
 =========================================================
 
 Prime Brokerage agreement implementation with full CCR analytics support.
@@ -429,7 +429,7 @@ class PrimeBrokerage(BaseProduct):
             pfe_add_on=pfe_addon,
             ead=ead,
             asset_class=AssetClass.EQUITY,
-            details={
+            metadata={
                 "supervisory_factor": sf,
                 "maturity_factor": mf,
                 "gross_exposure": self.get_gross_market_value(),

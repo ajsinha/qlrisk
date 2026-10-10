@@ -1,4 +1,4 @@
-# QLRisk - Risk Factors v2.2.0
+# QLRisk - Risk Factors v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -124,7 +124,14 @@ Because interpolation is linear between pillars, bumping one pillar is a standar
 `BaseProduct.risk_factors(market_data)` prices the product once against an access-recording copy of the market data. It returns every factor on each curve or surface the product read, or the specific names it read (e.g. only `FX.EURUSD`, not `FX.GBPUSD`).
 
 ```python
-swap.risk_factors(md)    # IR.DISCOUNT.* and IR.FWD.SOFR.*, nothing else
+from datetime import date
+from qlrisk.products.base import Currency
+from qlrisk.products.python import InterestRateSwap
+
+d0 = md.valuation_date
+swap = InterestRateSwap("IRS-1", d0, d0, date(d0.year + 5, d0.month, min(d0.day, 28)), 10e6, Currency.USD, "CP",
+                        fixed_rate=0.043)
+print(swap.risk_factors(md))    # IR.DISCOUNT.* and IR.FWD.SOFR.*, nothing else
 ```
 
 Reading any point on a curve counts as depending on the whole curve, because interpolation uses neighbouring pillars. Products whose code path depends on market levels (barriers, for example) can override `risk_factors()`.
@@ -138,11 +145,12 @@ Reading any point on a curve counts as depending on the whole curve, because int
 ```python
 from qlrisk.riskfactors import RiskFactorTimeSeries
 
-hist = RiskFactorTimeSeries.from_snapshots({d: md_d for d, md_d in snapshots})   # or from_records / from_csv
+from qlrisk.data import MarketHistoryGenerator
+hist = MarketHistoryGenerator(seed=1).generate(md, num_days=300)   # or from_snapshots / from_records / from_csv
 
 dates, r = hist.returns(horizon=10, overlapping=True)     # 10-day returns
 hist.fill_missing("ffill")                                 # or "interpolate"
-hist.proxy("EQ.NEWCO", "EQ.SPX", beta=1.2)                 # fill gaps from a proxy's returns
+hist.proxy("EQ.AAPL", "EQ.SPX", beta=1.2)                  # fill any AAPL gaps from SPX returns x 1.2
 yesterday = hist.market_data_at(hist.dates[-2], md)        # levels -> MarketData
 replayed = apply_shocks(yesterday, hist.return_shocks(r[-1]))
 hist.to_csv("history.csv")
@@ -188,4 +196,4 @@ The model has four layers: a global factor (equities and rates fall, spreads and
 
 ---
 
-*QLRisk v2.2.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.2.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

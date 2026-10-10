@@ -97,13 +97,20 @@ class SACCRCalculator(BaseCalculator):
     
     ALPHA = 1.4  # Regulatory multiplier
     
-    def __init__(self):
-        super().__init__(
-            calculator_type=CalculatorType.EAD,
-            implementation_type=ImplementationType.PYTHON
-        )
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
+        super().__init__(name or "saccr_calc", config or {})
     
-    def calculate(self, input_data: SACCRInput) -> SACCRResult:
+    @property
+    def calculator_type(self) -> CalculatorType:
+        return CalculatorType.SACCR
+    
+    def _calculate_impl(self, data: Any) -> SACCRResult:
+        """Accepts a SACCRInput or a dict of its fields."""
+        if isinstance(data, dict):
+            data = SACCRInput(**{k: v for k, v in data.items() if k in SACCRInput.__dataclass_fields__})
+        return self.compute(data)
+    
+    def compute(self, input_data: SACCRInput) -> SACCRResult:
         """Calculate SA-CCR EAD."""
         result = SACCRResult(netting_set_id=input_data.netting_set_id)
         

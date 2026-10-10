@@ -1,8 +1,4 @@
-# QLRisk - Products Documentation v2.2.0
-
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
+# QLRisk - Products Documentation v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -54,17 +50,16 @@ The Products module provides 81 financial product implementations across 12 asse
 | [Basis Swap](interest_rate/basis_swap.md) | `basis_swap.py` | Float-float swap |
 
 ```python
+from datetime import date
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency, FloatingRateIndex
 from qlrisk.products.python import InterestRateSwap
 
-irs = InterestRateSwap(
-    notional=10_000_000,
-    fixed_rate=0.03,
-    float_index='SOFR',
-    effective_date=date(2024, 1, 1),
-    maturity_date=date(2029, 1, 1),
-    payment_frequency='quarterly'
-)
-npv = irs.calculate_npv(market_data)
+market_data = create_sample_market_data(date(2026, 10, 9))
+irs = InterestRateSwap("IRS-001", market_data.valuation_date, market_data.valuation_date, date(2031, 10, 9),
+                       10_000_000, Currency.USD, "CP-001", fixed_rate=0.043, floating_index=FloatingRateIndex.SOFR)
+result = irs.price(market_data)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
 ```
 
 ---
@@ -227,6 +222,6 @@ npv = irs.calculate_npv(market_data)
 
 ---
 
-*Document Version: 2.2.0*  
+*Document Version: 2.2.1*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

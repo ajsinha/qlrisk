@@ -16,8 +16,8 @@ from enum import Enum
 import uuid
 
 from .base import ModelBase
-# from ..core.exceptions import ValidationError  # Removed - self-contained
-# from ..core.validators import Validators  # Removed - self-contained
+from ..core.exceptions import ValidationError
+from ..core.validators import Validators
 
 
 class TradeType(Enum):

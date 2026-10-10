@@ -1,8 +1,4 @@
-# QLRisk - Calculator Documentation v2.2.0
-
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (5 of 5 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
+# QLRisk - Calculator Documentation v2.2.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -88,7 +84,7 @@ with CCREngine() as engine:
         'credit_spread': 0.015,
         'recovery_rate': 0.40
     })
-    print(f"CVA: ${result.value:,.2f}")
+    print(f"CVA: ${result.value.cva:,.2f}")
 ```
 
 ---
@@ -154,14 +150,14 @@ calc = factory.get_calculator(CalculatorType.PD)
 
 try:
     result = calc.calculate({'rating': 'INVALID'})
-except CalculationError as e:
+except (CalculationError, ValueError) as e:
     print(f"Calculation failed: {e}")
 ```
 
 ### Result Processing
 
 ```python
-result = calc.calculate(input_data)
+result = calc.calculate({'credit_rating': 'BBB'})
 
 # Access result components
 value = result.value           # Main result
@@ -218,6 +214,6 @@ with CCREngine() as engine:
 
 ---
 
-*Document Version: 2.2.0*  
+*Document Version: 2.2.1*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

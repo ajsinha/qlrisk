@@ -1,5 +1,5 @@
 """
-QLRisk - Collateral Swap v2.2.0
+QLRisk - Collateral Swap v2.2.1
 ==============================================
 
 Collateral Swap product implementation for Securities Financing Transactions.
@@ -337,7 +337,7 @@ class CollateralSwap(BaseProduct):
             pfe_add_on=pfe_addon,
             ead=ead,
             asset_class=AssetClass.INTEREST_RATE,
-            details={
+            metadata={
                 "receive_leg_value": receive_value,
                 "deliver_leg_value": deliver_value,
                 "is_upgrade": self.is_upgrade,

@@ -1,9 +1,5 @@
 # Stress Testing Calculators
 
-<!-- legacy-examples -->
-> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (2 of 7 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
-<!-- /legacy-examples -->
-
 ## Overview
 
 The Stress Testing module provides calculators for assessing counterparty credit risk under adverse market conditions. It includes Stressed Exposure and Peak Exposure calculators for regulatory compliance (CCAR, DFAST, EBA) and internal risk management.
@@ -129,13 +125,17 @@ print(f"Stress multiplier for 2x exposure: {result.value.stress_multiplier:.2f}"
 ## Output Structure
 
 ```python
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
+
 @dataclass
 class StressedExposureResult:
-    stressed_exposure: float      # Exposure under stress
-    stress_multiplier: float      # Stressed / Base ratio
-    base_exposure: float          # Original exposure
-    stress_scenario: str          # Scenario name
-    components: Dict[str, Any]    # Detailed breakdown
+    """Result of stressed exposure calculation."""
+    stressed_exposure: float
+    stress_multiplier: float
+    base_exposure: float
+    stress_scenario: str
+    components: Dict[str, Any]
 ```
 
 ---
@@ -234,14 +234,18 @@ print(f"Peak from profile: ${result.value.peak_exposure:,.2f}")
 ## Output Structure
 
 ```python
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
+
 @dataclass
 class PeakExposureResult:
-    peak_exposure: float          # Maximum exposure
-    peak_time: float              # Time of peak
-    average_exposure: float       # Mean exposure over life
-    exposure_profile: List[float] # Full exposure profile
-    time_grid: List[float]        # Time points
-    components: Dict[str, Any]    # Simulation details
+    """Result of peak exposure calculation."""
+    peak_exposure: float
+    peak_time: float
+    average_exposure: float
+    exposure_profile: List[float]
+    time_grid: List[float]
+    components: Dict[str, Any]
 ```
 
 ---

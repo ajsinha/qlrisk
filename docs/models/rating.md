@@ -10,41 +10,42 @@ The Rating module provides models for credit ratings, rating histories, and tran
 
 Credit rating agencies.
 
-| Value | Description |
-|-------|-------------|
-| `SP` | Standard & Poor's |
-| `MOODYS` | Moody's |
-| `FITCH` | Fitch Ratings |
-| `INTERNAL` | Internal rating |
+| Value | Name | Description |
+|-------|------|-------------|
+| `S&P` | `SP` | Standard & Poor's |
+| `Moody's` | `MOODYS` | Moody's |
+| `Fitch` | `FITCH` | Fitch Ratings |
+| `Internal` | `INTERNAL` | Internal rating |
 
 ### RatingScale (Enum)
 
 Standard rating scale (S&P equivalent).
 
-| Rating | Score | Investment Grade |
-|--------|-------|------------------|
-| `AAA` | 1 | Yes |
-| `AA+` | 2 | Yes |
-| `AA` | 3 | Yes |
-| `AA-` | 4 | Yes |
-| `A+` | 5 | Yes |
-| `A` | 6 | Yes |
-| `A-` | 7 | Yes |
-| `BBB+` | 8 | Yes |
-| `BBB` | 9 | Yes |
-| `BBB-` | 10 | Yes (boundary) |
-| `BB+` | 11 | No |
-| `BB` | 12 | No |
-| `BB-` | 13 | No |
-| `B+` | 14 | No |
-| `B` | 15 | No |
-| `B-` | 16 | No |
-| `CCC+` | 17 | No (distressed) |
-| `CCC` | 18 | No (distressed) |
-| `CCC-` | 19 | No (distressed) |
-| `CC` | 20 | No (distressed) |
-| `C` | 21 | No (distressed) |
-| `D` | 22 | Default |
+| Value | Name | Description |
+|-------|------|-------------|
+| `AAA` | `AAA` | Yes |
+| `AA+` | `AA_PLUS` | Yes |
+| `AA` | `AA` | Yes |
+| `AA-` | `AA_MINUS` | Yes |
+| `A+` | `A_PLUS` | Yes |
+| `A` | `A` | Yes |
+| `A-` | `A_MINUS` | Yes |
+| `BBB+` | `BBB_PLUS` | Yes |
+| `BBB` | `BBB` | Yes |
+| `BBB-` | `BBB_MINUS` | Yes (boundary) |
+| `BB+` | `BB_PLUS` | No |
+| `BB` | `BB` | No |
+| `BB-` | `BB_MINUS` | No |
+| `B+` | `B_PLUS` | No |
+| `B` | `B` | No |
+| `B-` | `B_MINUS` | No |
+| `CCC+` | `CCC_PLUS` | No (distressed) |
+| `CCC` | `CCC` | No (distressed) |
+| `CCC-` | `CCC_MINUS` | No (distressed) |
+| `CC` | `CC` | No (distressed) |
+| `C` | `C` | No (distressed) |
+| `D` | `D` | Default |
+| `NR` | `NR` |  |
 
 ### RATING_PD_MAP
 
@@ -92,8 +93,8 @@ Historical ratings for an entity.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `entity_id` | str | "" | Entity identifier |
-| `history` | List[Tuple] | [] | (date, rating) pairs |
+| `entity_id` | str | '' | Entity identifier |
+| `history` | List | list() | (date, rating) pairs |
 
 #### Methods
 
@@ -112,10 +113,10 @@ Rating transition probability matrix.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `matrix_id` | str | Auto-generated | Unique identifier |
+| `matrix_id` | str | auto-generated | Unique identifier |
 | `time_horizon` | float | 1.0 | Time horizon (years) |
-| `ratings` | List[RatingScale] | [] | Rating categories |
-| `probabilities` | List[List[float]] | [] | Transition probs |
+| `ratings` | List | list() | Rating categories |
+| `probabilities` | List | list() | Transition probs |
 
 #### Methods
 

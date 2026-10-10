@@ -8,40 +8,39 @@ The Products model module provides domain models for 27 financial product types 
 
 ### PaymentFrequency (Enum)
 
-| Value | Per Year |
-|-------|----------|
-| `ANNUAL` | 1 |
-| `SEMI_ANNUAL` | 2 |
-| `QUARTERLY` | 4 |
-| `MONTHLY` | 12 |
-| `WEEKLY` | 52 |
-| `DAILY` | 365 |
+| Value | Name | Description |
+|-------|------|-------------|
+| `1` | `ANNUAL` | 1 |
+| `2` | `SEMI_ANNUAL` | 2 |
+| `4` | `QUARTERLY` | 4 |
+| `12` | `MONTHLY` | 12 |
+| `52` | `WEEKLY` | 52 |
+| `365` | `DAILY` | 365 |
 
 ### OptionType (Enum)
 
-| Value | Description |
-|-------|-------------|
-| `CALL` | Call option |
-| `PUT` | Put option |
+| Value | Name | Description |
+|-------|------|-------------|
+| `call` | `CALL` | Call option |
+| `put` | `PUT` | Put option |
 
 ### OptionStyle (Enum)
 
-| Value | Description |
-|-------|-------------|
-| `EUROPEAN` | European exercise |
-| `AMERICAN` | American exercise |
-| `BERMUDAN` | Bermudan exercise |
+| Value | Name | Description |
+|-------|------|-------------|
+| `european` | `EUROPEAN` | European exercise |
+| `american` | `AMERICAN` | American exercise |
+| `bermudan` | `BERMUDAN` | Bermudan exercise |
 
 ### AssetClass (Enum)
 
-| Value | Description |
-|-------|-------------|
-| `INTEREST_RATE` | IR products |
-| `FX` | FX products |
-| `CREDIT` | Credit products |
-| `EQUITY` | Equity products |
-| `COMMODITY` | Commodity products |
-| `REPO` | Repo products |
+| Value | Name | Description |
+|-------|------|-------------|
+| `interest_rate` | `INTEREST_RATE` | IR products |
+| `fx` | `FX` | FX products |
+| `credit` | `CREDIT` | Credit products |
+| `equity` | `EQUITY` | Equity products |
+| `commodity` | `COMMODITY` | Commodity products |
 
 ### Product (Dataclass)
 
@@ -49,14 +48,18 @@ Base product class.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `product_id` | str | Auto-generated | Unique ID |
-| `product_type` | str | "" | Product type |
-| `asset_class` | str | "" | Asset class |
+| `id` | str | auto-generated |  |
+| `created_at` | datetime | now() |  |
+| `updated_at` | datetime | now() |  |
+| `metadata` | Dict | dict() |  |
+| `product_id` | str | auto-generated | Unique ID |
+| `product_type` | str | '' | Product type |
+| `asset_class` | str | '' | Asset class |
 | `notional` | float | 0.0 | Notional amount |
-| `currency` | str | "USD" | Currency |
-| `effective_date` | date | today | Start date |
-| `maturity_date` | date | today | End date |
-| `counterparty_id` | str | "" | Counterparty |
+| `currency` | str | 'USD' | Currency |
+| `effective_date` | date | today() | Start date |
+| `maturity_date` | date | today() | End date |
+| `counterparty_id` | str | '' | Counterparty |
 
 ## Interest Rate Products
 
