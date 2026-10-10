@@ -18,6 +18,7 @@ Features:
 - Counterparty data with credit ratings
 - Market data generation (curves, volatilities, FX rates)
 - Stress scenario generation
+- Sample pricing MarketData and correlated risk-factor histories (market_history)
 - Reproducible random data with seed control
 
 Data Classes:
@@ -50,6 +51,7 @@ from .generator import (
     DataGenerator,
     create_test_dataset,
 )
+from .market_history import create_sample_market_data, MarketHistoryGenerator, DEFAULT_DAILY_VOLS
 
 __all__ = [
     "__version__",
@@ -60,4 +62,7 @@ __all__ = [
     "GeneratedMarketData",
     "DataGenerator",
     "create_test_dataset",
+    "create_sample_market_data",
+    "MarketHistoryGenerator",
+    "DEFAULT_DAILY_VOLS",
 ]

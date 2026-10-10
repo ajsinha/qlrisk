@@ -211,7 +211,7 @@ npv = irs.calculate_npv(market_data)
 | [ABS](fixed_income/abs.md) | `abs.py` | Asset-backed |
 | [CDO](fixed_income/cdo.md) | `cdo.py` | Collateralized debt |
 | [CLO](fixed_income/clo.md) | `clo.py` | Collateralized loan |
-| [Zero Coupon Bond](fixed_income/zero_coupon_bond.md) | `zero_coupon_bond.py` | Zero coupon |
+| [Zero Coupon Bond](fixed_income/bond.md) | `zero_coupon_bond.py` | Zero coupon |
 
 ---
 

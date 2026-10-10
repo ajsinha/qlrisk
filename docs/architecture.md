@@ -26,7 +26,7 @@ strictly prohibited without explicit written permission from the copyright holde
 
 ## 1. Overview
 
-QLRisk is a high-performance, multi-threaded system designed for comprehensive counterparty credit risk analytics. It provides dual implementations (pure Python and QuantLib) for all calculations, enabling performance comparison and production flexibility.
+QLRisk is a high-performance, multi-threaded system for unified trading-book risk analytics — market risk and counterparty credit risk on one shared product, market-data and engine core ("Every risk. One engine."). Counterparty credit risk and XVA are implemented today; the market-risk layer (risk factors, sensitivities, VaR/ES, stress, backtesting, FRTB) is planned and specified in [market_risk/README.md](market_risk/README.md). It provides dual implementations (pure Python and QuantLib) for all calculations, enabling performance comparison and production flexibility.
 
 ### 1.1 Key Design Principles
 
@@ -34,7 +34,7 @@ QLRisk is a high-performance, multi-threaded system designed for comprehensive c
 |-----------|---------------|
 | **Dual Implementation** | Every calculator has Python and QuantLib versions |
 | **Multi-threaded** | Concurrent execution via ThreadPoolExecutor |
-| **Modular Design** | Clean separation across 8 modules |
+| **Modular Design** | Clean separation across 10 modules |
 | **Factory Pattern** | Centralized object creation and caching |
 | **Protocol-Based** | Type-safe interfaces using Python protocols |
 | **Extensible** | Easy addition of new calculators, products, models |
@@ -245,7 +245,7 @@ Mirror implementations using QuantLib for enhanced performance.
 
 ### 3.4 Models Module (`qlrisk/models/`)
 
-55+ domain models for CCR analytics.
+55+ domain models for market risk and CCR analytics.
 
 | File | Models | Description |
 |------|--------|-------------|
@@ -300,6 +300,36 @@ Test data generation.
 | `GeneratedTrade` | Trade data class |
 | `GeneratedCounterparty` | Counterparty data class |
 | `GeneratedMarketData` | Market data snapshot |
+| `create_sample_market_data()` | Multi-asset `products.base.MarketData` for pricing demos and tests |
+| `MarketHistoryGenerator` | Correlated, fat-tailed risk-factor histories with a stress regime |
+
+### 3.8 Risk Factors Module (`qlrisk/riskfactors/`)
+
+The layer shared by market risk and CCR. See [market_risk/risk_factors.md](market_risk/risk_factors.md).
+
+| Component | Description |
+|-----------|-------------|
+| `taxonomy.py` | `RiskFactorKey` (`IR.FWD.SOFR.5Y`, `FX.EURUSD`, ...), `RiskClass`, `FactorKind` |
+| `mapping.py` | Enumerate / read / write factors in `MarketData`; copy-on-write clone; dependency detection |
+| `shocks.py` | Absolute / relative / log shocks; parallel, twist, butterfly curve shapes |
+| `timeseries.py` | `RiskFactorTimeSeries`: histories, returns, gap filling, proxies, CSV |
+
+### 3.9 Sensitivities Module (`qlrisk/sensitivities/`)
+
+Bump-and-reprice risk for any product. See [market_risk/sensitivities.md](market_risk/sensitivities.md).
+
+| Component | Description |
+|-----------|-------------|
+| `engine.py` | `SensitivityEngine`: central/forward differences, dependency-aware repricing, reporting currency, theta, cross-gamma |
+| `measures.py` | DV01 / CS01 / DIV01 / DELTA / VEGA / THETA / CROSS_GAMMA and bump conventions |
+| `results.py` | `SensitivityResult`: aggregation, ladders, export |
+| `ladders.py` | Tenor ladders, re-bucketing onto standard and FRTB vertices |
+
+```
+products.price(MarketData) ◄── apply_shocks(base, factor ± bump) ◄── enumerate / detect factors
+          │                                                     (riskfactors)
+          └──► SensitivityResult (DV01, CS01, delta, vega, ...) ──► ladders / aggregation
+```
 
 ---
 

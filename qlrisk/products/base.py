@@ -24,6 +24,7 @@ strictly prohibited without explicit written permission from the copyright holde
 """
 
 from abc import ABC, abstractmethod
+from bisect import bisect_right
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from enum import Enum, auto
@@ -362,6 +363,10 @@ class MarketData:
     credit_curves: Dict[str, Dict[float, float]] = field(default_factory=dict)
     correlation_matrix: Optional[np.ndarray] = None
     dividend_curves: Dict[str, Dict[float, float]] = field(default_factory=dict)
+    equity_prices: Dict[str, float] = field(default_factory=dict)
+    bond_prices: Dict[str, float] = field(default_factory=dict)
+    reference_rates: Dict[str, float] = field(default_factory=dict)
+    commodity_prices: Dict[str, float] = field(default_factory=dict)
 
 
 @dataclass
@@ -512,6 +517,23 @@ class BaseProduct(ABC):
         """
         pass
     
+    def risk_factors(self, market_data: MarketData) -> List[Any]:
+        """
+        Risk factors this product's price depends on.
+        
+        The default detects dependencies by pricing once against an
+        access-recording copy of the market data. Override for products
+        where that is too broad or too slow.
+        
+        Args:
+            market_data: Market data the product will be priced against
+            
+        Returns:
+            List of RiskFactorKey
+        """
+        from ..riskfactors.mapping import detect_risk_factors
+        return detect_risk_factors(self, market_data)
+    
     def get_remaining_maturity(self, as_of_date: date) -> float:
         """Calculate remaining maturity in years."""
         days = (self.maturity_date - as_of_date).days
@@ -654,6 +676,22 @@ class SACCRParameters:
             return cls.SUPERVISORY_FACTORS[key]
         return cls.SUPERVISORY_FACTORS.get((asset_class, None), 0.05)
     
+    @staticmethod
+    def supervisory_duration(start: float, end: float) -> float:
+        """Basel CRE52 supervisory duration: (exp(-0.05 S) - exp(-0.05 E)) / 0.05, S floored at 0, E at 10 business days."""
+        s, e = max(start, 0.0), max(end, 10 / 250)
+        return (np.exp(-0.05 * s) - np.exp(-0.05 * e)) / 0.05
+    
+    @staticmethod
+    def calculate_option_delta(is_call: bool, underlying: float, strike: float, expiry: float, vol: float) -> float:
+        """Basel CRE52.40 supervisory delta for a bought option: Phi(d) for calls, -Phi(-d) for puts."""
+        from scipy.stats import norm
+        t, sigma = max(expiry, 1e-6), max(vol, 1e-6)
+        if underlying <= 0 or strike <= 0:
+            return 1.0 if is_call else -1.0
+        d = (np.log(underlying / strike) + 0.5 * sigma * sigma * t) / (sigma * np.sqrt(t))
+        return float(norm.cdf(d)) if is_call else -float(norm.cdf(-d))
+    
     @classmethod
     def calculate_maturity_factor(cls, maturity: float, mpor: float = 10/252) -> float:
         """Calculate SA-CCR maturity factor."""
@@ -704,6 +742,38 @@ def year_fraction(
         ) / 360
     else:
         return days / 365
+
+
+def curve_value(
+    curve: Dict[float, float],
+    time: float,
+    default: float = 0.05
+) -> float:
+    """
+    Read a tenor curve at any time point.
+    
+    Linear interpolation between pillars, flat extrapolation outside them.
+    Returns `default` only when the curve is empty.
+    
+    Args:
+        curve: Mapping of tenor (years) to value (e.g. zero rate)
+        time: Time point in years
+        default: Value used when the curve has no pillars
+        
+    Returns:
+        Curve value at `time`
+    """
+    if not curve:
+        return default
+    tenors = sorted(curve)
+    if time <= tenors[0]:
+        return curve[tenors[0]]
+    if time >= tenors[-1]:
+        return curve[tenors[-1]]
+    i = bisect_right(tenors, time)
+    t0, t1 = tenors[i - 1], tenors[i]
+    w = (time - t0) / (t1 - t0)
+    return curve[t0] + w * (curve[t1] - curve[t0])
 
 
 def discount_factor(rate: float, time: float) -> float:

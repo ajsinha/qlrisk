@@ -28,6 +28,7 @@ import numpy as np
 from scipy.stats import norm
 from scipy.optimize import brentq
 
+from ..base import curve_value
 from ..base import (
     BaseProduct, ProductType, AssetClass, Currency, FloatingRateIndex,
     DayCountConvention, PaymentFrequency, BusinessDayConvention,
@@ -182,7 +183,7 @@ class InterestRateSwap(BaseProduct):
             t = year_fraction(valuation_date, end, DayCountConvention.ACT_365)
             
             # Get discount factor
-            df = np.exp(-discount_curve.get(t, 0.05) * t)
+            df = np.exp(-curve_value(discount_curve, t, 0.05) * t)
             
             fixed_pv += notional * self.fixed_rate * tau * df
             fixed_dv01 += notional * tau * df * 0.0001
@@ -202,15 +203,15 @@ class InterestRateSwap(BaseProduct):
             t_end = year_fraction(valuation_date, end, DayCountConvention.ACT_365)
             
             # Get forward rate and discount factor
-            df_start = np.exp(-forward_curve.get(t_start, 0.05) * t_start) if t_start > 0 else 1.0
-            df_end = np.exp(-forward_curve.get(t_end, 0.05) * t_end)
+            df_start = np.exp(-curve_value(forward_curve, t_start, 0.05) * t_start) if t_start > 0 else 1.0
+            df_end = np.exp(-curve_value(forward_curve, t_end, 0.05) * t_end)
             
             if t_end > t_start and t_start >= 0:
                 fwd_rate = (df_start / df_end - 1) / tau
             else:
-                fwd_rate = forward_curve.get(t_end, 0.05)
+                fwd_rate = curve_value(forward_curve, t_end, 0.05)
             
-            df_discount = np.exp(-discount_curve.get(t_end, 0.05) * t_end)
+            df_discount = np.exp(-curve_value(discount_curve, t_end, 0.05) * t_end)
             float_pv += notional * (fwd_rate + self.spread) * tau * df_discount
         
         # Calculate NPV based on position
@@ -223,7 +224,7 @@ class InterestRateSwap(BaseProduct):
         annuity = sum(
             self.get_notional_at_date(start) * 
             year_fraction(start, end, self.fixed_day_count) *
-            np.exp(-discount_curve.get(
+            np.exp(-curve_value(discount_curve, 
                 year_fraction(valuation_date, end, DayCountConvention.ACT_365), 0.05
             ) * year_fraction(valuation_date, end, DayCountConvention.ACT_365))
             for start, end in fixed_schedule
@@ -514,16 +515,16 @@ class ForwardRateAgreement(BaseProduct):
         tau = year_fraction(self.effective_date, self.maturity_date, self.day_count)
         
         # Forward rate
-        df_settle = np.exp(-forward_curve.get(t_settle, 0.05) * t_settle) if t_settle > 0 else 1.0
-        df_end = np.exp(-forward_curve.get(t_end, 0.05) * t_end)
+        df_settle = np.exp(-curve_value(forward_curve, t_settle, 0.05) * t_settle) if t_settle > 0 else 1.0
+        df_end = np.exp(-curve_value(forward_curve, t_end, 0.05) * t_end)
         
         if t_end > t_settle:
             fwd_rate = (df_settle / df_end - 1) / tau
         else:
-            fwd_rate = forward_curve.get(t_end, 0.05)
+            fwd_rate = curve_value(forward_curve, t_end, 0.05)
         
         # Discount factor to settlement
-        df_discount = np.exp(-discount_curve.get(t_settle, 0.05) * t_settle)
+        df_discount = np.exp(-curve_value(discount_curve, t_settle, 0.05) * t_settle)
         
         # NPV (cash settlement at effective date)
         rate_diff = fwd_rate - self.fra_rate
@@ -725,12 +726,12 @@ class InterestRateCap(BaseProduct):
                 continue
             
             # Forward rate
-            df_start = np.exp(-forward_curve.get(t_fix, 0.05) * t_fix)
-            df_end = np.exp(-forward_curve.get(t_pay, 0.05) * t_pay)
+            df_start = np.exp(-curve_value(forward_curve, t_fix, 0.05) * t_fix)
+            df_end = np.exp(-curve_value(forward_curve, t_pay, 0.05) * t_pay)
             fwd_rate = (df_start / df_end - 1) / tau
             
             # Discount factor
-            df_discount = np.exp(-discount_curve.get(t_pay, 0.05) * t_pay)
+            df_discount = np.exp(-curve_value(discount_curve, t_pay, 0.05) * t_pay)
             
             # Volatility (use flat vol if surface not available)
             vol = vol_surface.get(t_fix, 0.15)  # 15% normal vol default
@@ -812,7 +813,7 @@ class InterestRateCap(BaseProduct):
         forward_curve = market_data.forward_curves.get(
             self.floating_index.value, market_data.discount_curve
         )
-        avg_fwd = forward_curve.get(remaining_maturity / 2, 0.05)
+        avg_fwd = curve_value(forward_curve, remaining_maturity / 2, 0.05)
         
         # Black delta
         vol = market_data.volatility_surfaces.get("cap_vol", {}).get(remaining_maturity, 0.15)
@@ -922,13 +923,13 @@ class Swaption(BaseProduct):
         t_start = year_fraction(valuation_date, self.effective_date, DayCountConvention.ACT_365)
         t_end = year_fraction(valuation_date, self.maturity_date, DayCountConvention.ACT_365)
         
-        df_start = np.exp(-forward_curve.get(t_start, 0.05) * t_start) if t_start > 0 else 1.0
-        df_end = np.exp(-forward_curve.get(t_end, 0.05) * t_end)
+        df_start = np.exp(-curve_value(forward_curve, t_start, 0.05) * t_start) if t_start > 0 else 1.0
+        df_end = np.exp(-curve_value(forward_curve, t_end, 0.05) * t_end)
         
         # Annuity factor (simplified)
         num_periods = int(swap_tenor * 2)  # Semi-annual
         annuity = sum(
-            0.5 * np.exp(-discount_curve.get(t_start + i * 0.5, 0.05) * (t_start + i * 0.5))
+            0.5 * np.exp(-curve_value(discount_curve, t_start + i * 0.5, 0.05) * (t_start + i * 0.5))
             for i in range(1, num_periods + 1)
         )
         
@@ -943,7 +944,7 @@ class Swaption(BaseProduct):
             vol = 0.15
         
         # Discount to expiry
-        df_expiry = np.exp(-discount_curve.get(t_expiry, 0.05) * t_expiry)
+        df_expiry = np.exp(-curve_value(discount_curve, t_expiry, 0.05) * t_expiry)
         
         # Black normal model
         if self.option_type == OptionType.CALL:  # Payer swaption
@@ -1130,10 +1131,10 @@ class BasisSwap(InterestRateSwap):
             tau = year_fraction(start, end, DayCountConvention.ACT_360)
             t_end = year_fraction(valuation_date, end, DayCountConvention.ACT_365)
             
-            df_pay = np.exp(-pay_curve.get(t_end, 0.05) * t_end)
-            fwd_rate = pay_curve.get(t_end, 0.05)
+            df_pay = np.exp(-curve_value(pay_curve, t_end, 0.05) * t_end)
+            fwd_rate = curve_value(pay_curve, t_end, 0.05)
             
-            df_discount = np.exp(-discount_curve.get(t_end, 0.05) * t_end)
+            df_discount = np.exp(-curve_value(discount_curve, t_end, 0.05) * t_end)
             pay_pv += self.notional * (fwd_rate + self.spread_pay) * tau * df_discount
         
         # Price receive leg
@@ -1147,9 +1148,9 @@ class BasisSwap(InterestRateSwap):
             tau = year_fraction(start, end, DayCountConvention.ACT_360)
             t_end = year_fraction(valuation_date, end, DayCountConvention.ACT_365)
             
-            fwd_rate = receive_curve.get(t_end, 0.05)
+            fwd_rate = curve_value(receive_curve, t_end, 0.05)
             
-            df_discount = np.exp(-discount_curve.get(t_end, 0.05) * t_end)
+            df_discount = np.exp(-curve_value(discount_curve, t_end, 0.05) * t_end)
             receive_pv += self.notional * (fwd_rate + self.spread_receive) * tau * df_discount
         
         npv = receive_pv - pay_pv

@@ -302,7 +302,7 @@ Adjusted_Notional = Notional × Duration / 5.0
 - [Equity Products](../products/README.md#equity-derivatives)
 - [Fixed Income Products](../products/README.md#fixed-income)
 - [SA-CCR Documentation](../saccr.md)
-- [XVA Calculations](../xva.md)
+- [XVA Calculations](../calculators/cva_calculator.md)
 
 ---
 

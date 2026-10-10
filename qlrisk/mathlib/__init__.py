@@ -11,7 +11,7 @@ strictly prohibited without explicit written permission from the copyright holde
 
 ---
 
-Mathematical utilities for CCR analytics including:
+Mathematical utilities for market risk and CCR analytics including:
 - Stochastic path generation
 - Monte Carlo simulation engines
 - Statistical utilities

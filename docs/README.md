@@ -13,17 +13,24 @@ strictly prohibited without explicit written permission from the copyright holde
 
 ## Documentation Index
 
-Welcome to QLRisk documentation. This comprehensive guide covers all aspects of the counterparty credit risk analytics platform.
+Welcome to QLRisk documentation. QLRisk is a unified market risk and counterparty credit risk analytics platform — **Every risk. One engine.**
+This guide covers pricing and sensitivities, counterparty credit risk and XVA, and the market-risk roadmap
+(VaR, Expected Shortfall, stress testing, backtesting and FRTB).
 
 ### Quick Links
 
 | Document | Description |
 |----------|-------------|
+| [guides/](guides/README.md) | **User guides with tested, working examples (start here)** |
 | [README.md](../README.md) | Main project README with overview |
 | [quickstart.md](quickstart.md) | Getting started guide with examples |
 | [architecture.md](architecture.md) | System architecture and design |
 | [mathematical_formulas.md](mathematical_formulas.md) | Mathematical foundations |
 | [saccr.md](saccr.md) | SA-CCR methodology documentation |
+| [market_risk/README.md](market_risk/README.md) | Market-risk roadmap: VaR, ES, sensitivities, stress, backtesting, FRTB |
+| [market_risk/risk_factors.md](market_risk/risk_factors.md) | Risk-factor keys, shocks, dependency detection, factor histories |
+| [market_risk/sensitivities.md](market_risk/sensitivities.md) | DV01, CS01, delta, gamma, vega, theta, cross-gamma, tenor ladders |
+| [Brand kit](../assets/branding/BRAND.md) | Logo, favicon, tagline and palette |
 
 ---
 
@@ -36,6 +43,19 @@ docs/
 ├── quickstart.md                # Getting started guide
 ├── mathematical_formulas.md     # Mathematical reference
 ├── saccr.md                     # SA-CCR implementation details
+│
+├── guides/                      # User guides (examples run in the test suite)
+│   ├── getting_started/        # installation, first portfolio
+│   ├── market_data/            # building market data, shocks, histories
+│   ├── pricing/                # pricing every product family
+│   ├── market_risk/            # sensitivity reports
+│   └── counterparty_risk/      # exposure, SA-CCR, CCR metrics
+│
+├── market_risk/                 # Market-risk roadmap and methodology
+│   ├── README.md               # Module plan by phase
+│   ├── risk_factors.md         # Risk-factor keys, shocks, histories
+│   ├── sensitivities.md        # Bump-and-reprice sensitivities, ladders
+│   └── pricers.md              # Analytic pricers and product kwargs
 │
 ├── calculators/                 # Calculator documentation (18 files)
 │   ├── README.md               # Calculator overview
@@ -132,6 +152,7 @@ docs/
 | Valuation | CVA, DVA, FVA, KVA, MVA |
 | Capital | EC, RAROC, IM |
 | Regulatory | SA-CCR |
+| Market Risk | Sensitivities ✅; planned: VaR (HS/Parametric/MC), ES, SVaR, VaR decomposition, FRTB SA/IMA, CVA capital |
 
 ---
 

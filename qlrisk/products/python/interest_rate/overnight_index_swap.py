@@ -13,6 +13,7 @@ from datetime import date
 from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency, FloatingRateIndex,
     DayCountConvention, PaymentFrequency,
@@ -67,13 +68,13 @@ class OvernightIndexSwap(BaseProduct):
         discount_curve = market_data.discount_curve
         remaining_maturity = self.get_remaining_maturity(valuation_date)
         
-        df = np.exp(-discount_curve.get(remaining_maturity, 0.05) * remaining_maturity)
+        df = np.exp(-curve_value(discount_curve, remaining_maturity, 0.05) * remaining_maturity)
         
         # OIS fixed leg PV
         fixed_pv = self.notional * self.fixed_rate * remaining_maturity * df
         
         # OIS float leg approximation (at par initially)
-        ois_rate = discount_curve.get(remaining_maturity, 0.05)
+        ois_rate = curve_value(discount_curve, remaining_maturity, 0.05)
         float_pv = self.notional * ois_rate * remaining_maturity * df
         
         if self.is_payer:

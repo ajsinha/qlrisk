@@ -2,7 +2,7 @@
 QLRisk - Main Engine Module
 ==========================================
 
-High-performance, multi-threaded CCR analytics engine.
+High-performance, multi-threaded counterparty credit risk (CCR) engine.
 
 Features:
 - Concurrent calculator execution

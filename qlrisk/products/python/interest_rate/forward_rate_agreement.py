@@ -12,6 +12,7 @@ from datetime import date
 from typing import Dict, Any, Optional
 import numpy as np
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency,
     DayCountConvention,
@@ -70,8 +71,8 @@ class ForwardRateAgreement(BaseProduct):
         t_maturity = year_fraction(valuation_date, self.maturity_date, DayCountConvention.ACT_365)
         tau = year_fraction(self.settlement_date, self.maturity_date, self.day_count)
         
-        df_settle = np.exp(-discount_curve.get(t_settle, 0.05) * t_settle)
-        df_maturity = np.exp(-discount_curve.get(t_maturity, 0.05) * t_maturity)
+        df_settle = np.exp(-curve_value(discount_curve, t_settle, 0.05) * t_settle)
+        df_maturity = np.exp(-curve_value(discount_curve, t_maturity, 0.05) * t_maturity)
         
         # Forward rate
         fwd_rate = (df_settle / df_maturity - 1) / tau if tau > 0 else 0

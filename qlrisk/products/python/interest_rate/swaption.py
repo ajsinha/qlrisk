@@ -13,6 +13,7 @@ from typing import Dict, Any, Optional
 import numpy as np
 from scipy.stats import norm
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency, FloatingRateIndex,
     DayCountConvention, PaymentFrequency, OptionStyle,
@@ -82,10 +83,10 @@ class Swaption(BaseProduct):
         
         # Approximate forward swap rate
         t_end = year_fraction(valuation_date, self.swap_maturity, DayCountConvention.ACT_365)
-        forward_rate = discount_curve.get(t_end, 0.05)
+        forward_rate = curve_value(discount_curve, t_end, 0.05)
         
         # Annuity (approximate)
-        annuity = swap_tenor * np.exp(-discount_curve.get(t_end/2, 0.05) * t_end/2)
+        annuity = swap_tenor * np.exp(-curve_value(discount_curve, t_end/2, 0.05) * t_end/2)
         
         # Black's model
         if option_maturity > 0 and vol > 0:

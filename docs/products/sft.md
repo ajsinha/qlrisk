@@ -374,8 +374,8 @@ Settlement failures, corporate action processing, dividend handling.
 
 - [Repo Products](../products/README.md#repo)
 - [SA-CCR Documentation](../saccr.md)
-- [Margin & Collateral](../margin.md)
-- [XVA Calculations](../xva.md)
+- [Margin & Collateral](../calculators/im_calculator.md)
+- [XVA Calculations](../calculators/cva_calculator.md)
 
 ---
 

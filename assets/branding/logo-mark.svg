@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>qlrisk mark</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#13315C"/>
+      <stop offset="1" stop-color="#0B1F3A"/>
+    </linearGradient>
+    <clipPath id="tail"><rect x="42" y="0" width="22" height="64"/></clipPath>
+    <clipPath id="body"><rect x="0" y="0" width="42" height="64"/></clipPath>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- area under the loss distribution -->
+  <path id="area" d="M10 46 C16 46 18 18 25 18 C31 18 33 32 40 36.5 C46 40.5 50 45 55 46 Z" fill="#4FB3FF" fill-opacity="0.22" clip-path="url(#body)"/>
+  <path d="M10 46 C16 46 18 18 25 18 C31 18 33 32 40 36.5 C46 40.5 50 45 55 46 Z" fill="#F5A524" clip-path="url(#tail)"/>
+  <!-- distribution curve -->
+  <path d="M10 46 C16 46 18 18 25 18 C31 18 33 32 40 36.5 C46 40.5 50 45 55 46" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- quantile cut (VaR / PFE) -->
+  <line x1="42" y1="12" x2="42" y2="46" stroke="#F5A524" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="3.2 3"/>
+  <!-- baseline -->
+  <line x1="9" y1="48.5" x2="55" y2="48.5" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="1.6" stroke-linecap="round"/>
+</svg>

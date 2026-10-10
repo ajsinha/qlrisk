@@ -11,7 +11,7 @@ strictly prohibited without explicit written permission from the copyright holde
 
 ---
 
-High-performance, multi-threaded CCR analytics engine.
+High-performance, multi-threaded risk analytics engine (CCR today; market risk on the roadmap).
 
 Features:
 - Concurrent calculator execution via ThreadPoolExecutor

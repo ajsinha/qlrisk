@@ -2,7 +2,7 @@
 QLRisk - Data Generator Module
 =============================================
 
-Utilities for generating test data for CCR analytics.
+Utilities for generating test data for risk analytics.
 
 Generates:
 - Trade portfolios (IRS, FX, Options, CDS)
@@ -177,7 +177,7 @@ class GeneratedMarketData:
 
 class DataGenerator:
     """
-    Generator for CCR analytics test data.
+    Generator for risk analytics test data.
     
     Generates realistic test data for:
     - Trade portfolios

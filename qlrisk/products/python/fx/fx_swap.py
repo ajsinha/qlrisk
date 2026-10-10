@@ -62,7 +62,7 @@ class FXSwap(BaseProduct):
         valuation_date = market_data.valuation_date
         
         if self.is_expired(valuation_date):
-            return PricingResult(npv=0.0, currency=self.base_currency.value)
+            return PricingResult(npv=0.0, currency=self.quote_currency.value)
         
         pair = f"{self.base_currency.value}{self.quote_currency.value}"
         spot = market_data.fx_spots.get(pair, self.near_rate)
@@ -75,7 +75,7 @@ class FXSwap(BaseProduct):
         
         return PricingResult(
             npv=npv,
-            currency=self.base_currency.value,
+            currency=self.quote_currency.value,
             components={"swap_points": swap_points * 10000, "near_rate": self.near_rate, "far_rate": self.far_rate},
             greeks={"fx_delta": self.base_notional},
             metadata={"product_type": self.product_type.value}

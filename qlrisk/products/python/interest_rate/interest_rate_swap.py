@@ -14,6 +14,7 @@ from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
 from scipy.stats import norm
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency, FloatingRateIndex,
     DayCountConvention, PaymentFrequency, BusinessDayConvention,
@@ -148,7 +149,7 @@ class InterestRateSwap(BaseProduct):
             tau = year_fraction(start, end, self.fixed_day_count)
             t = year_fraction(valuation_date, end, DayCountConvention.ACT_365)
             
-            df = np.exp(-discount_curve.get(t, 0.05) * t)
+            df = np.exp(-curve_value(discount_curve, t, 0.05) * t)
             
             fixed_pv += notional * self.fixed_rate * tau * df
             fixed_dv01 += notional * tau * df * 0.0001
@@ -167,15 +168,15 @@ class InterestRateSwap(BaseProduct):
             t_start = year_fraction(valuation_date, start, DayCountConvention.ACT_365)
             t_end = year_fraction(valuation_date, end, DayCountConvention.ACT_365)
             
-            df_start = np.exp(-forward_curve.get(t_start, 0.05) * t_start) if t_start > 0 else 1.0
-            df_end = np.exp(-forward_curve.get(t_end, 0.05) * t_end)
+            df_start = np.exp(-curve_value(forward_curve, t_start, 0.05) * t_start) if t_start > 0 else 1.0
+            df_end = np.exp(-curve_value(forward_curve, t_end, 0.05) * t_end)
             
             if t_end > t_start and t_start >= 0:
                 fwd_rate = (df_start / df_end - 1) / tau
             else:
-                fwd_rate = forward_curve.get(t_end, 0.05)
+                fwd_rate = curve_value(forward_curve, t_end, 0.05)
             
-            df_discount = np.exp(-discount_curve.get(t_end, 0.05) * t_end)
+            df_discount = np.exp(-curve_value(discount_curve, t_end, 0.05) * t_end)
             float_pv += notional * (fwd_rate + self.spread) * tau * df_discount
         
         if self.is_payer:
@@ -186,7 +187,7 @@ class InterestRateSwap(BaseProduct):
         annuity = sum(
             self.get_notional_at_date(start) * 
             year_fraction(start, end, self.fixed_day_count) *
-            np.exp(-discount_curve.get(
+            np.exp(-curve_value(discount_curve, 
                 year_fraction(valuation_date, end, DayCountConvention.ACT_365), 0.05
             ) * year_fraction(valuation_date, end, DayCountConvention.ACT_365))
             for start, end in fixed_schedule

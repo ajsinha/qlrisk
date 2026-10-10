@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Trade model represents individual financial transactions in QLRisk. It captures all essential attributes needed for counterparty credit risk calculations.
+The Trade model represents individual financial transactions in QLRisk. It captures all essential attributes needed for market risk and counterparty credit risk calculations.
 
 ## Classes
 
