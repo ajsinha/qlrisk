@@ -1,5 +1,11 @@
 # Treasury Inflation-Protected Securities (TIPS) v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `TIPS` is priced by `price_fixed_bond` in `products/python/_pricing.py`. Product terms are keyword arguments: `coupon`, `frequency` (2), `issuer` (credit curve), `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -87,29 +93,21 @@ With $SF_{IR} = 0.50\%$
 
 ```python
 from datetime import date
-from products.python.fixed_income import TIPS
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import TIPS
+from qlrisk.sensitivities import SensitivityEngine
 
-# Create a 10-year TIPS
-tips = TIPS(
-    trade_id="TIPS-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2034, 1, 15),
-    face_value=5000000,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    real_coupon_rate=0.015,  # 1.5% real coupon
-    base_cpi=305.0,
-    current_cpi=310.0,
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = TIPS("TIPS-1", md.valuation_date, md.valuation_date, date(2031, 10, 9), 5_000_000, Currency.USD, "CP-1", coupon=0.05, issuer="ACME")
 
-result = tips.price(market_data)
-print(f"Adjusted Principal: ${result.components['adjusted_principal']:,.2f}")
-print(f"Real Yield: {result.components['real_yield']:.2%}")
-print(f"Breakeven Inflation: {result.components['breakeven_inflation']:.2%}")
-print(f"Inflation Delta: ${result.greeks['inflation_delta']:,.2f}")
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

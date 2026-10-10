@@ -1,5 +1,11 @@
 # FX Swap v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `FXSwap` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.FXSwap)`).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -41,24 +47,21 @@ $$Cost = \frac{Swap Points \times N \times Days}{10000 \times 365}$$
 
 ```python
 from datetime import date
-from products.python.fx import FXSwap
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import FXSwap
+from qlrisk.sensitivities import SensitivityEngine
 
-fx_swap = FXSwap(
-    trade_id="FXSWP-001",
-    trade_date=date(2024, 1, 15),
-    near_date=date(2024, 1, 17),
-    far_date=date(2024, 4, 17),
-    base_currency=Currency.USD,
-    quote_currency=Currency.JPY,
-    base_notional=50000000,
-    near_rate=148.50,
-    far_rate=147.80,
-    counterparty_id="CPY-001",
-    buy_base_near=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = FXSwap("FXSW-1", d0, date(2026, 10, 13), date(2027, 10, 9), Currency.EUR, Currency.USD, 1_000_000, 1.085, 1.10, "CP-1")
 
-result = fx_swap.price(market_data)
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

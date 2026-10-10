@@ -1,5 +1,11 @@
 # Asset-Backed Securities (ABS) v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation status:** `ABS` currently uses **placeholder pricing** (`notional × discount factor × 1%`), so its PV and risk are not meaningful yet. It is on the roadmap for a real model.
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -68,25 +74,21 @@ Losses are allocated in reverse order of seniority.
 
 ```python
 from datetime import date
-from products.python.fixed_income import ABS
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import ABS
+from qlrisk.sensitivities import SensitivityEngine
 
-abs_auto = ABS(
-    trade_id="ABS-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 1),
-    maturity_date=date(2029, 1, 1),
-    face_value=10000000,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    coupon_rate=0.045,
-    collateral_type="auto",
-    tranche="A",
-    credit_enhancement=0.15,
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = ABS("ABS-1", md.valuation_date, md.valuation_date, date(2031, 10, 9), 5_000_000, Currency.USD, "CP-1")
 
-result = abs_auto.price(market_data)
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

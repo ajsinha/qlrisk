@@ -1,4 +1,4 @@
-# QLRisk - Market Risk Roadmap v2.0.0
+# QLRisk - Market Risk Roadmap v2.0.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -192,32 +192,24 @@ cross-currency swaps). See [pricers.md](pricers.md).
 tranching), convertible bond, variance swap, dividend swap, equity swap, total return swap, bond
 future, interest-rate future and VIX future.
 
-## 4. Planned Usage (target API)
+## 4. Usage (as delivered)
 
 ```python
-from qlrisk.engine import MarketRiskEngine
-from qlrisk.scenarios import HistoricalScenarioGenerator
+from qlrisk.demos import demo_book
+from qlrisk.engine import MarketRiskEngine, RiskEngine
+from qlrisk.scenarios import historical_scenarios
 
-with MarketRiskEngine() as engine:
-    scenarios = HistoricalScenarioGenerator(history, lookback_days=500).generate()
+book, md, history, tree, frtb_maps = demo_book()
 
-    var = engine.run_var(portfolio, market_data, scenarios, confidence=0.99, horizon_days=10)
-    es  = engine.run_es(portfolio, market_data, scenarios, confidence=0.975)
-    sens = engine.run_sensitivities(portfolio, market_data)
+mre = MarketRiskEngine(reporting_currency="USD")
+scen = historical_scenarios(history, lookback=250, horizon=10, sqrt_scaling=True)
+print(mre.var(book, md, scen, confidence=0.99), mre.es(book, md, scen, confidence=0.975))
+print(mre.sensitivities(book, md).ladder("forward_curves", "SOFR"))
 
-    print(f"10d 99% VaR: {var.value:,.0f}   97.5% ES: {es.value:,.0f}")
-    print(sens.ladder("GIRR", currency="USD"))      # DV01 by tenor
+report = RiskEngine(reporting_currency="USD").run(          # one engine, every risk
+    book, md, history, measures=("VAR", "ES", "SENSITIVITIES", "EXPOSURE", "FRTB_SA"), frtb=frtb_maps)
+print(report)
 ```
-
-```python
-from qlrisk.engine import RiskEngine
-
-with RiskEngine() as engine:                        # one engine, every risk
-    report = engine.run(portfolio, market_data,
-                        measures=["VAR", "ES", "SENSITIVITIES", "PFE", "CVA", "FRTB_SA", "SACCR"])
-```
-
----
 
 ## 5. Documentation That Ships With Each Phase
 
@@ -239,4 +231,4 @@ with RiskEngine() as engine:                        # one engine, every risk
 
 ---
 
-*QLRisk v2.0.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.0.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

@@ -1,5 +1,5 @@
 """
-QLRisk - Data Module v2.0.0
+QLRisk - Data Module v2.0.1
 ==========================================
 
 Copyright © 2025-2030, All Rights Reserved
@@ -40,7 +40,7 @@ Usage:
     )
 """
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 from .generator import (
     ProductType,

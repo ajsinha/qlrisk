@@ -1,5 +1,11 @@
 # Floating Rate Note (FRN) v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `FloatingRateNote` is priced by `price_frn` in `products/python/_pricing.py`. Product terms are keyword arguments: `index`, `spread`, `frequency` (4), `issuer`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -85,30 +91,21 @@ $$C = \min(\max(R + s, Floor), Cap)$$
 
 ```python
 from datetime import date
-from products.python.fixed_income import FloatingRateNote
-from products.base import Currency, MarketData, PaymentFrequency
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import FloatingRateNote
+from qlrisk.sensitivities import SensitivityEngine
 
-frn = FloatingRateNote(
-    trade_id="FRN-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2027, 1, 15),
-    face_value=10000000,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    spread=0.0075,  # 75 bps over SOFR
-    reference_rate="SOFR",
-    reset_frequency=PaymentFrequency.QUARTERLY,
-    issuer_name="Bank ABC",
-    floor=0.0,
-    cap=0.08,
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = FloatingRateNote("FLOATING-RATE-NOTE-1", md.valuation_date, md.valuation_date, date(2031, 10, 9), 5_000_000, Currency.USD, "CP-1", index="SOFR", spread=0.01, issuer="ACME")
 
-result = frn.price(market_data)
-print(f"Current Coupon: {result.components['current_coupon']:.2%}")
-print(f"Duration: {result.components['duration']:.2f}")
-print(f"Spread DV01: ${result.greeks['spread_dv01']:,.2f}")
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

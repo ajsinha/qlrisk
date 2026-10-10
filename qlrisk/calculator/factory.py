@@ -13,7 +13,7 @@ strictly prohibited without explicit written permission from the copyright holde
 """
 
 import inspect
-from typing import Dict, Any, Type, Optional, List
+from typing import Union, Dict, Any, Type, Optional, List
 from threading import Lock
 
 from ..core.logger import get_logger
@@ -369,9 +369,14 @@ class CalculatorFactory:
         """Set the default implementation type."""
         self._default_implementation = implementation
     
+    @classmethod
+    def get_instance(cls) -> 'CalculatorFactory':
+        """The singleton factory (same as CalculatorFactory() or get_calculator_factory())."""
+        return cls()
+    
     def get_calculator(
         self,
-        calc_type: str,
+        calc_type: Union[str, CalculatorType],
         name: Optional[str] = None,
         config: Optional[Dict[str, Any]] = None,
         implementation: Optional[str] = None
@@ -380,10 +385,10 @@ class CalculatorFactory:
         Generic method to get any calculator by type string.
         
         Args:
-            calc_type: Calculator type string (e.g., 'pd', 'lgd', 'ead', 'el', etc.)
+            calc_type: CalculatorType, or a type string (e.g., 'pd', 'lgd', 'ead', 'el', 'var', ...)
             name: Optional calculator name
             config: Optional configuration
-            implementation: Implementation type ('python' or 'quantlib')
+            implementation: 'python', or 'quantlib' / 'qlib' (falls back to Python where incomplete)
             
         Returns:
             Calculator instance
@@ -391,7 +396,11 @@ class CalculatorFactory:
         # Map string to implementation type
         impl = None
         if implementation:
-            impl = ImplementationType.PYTHON if implementation.lower() == "python" else ImplementationType.QUANTLIB
+            impl_text = getattr(implementation, "value", implementation)
+            impl = ImplementationType.PYTHON if str(impl_text).lower() == "python" else ImplementationType.QUANTLIB
+        
+        if isinstance(calc_type, CalculatorType):
+            return self.create(calc_type, name or f"{calc_type.value}_calc", config or {}, impl)
         
         # Map calc_type string to method
         calc_type_lower = calc_type.lower()
@@ -408,7 +417,9 @@ class CalculatorFactory:
             "ec": self.get_ec_calculator,
             "im": self.get_im_calculator,
             "mtm": self.get_mtm_calculator,
-            "raroc": self.get_ec_calculator,  # Map raroc to EC for now
+            "raroc": lambda **kw: self.create(CalculatorType.RAROC, kw.get("name") or "raroc_calc", kw.get("config") or {}, kw.get("implementation")),
+            "var": lambda **kw: self.create(CalculatorType.VAR, kw.get("name") or "var_calc", kw.get("config") or {}, kw.get("implementation")),
+            "es": lambda **kw: self.create(CalculatorType.EXPECTED_SHORTFALL, kw.get("name") or "es_calc", kw.get("config") or {}, kw.get("implementation")),
             "stressed_exposure": lambda **kw: self.create(CalculatorType.STRESSED_EXPOSURE, kw.get("name") or "stressed_exposure_calc", kw.get("config") or {}, kw.get("implementation")),
             "peak_exposure": lambda **kw: self.create(CalculatorType.PEAK_EXPOSURE, kw.get("name") or "peak_exposure_calc", kw.get("config") or {}, kw.get("implementation")),
         }
@@ -419,7 +430,7 @@ class CalculatorFactory:
         method = method_map[calc_type_lower]
         
         # Special handling for lambda functions (stress calculators)
-        if calc_type_lower in ["stressed_exposure", "peak_exposure"]:
+        if calc_type_lower in ["stressed_exposure", "peak_exposure", "raroc", "var", "es"]:
             return method(name=name or f"{calc_type_lower}_calc", config=config, implementation=impl)
         
         return method(name=name or f"{calc_type_lower}_calc", config=config, implementation=impl)

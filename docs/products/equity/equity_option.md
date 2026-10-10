@@ -1,5 +1,11 @@
 # Equity Option v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `EquityOption` is priced by `price_equity_option` in `products/python/_pricing.py`. Product terms are keyword arguments: `ticker`, `strike` (ATM), `is_call`, `quantity`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -41,26 +47,21 @@ $$d_1 = \frac{\ln(S/K) + (r - q + 0.5\sigma^2)T}{\sigma\sqrt{T}}$$
 
 ```python
 from datetime import date
-from products.python.equity import EquityOption
-from products.base import Currency, MarketData, OptionType
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import EquityOption
+from qlrisk.sensitivities import SensitivityEngine
 
-eq_opt = EquityOption(
-    trade_id="EQOPT-001",
-    trade_date=date(2024, 1, 15),
-    expiry_date=date(2024, 7, 15),
-    underlying="AAPL",
-    strike=180.0,
-    notional=1000,  # 1000 shares
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    option_type=OptionType.CALL,
-    is_long=True,
-    volatility=0.25
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = EquityOption("EQUITY-OPTION-1", md.valuation_date, md.valuation_date, date(2027, 10, 9), 5_000_000, Currency.USD, "CP-1", ticker="AAPL", strike=200.0, is_call=True)
 
-result = eq_opt.price(market_data)
-print(f"Premium: ${result.npv:,.2f}")
-print(f"Delta: {result.greeks['delta']:.2f}")
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

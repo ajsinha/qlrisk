@@ -113,7 +113,7 @@ Pre-defined regulatory scenarios:
 ## Usage Examples
 
 ```python
-from models import (
+from qlrisk.models import (
     Scenario, ScenarioType, ShockType,
     CurveShock, RiskFactorShock, ScenarioSet
 )

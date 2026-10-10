@@ -1,5 +1,9 @@
 # Expected Exposure (EE) Calculator
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Expected Exposure (EE) Calculator computes the average expected positive credit exposure at future dates. EE is the risk-neutral expectation of exposure and is fundamental to CVA calculations and regulatory capital under the Internal Model Method (IMM).
@@ -33,7 +37,7 @@ Average of EEE profile over exposure horizon
 
 ### 1. Monte Carlo Simulation (Default)
 
-```python
+```text
 for each simulation path:
     for each time point t:
         Simulate risk factors

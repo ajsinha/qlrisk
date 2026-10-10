@@ -1,5 +1,11 @@
 # Corporate Bond v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `CorporateBond` is priced by `price_fixed_bond` in `products/python/_pricing.py`. Product terms are keyword arguments: `coupon`, `frequency` (2), `issuer` (credit curve), `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -109,40 +115,21 @@ $$AddOn = SF_{credit}(rating) \times Notional \times MF$$
 
 ```python
 from datetime import date
-from products.python.fixed_income import CorporateBond, Seniority
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import CorporateBond
+from qlrisk.sensitivities import SensitivityEngine
 
-corp = CorporateBond(
-    trade_id="CORP-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2029, 1, 15),
-    face_value=5000000,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    coupon_rate=0.055,
-    issuer_name="ACME Corp",
-    credit_rating="BBB",
-    seniority=Seniority.SENIOR_UNSECURED,
-    sector="technology",
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = CorporateBond("CORPORATE-BOND-1", md.valuation_date, md.valuation_date, date(2031, 10, 9), 5_000_000, Currency.USD, "CP-1", coupon=0.05, issuer="ACME")
 
-# Create market data with credit spread
-market_data = MarketData(
-    valuation_date=date(2024, 6, 15),
-    discount_curve={1: 0.05, 5: 0.052, 10: 0.055},
-    credit_spreads={"BBB": 0.015}  # 150 bps
-)
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
 
-result = corp.price(market_data)
-print(f"Credit Spread: {result.components['credit_spread']:.0%}")
-print(f"CS01: ${result.greeks['cs01']:,.2f}")
-print(f"Recovery Rate: {result.components['recovery_rate']:.0%}")
-
-# SA-CCR
-saccr = corp.calculate_saccr(market_data)
-print(f"EAD: ${saccr.ead:,.2f}")
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

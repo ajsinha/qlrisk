@@ -1,5 +1,5 @@
 """
-QLRisk - Bond Total Return Swap (TRS) v2.0.0
+QLRisk - Bond Total Return Swap (TRS) v2.0.1
 ============================================================
 
 Bond Total Return Swap implementation with full CCR analytics support.

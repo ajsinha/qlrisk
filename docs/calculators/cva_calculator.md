@@ -1,5 +1,9 @@
 # Credit Valuation Adjustment (CVA) Calculator
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (3 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Credit Valuation Adjustment (CVA) Calculator computes the market value of counterparty credit risk. CVA represents the expected loss due to counterparty default and is both an accounting adjustment (fair value) and a regulatory capital requirement.

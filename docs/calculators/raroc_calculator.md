@@ -1,5 +1,9 @@
 # RAROC Calculator Documentation v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The RAROC (Risk-Adjusted Return on Capital) Calculator computes the risk-adjusted profitability of trades and portfolios, comparing returns to the capital at risk.
@@ -52,7 +56,7 @@ $$Value\ Added = (RAROC - Hurdle\ Rate) \times EC$$
 ## Usage Example
 
 ```python
-from calculator.python import RAROCCalculator, RAROCInput
+from qlrisk.calculator.python import RAROCCalculator, RAROCInput
 
 calculator = RAROCCalculator()
 

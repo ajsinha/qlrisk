@@ -1,5 +1,9 @@
 # Exposure at Default (EAD) Calculator
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Exposure at Default (EAD) Calculator estimates the total exposure amount at the time of default. For derivatives and off-balance sheet items, EAD includes both current exposure and potential future exposure. EAD is a key component in Expected Loss and regulatory capital calculations.

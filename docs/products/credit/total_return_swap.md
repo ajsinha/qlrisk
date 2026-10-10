@@ -1,5 +1,11 @@
 # Total Return Swap (TRS) v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation status:** `TotalReturnSwap` currently uses **placeholder pricing** (`notional × discount factor × 1%`), so its PV and risk are not meaningful yet. It is on the roadmap for a real model.
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -43,23 +49,21 @@ $$E[TR] = (r + s) \times N \times T$$
 
 ```python
 from datetime import date
-from products.python.credit import TotalReturnSwap
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import TotalReturnSwap
+from qlrisk.sensitivities import SensitivityEngine
 
-trs = TotalReturnSwap(
-    trade_id="TRS-001",
-    trade_date=date(2024, 1, 15),
-    effective_date=date(2024, 1, 17),
-    maturity_date=date(2025, 1, 17),
-    notional=25000000,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    reference_asset="XYZ Corp 5% 2030",
-    funding_spread=0.0025,  # 25 bps over SOFR
-    is_total_return_receiver=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = TotalReturnSwap("TOTAL-RETURN-SWAP-1", md.valuation_date, md.valuation_date, date(2031, 10, 9), 5_000_000, Currency.USD, "CP-1")
 
-result = trs.price(market_data)
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

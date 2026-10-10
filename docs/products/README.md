@@ -1,4 +1,8 @@
-# QLRisk - Products Documentation v2.0.0
+# QLRisk - Products Documentation v2.0.1
+
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -223,6 +227,6 @@ npv = irs.calculate_npv(market_data)
 
 ---
 
-*Document Version: 2.0.0*  
+*Document Version: 2.0.1*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

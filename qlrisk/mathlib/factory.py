@@ -44,6 +44,11 @@ class MathFactory:
                     cls._instance._initialized = False
         return cls._instance
     
+    @classmethod
+    def get_instance(cls) -> 'MathFactory':
+        """The singleton factory (same as MathFactory())."""
+        return cls()
+    
     def __init__(self):
         """Initialize the factory."""
         if self._initialized:

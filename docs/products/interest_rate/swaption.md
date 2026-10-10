@@ -1,5 +1,15 @@
 # Swaption v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
+<!-- generated:implementation -->
+> **Implementation:** `Swaption` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.Swaption)`).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -65,29 +75,21 @@ $$\sigma_{normal} \approx \sigma_{Black} \times S$$
 
 ```python
 from datetime import date
-from products.python.interest_rate import Swaption
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import Swaption
+from qlrisk.sensitivities import SensitivityEngine
 
-# 1Y x 5Y payer swaption
-swaption = Swaption(
-    trade_id="SWPTN-001",
-    trade_date=date(2024, 1, 15),
-    option_expiry=date(2025, 1, 15),
-    swap_effective=date(2025, 1, 17),
-    swap_maturity=date(2030, 1, 17),
-    notional=100000000,
-    strike=0.04,
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    is_payer=True,
-    exercise_type="european",
-    volatility=0.25
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = Swaption("SWPN-1", d0, date(2027, 10, 9), date(2027, 10, 9), date(2032, 10, 9), 10_000_000, Currency.USD, "CP-1", strike=0.043)
 
-result = swaption.price(market_data)
-print(f"Premium: ${result.npv:,.2f}")
-print(f"Delta: {result.greeks['delta']:.2f}")
-print(f"Vega: ${result.greeks['vega']:,.2f}")
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---
@@ -95,7 +97,7 @@ print(f"Vega: ${result.greeks['vega']:,.2f}")
 ## QuantLib Implementation
 
 ```python
-from products.qlib.interest_rate import SwaptionQL
+from qlrisk.products.qlib.interest_rate import SwaptionQL
 
 swaption_ql = SwaptionQL(
     trade_id="SWPTN-QL-001",

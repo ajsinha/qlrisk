@@ -1,5 +1,15 @@
 # FX Option v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
+<!-- generated:implementation -->
+> **Implementation:** `FXOption` is priced by `price_fx_option` in `products/python/_pricing.py`. Product terms are keyword arguments: `pair`, `strike` (ATMF), `is_call`, `foreign_curve` / `foreign_rate`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -57,28 +67,21 @@ $$d_2 = d_1 - \sigma\sqrt{T}$$
 
 ```python
 from datetime import date
-from products.python.fx import FXOption
-from products.base import Currency, MarketData, OptionType
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import FXOption
+from qlrisk.sensitivities import SensitivityEngine
 
-fx_opt = FXOption(
-    trade_id="FXOPT-001",
-    trade_date=date(2024, 1, 15),
-    expiry_date=date(2024, 7, 15),
-    settlement_date=date(2024, 7, 17),
-    base_currency=Currency.EUR,
-    quote_currency=Currency.USD,
-    base_notional=10000000,
-    strike=1.10,
-    counterparty_id="CPY-001",
-    option_type=OptionType.CALL,
-    is_long=True,
-    volatility=0.08
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = FXOption("FX-OPTION-1", md.valuation_date, md.valuation_date, date(2027, 10, 9), 5_000_000, Currency.EUR, "CP-1", pair="EURUSD", strike=1.10, is_call=True)
 
-result = fx_opt.price(market_data)
-print(f"Premium: ${result.npv:,.2f}")
-print(f"Delta: {result.greeks['delta']:.4f}")
-print(f"Vega: ${result.greeks['vega']:,.2f}")
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---
@@ -86,7 +89,7 @@ print(f"Vega: ${result.greeks['vega']:,.2f}")
 ## QuantLib Implementation
 
 ```python
-from products.qlib.fx import FXOptionQL
+from qlrisk.products.qlib.fx import FXOptionQL
 
 fx_opt_ql = FXOptionQL(
     trade_id="FXOPT-QL-001",

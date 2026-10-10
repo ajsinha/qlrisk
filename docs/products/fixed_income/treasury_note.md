@@ -1,5 +1,15 @@
 # Treasury Note (T-Note) v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
+<!-- generated:implementation -->
+> **Implementation:** `TreasuryNote` is priced by `price_fixed_bond` in `products/python/_pricing.py`. Product terms are keyword arguments: `coupon`, `frequency` (2), `issuer` (credit curve), `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -132,46 +142,21 @@ $$AddOn_{IR} = SF_{IR} \times \delta \times EN \times MF$$
 
 ```python
 from datetime import date
-from products.python.fixed_income import TreasuryNote
-from products.base import Currency, MarketData, PaymentFrequency
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import TreasuryNote
+from qlrisk.sensitivities import SensitivityEngine
 
-# Create a 10-year Treasury Note
-tnote = TreasuryNote(
-    trade_id="TNOTE-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2034, 1, 15),
-    face_value=10000000,  # $10M face value
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    coupon_rate=0.04,  # 4% coupon
-    coupon_frequency=PaymentFrequency.SEMI_ANNUAL,
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = TreasuryNote("TREASURY-NOTE-1", md.valuation_date, md.valuation_date, date(2031, 10, 9), 5_000_000, Currency.USD, "CP-1", coupon=0.05, issuer="ACME")
 
-# Create market data
-market_data = MarketData(
-    valuation_date=date(2024, 6, 15),
-    discount_curve={
-        0.5: 0.045, 1.0: 0.046, 2.0: 0.047,
-        5.0: 0.048, 10.0: 0.050
-    }
-)
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
 
-# Price the T-Note
-result = tnote.price(market_data)
-
-print(f"Clean Price: {result.components['clean_price']:.4f}")
-print(f"Dirty Price: {result.components['dirty_price']:.4f}")
-print(f"Accrued Interest: ${result.components['accrued_interest']:,.2f}")
-print(f"YTM: {result.components['ytm']:.2%}")
-print(f"Modified Duration: {result.components['modified_duration']:.2f}")
-print(f"Convexity: {result.components['convexity']:.2f}")
-print(f"DV01: ${result.greeks['dv01']:,.2f}")
-
-# Calculate SA-CCR
-saccr = tnote.calculate_saccr(market_data)
-print(f"EAD: ${saccr.ead:,.2f}")
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---
@@ -179,7 +164,7 @@ print(f"EAD: ${saccr.ead:,.2f}")
 ## QuantLib Implementation
 
 ```python
-from products.qlib.fixed_income import FixedRateBondQL
+from qlrisk.products.qlib.fixed_income import FixedRateBondQL
 
 # Use QuantLib for enhanced accuracy
 tnote_ql = FixedRateBondQL(

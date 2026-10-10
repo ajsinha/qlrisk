@@ -61,7 +61,7 @@ Effective Maturity = max(1, Σ(t × ΔEE(t)) / EPE)
 ## Calculation Methods
 
 ### Monte Carlo
-```python
+```text
 for each simulation:
     for each time t:
         Exposure[t] = max(0, Value[t])

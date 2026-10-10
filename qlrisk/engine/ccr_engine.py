@@ -490,31 +490,23 @@ class CCREngine:
         timer = Timer("ccr_metrics")
         timer.start()
         
-        # Calculate PD using rating-based model
-        try:
-            pd_input = {
-                "credit_rating": rating,
-                "rating_pd": pd_value,
-                "time_horizon": 1.0,
-            }
-            pd_result = self.calculate(CalculatorType.PD, pd_input, impl)
-            results["pd"] = pd_result.value if isinstance(pd_result.value, (int, float)) else pd_value
-        except Exception as e:
-            results["pd"] = pd_value  # Fall back to provided PD
-            results["pd_error"] = str(e)
+        # PD: use the supplied counterparty PD; otherwise derive it from the rating
+        if "counterparty_pd" in trade_data:
+            results["pd"] = pd_value
+        else:
+            try:
+                pd_result = self.calculate(CalculatorType.PD, {"credit_rating": rating}, impl,
+                                           calculator_config={"model": "transition_matrix"})
+                results["pd"] = float(pd_result.value)
+            except Exception as e:
+                results["pd"] = pd_value
+                results["pd_error"] = str(e)
         
-        # Calculate LGD
-        try:
-            lgd_input = {
-                "seniority": "senior_unsecured",
-                "collateral_value": 0,
-                "exposure_value": notional,
-            }
-            lgd_result = self.calculate(CalculatorType.LGD, lgd_input, impl)
-            results["lgd"] = lgd_result.value if isinstance(lgd_result.value, (int, float)) else lgd_value
-        except Exception as e:
-            results["lgd"] = lgd_value  # Fall back to provided LGD
-            results["lgd_error"] = str(e)
+        # LGD: use the supplied LGD, else 1 - recovery rate
+        if "counterparty_lgd" in trade_data:
+            results["lgd"] = lgd_value
+        else:
+            results["lgd"] = 1.0 - recovery_rate
         
         # Calculate EAD
         try:
@@ -653,6 +645,23 @@ class CCREngine:
         except Exception as e:
             results["economic_capital"] = None
             results["ec_error"] = str(e)
+        
+        # RAROC = (revenue - expected loss) / economic capital; revenue = spread x notional per year
+        try:
+            ec_value = results.get("economic_capital")
+            raroc_input = {
+                "revenue": trade_data.get("revenue", trade_data.get("spread", 0.0) * notional),
+                "operating_cost": trade_data.get("operating_cost", 0.0),
+                "funding_cost": trade_data.get("funding_cost", 0.0),
+                "expected_loss": results.get("el", 0.0),
+                "economic_capital": ec_value or 0.0,
+            }
+            raroc_result = self.calculate(CalculatorType.RAROC, raroc_input, impl)
+            value = raroc_result.value
+            results["raroc"] = getattr(value, "raroc", value.get("raroc") if isinstance(value, dict) else value)
+        except Exception as e:
+            results["raroc"] = None
+            results["raroc_error"] = str(e)
         
         # Calculate Initial Margin
         try:

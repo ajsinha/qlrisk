@@ -1,5 +1,11 @@
 # Treasury Bill (T-Bill) v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `TreasuryBill` is priced by `price_deposit` in `products/python/_pricing.py`. Product terms are keyword arguments: `rate`, `issuer`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -125,47 +131,21 @@ Where:
 
 ```python
 from datetime import date
-from products.python.fixed_income import TreasuryBill
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import TreasuryBill
+from qlrisk.sensitivities import SensitivityEngine
 
-# Create a 26-week T-Bill
-tbill = TreasuryBill(
-    trade_id="TBILL-001",
-    trade_date=date(2024, 1, 15),
-    issue_date=date(2024, 1, 15),
-    maturity_date=date(2024, 7, 15),
-    face_value=1000000,  # $1M face value
-    currency=Currency.USD,
-    counterparty_id="CPY-001",
-    discount_rate=0.0525,  # 5.25% discount rate
-    is_long=True
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = TreasuryBill("TREASURY-BILL-1", md.valuation_date, md.valuation_date, date(2027, 10, 9), 5_000_000, Currency.USD, "CP-1", rate=0.045)
 
-# Create market data
-market_data = MarketData(
-    valuation_date=date(2024, 3, 15),
-    discount_curve={0.25: 0.052, 0.5: 0.053, 1.0: 0.054}
-)
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
 
-# Price the T-Bill
-result = tbill.price(market_data)
-
-print(f"NPV: ${result.npv:,.2f}")
-print(f"Price: ${result.components['price']:,.2f}")
-print(f"Discount Yield: {result.components['discount_yield']:.2%}")
-print(f"Money Market Yield: {result.components['money_market_yield']:.2%}")
-print(f"Bond Equivalent Yield: {result.components['bond_equivalent_yield']:.2%}")
-
-# Calculate CCR exposure
-ccr = tbill.calculate_ccr_exposure(market_data)
-print(f"Expected Positive Exposure: ${ccr.epe:,.2f}")
-print(f"Peak Exposure: ${ccr.peak_exposure:,.2f}")
-
-# Calculate SA-CCR
-saccr = tbill.calculate_saccr(market_data)
-print(f"Replacement Cost: ${saccr.replacement_cost:,.2f}")
-print(f"PFE Add-On: ${saccr.pfe_add_on:,.2f}")
-print(f"EAD: ${saccr.ead:,.2f}")
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

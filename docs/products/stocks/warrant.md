@@ -1,5 +1,11 @@
 # Warrant v1.2.0
 
+<!-- generated:implementation -->
+> **Implementation:** `Warrant` is priced by `price_equity_option` in `products/python/_pricing.py`. Product terms are keyword arguments: `ticker`, `strike` (ATM), `is_call`, `quantity`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -38,17 +44,22 @@ Where m = warrants outstanding, n = shares outstanding
 ## Implementation Example
 
 ```python
-from products.python.stocks import Warrant
+from datetime import date
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import Warrant
+from qlrisk.sensitivities import SensitivityEngine
 
-warrant = Warrant(
-    trade_id="WRT-001",
-    ticker="SPCE-WS",
-    warrants=50000,
-    strike=11.50,
-    expiry_date=date(2028, 1, 1),
-    warrant_ratio=1.0,  # 1 warrant = 1 share
-    # ...
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = Warrant("WARRANT-1", md.valuation_date, md.valuation_date, date(2027, 10, 9), 5_000_000, Currency.USD, "CP-1", ticker="AAPL", strike=200.0, is_call=True)
+
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
+
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---

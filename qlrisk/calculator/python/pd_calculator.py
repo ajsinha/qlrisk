@@ -115,15 +115,25 @@ class PDCalculator(CreditRiskCalculator):
         else:
             pd_input = data
         
-        if self._model == PDModel.STRUCTURAL:
+        model = self._model
+        if model == PDModel.STRUCTURAL and "model" not in self.config and pd_input.asset_value is None:
+            # No model configured and no Merton inputs: fall back to what the input supports
+            if pd_input.hazard_rate is not None:
+                model = PDModel.REDUCED_FORM
+            elif pd_input.credit_rating is not None:
+                model = PDModel.TRANSITION_MATRIX
+            elif pd_input.rating_pd is not None:
+                return float(pd_input.rating_pd)
+        
+        if model == PDModel.STRUCTURAL:
             return self._merton_pd(pd_input)
-        elif self._model == PDModel.REDUCED_FORM:
+        elif model == PDModel.REDUCED_FORM:
             return self._hazard_rate_pd(pd_input)
-        elif self._model == PDModel.TRANSITION_MATRIX:
+        elif model == PDModel.TRANSITION_MATRIX:
             return self._transition_matrix_pd(pd_input)
-        elif self._model == PDModel.LOGISTIC:
+        elif model == PDModel.LOGISTIC:
             return self._logistic_pd(pd_input)
-        elif self._model == PDModel.HISTORICAL:
+        elif model == PDModel.HISTORICAL:
             return self._historical_pd(pd_input)
         else:
             raise ValueError(f"Unknown PD model: {self._model}")

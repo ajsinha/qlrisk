@@ -1,10 +1,14 @@
 # Total Return Swaps (TRS)
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 4 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 A Total Return Swap (TRS) is a derivative contract where one party (total return payer) pays the total return of an underlying asset (including price appreciation, dividends/coupons, and any principal changes) while receiving a financing rate (typically SOFR + spread) from the counterparty.
 
-## QLRisk - TRS v2.0.0
+## QLRisk - TRS v2.0.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -306,4 +310,4 @@ Adjusted_Notional = Notional × Duration / 5.0
 
 ---
 
-*QLRisk v2.0.0*
+*QLRisk v2.0.1*

@@ -1,5 +1,9 @@
 # Stress Testing Calculators
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (2 of 7 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Stress Testing module provides calculators for assessing counterparty credit risk under adverse market conditions. It includes Stressed Exposure and Peak Exposure calculators for regulatory compliance (CCAR, DFAST, EBA) and internal risk management.
@@ -154,7 +158,7 @@ where PFE(t) = Quantile(Exposure distribution at t, α)
 
 ### 1. Monte Carlo Simulation
 
-```python
+```text
 for each simulation path:
     for each time point t:
         Simulate future exposure

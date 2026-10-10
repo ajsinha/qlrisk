@@ -1,5 +1,15 @@
 # FX Forward v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
+<!-- generated:implementation -->
+> **Implementation:** `FXForward` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.FXForward)`).
+>
+> The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
+<!-- /generated:implementation -->
+
 ## Product Overview
 
 | Attribute | Value |
@@ -63,29 +73,21 @@ Where $SF_{FX} = 4.0\%$
 
 ```python
 from datetime import date
-from products.python.fx import FXForward
-from products.base import Currency, MarketData
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import FXForward
+from qlrisk.sensitivities import SensitivityEngine
 
-fx_fwd = FXForward(
-    trade_id="FXFWD-001",
-    trade_date=date(2024, 1, 15),
-    settlement_date=date(2024, 7, 15),
-    base_currency=Currency.EUR,
-    quote_currency=Currency.USD,
-    base_notional=10000000,  # €10M
-    forward_rate=1.0850,
-    counterparty_id="CPY-001",
-    is_buy_base=True  # Buy EUR, sell USD
-)
+md = create_sample_market_data(date(2026, 10, 9))
+d0 = md.valuation_date
+trade = FXForward("FXF-1", d0, date(2027, 10, 9), Currency.EUR, Currency.USD, 1_000_000, 1.10, "CP-1")
 
-market_data = MarketData(
-    valuation_date=date(2024, 4, 15),
-    fx_spots={"EURUSD": 1.0750}
-)
+result = trade.price(md)
+print(f"NPV: {result.npv:,.2f} {result.currency}")
 
-result = fx_fwd.price(market_data)
-print(f"NPV: ${result.npv:,.2f}")
-print(f"Forward Points: {result.components['forward_points']:.0f}")
+risk = SensitivityEngine().compute(trade, md, reporting_currency="USD")
+print({f"{rc.value} {m.value}": round(v, 2) for (rc, m), v in risk.aggregate(("risk_class", "measure")).items()})
+print(f"SA-CCR EAD: {trade.calculate_saccr(md).ead:,.2f}")
 ```
 
 ---
@@ -93,7 +95,7 @@ print(f"Forward Points: {result.components['forward_points']:.0f}")
 ## QuantLib Implementation
 
 ```python
-from products.qlib.fx import FXForwardQL
+from qlrisk.products.qlib.fx import FXForwardQL
 
 fx_fwd_ql = FXForwardQL(
     trade_id="FXFWD-QL-001",

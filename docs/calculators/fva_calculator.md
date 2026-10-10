@@ -1,5 +1,9 @@
 # FVA Calculator Documentation v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The FVA (Funding Valuation Adjustment) Calculator computes the cost or benefit of funding uncollateralized derivatives positions.
@@ -48,7 +52,7 @@ Where:
 ## Usage Example
 
 ```python
-from calculator.python import FVACalculator, FVAInput
+from qlrisk.calculator.python import FVACalculator, FVAInput
 
 calculator = FVACalculator()
 

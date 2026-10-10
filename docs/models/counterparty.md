@@ -1,5 +1,9 @@
 # Counterparty Model Documentation v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Counterparty module provides models for managing counterparty information, netting sets, and collateral agreements essential for CCR calculations.
@@ -84,7 +88,7 @@ Credit Support Annex (CSA) details.
 ## Usage Examples
 
 ```python
-from models import Counterparty, NettingSet, CollateralAgreement
+from qlrisk.models import Counterparty, NettingSet, CollateralAgreement
 
 # Create counterparty
 cp = Counterparty(

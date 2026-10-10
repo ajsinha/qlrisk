@@ -1,5 +1,9 @@
 # Trade Model Documentation v1.2.0
 
+<!-- legacy-examples -->
+> ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (1 of 1 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
+<!-- /legacy-examples -->
+
 ## Overview
 
 The Trade model represents individual financial transactions in QLRisk. It captures all essential attributes needed for market risk and counterparty credit risk calculations.
@@ -62,7 +66,7 @@ Main trade representation.
 ## Usage Examples
 
 ```python
-from models import Trade, TradeType, TradeStatus
+from qlrisk.models import Trade, TradeType, TradeStatus
 from datetime import date
 
 # Create a trade
