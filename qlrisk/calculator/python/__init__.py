@@ -1,5 +1,5 @@
 """
-QLRisk - Python Calculators v2.1.0
+QLRisk - Python Calculators v2.2.0
 =================================================
 
 Copyright © 2025-2030, All Rights Reserved
@@ -39,7 +39,7 @@ Regulatory Calculators:
 - SACCRCalculator: SA-CCR EAD (Basel III/IV)
 """
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 from .pd_calculator import PDCalculator
 from .lgd_calculator import LGDCalculator

@@ -1,4 +1,4 @@
-# QLRisk - Sensitivities v2.1.0
+# QLRisk - Sensitivities v2.2.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -150,9 +150,9 @@ The test suite (`tests/test_sensitivities.py`) checks the engine against closed-
 
 ## 8. Model Coverage
 
-Since v2.1.0 every product prices off market data (see [pricers.md](pricers.md)), so every product has
+Since v2.2.0 every product prices off market data (see [pricers.md](pricers.md)), so every product has
 meaningful sensitivities. Model simplifications are listed in pricers.md.
 
 ---
 
-*QLRisk v2.1.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.2.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

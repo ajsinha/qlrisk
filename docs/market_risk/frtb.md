@@ -1,4 +1,4 @@
-# QLRisk - Regulatory Market Risk Capital v2.1.0
+# QLRisk - Regulatory Market Risk Capital v2.2.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -109,4 +109,4 @@ capital = max(VaR, m·avg60 VaR) + max(SVaR, m·avg60 SVaR), with m = 3 + the ba
 
 ---
 
-*QLRisk v2.1.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.2.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

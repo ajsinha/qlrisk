@@ -1,4 +1,4 @@
-# QLRisk - Calculator Documentation v2.1.0
+# QLRisk - Calculator Documentation v2.2.0
 
 <!-- legacy-examples -->
 > ⚠️ **Some code samples on this page predate v2.0 and no longer match the API** (5 of 5 fail). Use the [user guides](../guides/README.md), whose examples are executed by the test suite, until this page is revised.
@@ -21,7 +21,9 @@ QLRisk provides 16 risk calculators, each with dual implementations:
 - **Python**: Pure Python implementation using NumPy/SciPy
 - **QuantLib**: High-performance implementation using QuantLib-Python
 
-The calculators below cover counterparty credit risk, XVA, credit risk and capital. Market risk adds
+The calculators below cover counterparty credit risk, XVA, credit risk and capital. DVA, FVA, KVA and MVA are
+`CalculatorType.DVA / FVA / KVA / MVA` (input: the matching `*Input` dataclass or a dict of its fields; the
+result value is the `*Result` dataclass). Market risk adds
 `CalculatorType.VAR` and `CalculatorType.EXPECTED_SHORTFALL` (input: `{"pnl": [...], "confidence": 0.99}`
 or `{"mean", "std"}` with `method="parametric"`); full portfolio VaR / ES / SVaR runs through
 `qlrisk.engine.MarketRiskEngine` — see [../market_risk/var_es.md](../market_risk/var_es.md).
@@ -216,6 +218,6 @@ with CCREngine() as engine:
 
 ---
 
-*Document Version: 2.1.0*  
+*Document Version: 2.2.0*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

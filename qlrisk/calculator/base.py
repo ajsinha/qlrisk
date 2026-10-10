@@ -41,6 +41,12 @@ class CalculatorType(Enum):
     RAROC = "risk_adjusted_return_on_capital"
     IM = "initial_margin"
     
+    # Other valuation adjustments
+    DVA = "debit_valuation_adjustment"
+    FVA = "funding_valuation_adjustment"
+    KVA = "capital_valuation_adjustment"
+    MVA = "margin_valuation_adjustment"
+    
     # Market Risk
     VAR = "value_at_risk"
     EXPECTED_SHORTFALL = "expected_shortfall"

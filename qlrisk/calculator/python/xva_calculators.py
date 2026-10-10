@@ -20,6 +20,7 @@ import math
 import numpy as np
 
 from ..base import BaseCalculator, CalculatorType, ImplementationType
+from ...products.base import curve_value
 
 
 # ============================================================================
@@ -52,13 +53,21 @@ class DVACalculator(BaseCalculator):
     DVA = -CVA from counterparty's perspective.
     """
     
-    def __init__(self):
-        super().__init__(
-            calculator_type=CalculatorType.CVA,  # Related to CVA
-            implementation_type=ImplementationType.PYTHON
-        )
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
+        super().__init__(name or "dva_calc", config or {})
     
-    def calculate(self, input_data: DVAInput) -> DVAResult:
+    @property
+    def calculator_type(self) -> CalculatorType:
+        return CalculatorType.DVA
+    
+    def _calculate_impl(self, data: Any) -> DVAResult:
+        """Accepts a DVAInput or a dict of its fields; returns DVAResult."""
+        if isinstance(data, dict):
+            data = DVAInput(**{k: v for k, v in data.items() if k in DVAInput.__dataclass_fields__})
+        return self.compute(data)
+    
+    
+    def compute(self, input_data: DVAInput) -> DVAResult:
         """Calculate DVA."""
         result = DVAResult()
         
@@ -77,11 +86,11 @@ class DVACalculator(BaseCalculator):
             ene = abs(min(0, input_data.exposure_profile[i]))
             
             # Own default probability
-            pd = input_data.own_pd_curve.get(t, 0.01)
+            pd = curve_value(input_data.own_pd_curve, t, 0.01)
             marginal_pd = prev_survival * pd * dt
             
             # Discount factor  
-            r = input_data.discount_curve.get(t, 0.05)
+            r = curve_value(input_data.discount_curve, t, 0.05)
             df = math.exp(-r * t)
             
             # DVA contribution (benefit from own default)
@@ -127,13 +136,21 @@ class FVACalculator(BaseCalculator):
     FVA = FCA - FBA
     """
     
-    def __init__(self):
-        super().__init__(
-            calculator_type=CalculatorType.CVA,
-            implementation_type=ImplementationType.PYTHON
-        )
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
+        super().__init__(name or "fva_calc", config or {})
     
-    def calculate(self, input_data: FVAInput) -> FVAResult:
+    @property
+    def calculator_type(self) -> CalculatorType:
+        return CalculatorType.FVA
+    
+    def _calculate_impl(self, data: Any) -> FVAResult:
+        """Accepts a FVAInput or a dict of its fields; returns FVAResult."""
+        if isinstance(data, dict):
+            data = FVAInput(**{k: v for k, v in data.items() if k in FVAInput.__dataclass_fields__})
+        return self.compute(data)
+    
+    
+    def compute(self, input_data: FVAInput) -> FVAResult:
         """Calculate FVA."""
         result = FVAResult()
         
@@ -150,11 +167,11 @@ class FVACalculator(BaseCalculator):
             exposure = input_data.exposure_profile[i]
             
             # Discount factor
-            r = input_data.discount_curve.get(t, 0.05)
+            r = curve_value(input_data.discount_curve, t, 0.05)
             df = math.exp(-r * t)
             
             # Counterparty survival
-            surv = input_data.counterparty_survival_curve.get(t, 0.99)
+            surv = curve_value(input_data.counterparty_survival_curve, t, 0.99)
             
             if exposure > 0:
                 # Positive exposure: funding cost
@@ -202,13 +219,21 @@ class KVACalculator(BaseCalculator):
     against counterparty credit risk.
     """
     
-    def __init__(self):
-        super().__init__(
-            calculator_type=CalculatorType.EC,
-            implementation_type=ImplementationType.PYTHON
-        )
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
+        super().__init__(name or "kva_calc", config or {})
     
-    def calculate(self, input_data: KVAInput) -> KVAResult:
+    @property
+    def calculator_type(self) -> CalculatorType:
+        return CalculatorType.KVA
+    
+    def _calculate_impl(self, data: Any) -> KVAResult:
+        """Accepts a KVAInput or a dict of its fields; returns KVAResult."""
+        if isinstance(data, dict):
+            data = KVAInput(**{k: v for k, v in data.items() if k in KVAInput.__dataclass_fields__})
+        return self.compute(data)
+    
+    
+    def compute(self, input_data: KVAInput) -> KVAResult:
         """Calculate KVA."""
         result = KVAResult()
         
@@ -238,7 +263,7 @@ class KVACalculator(BaseCalculator):
             capital_profile.append(capital)
             
             # Discount factor
-            r = input_data.discount_curve.get(t, 0.05)
+            r = curve_value(input_data.discount_curve, t, 0.05)
             df = math.exp(-r * t)
             
             # KVA contribution
@@ -335,13 +360,21 @@ class MVACalculator(BaseCalculator):
     MVA represents the cost of funding initial margin.
     """
     
-    def __init__(self):
-        super().__init__(
-            calculator_type=CalculatorType.IM,
-            implementation_type=ImplementationType.PYTHON
-        )
+    def __init__(self, name: str = "", config: Optional[Dict[str, Any]] = None):
+        super().__init__(name or "mva_calc", config or {})
     
-    def calculate(self, input_data: MVAInput) -> MVAResult:
+    @property
+    def calculator_type(self) -> CalculatorType:
+        return CalculatorType.MVA
+    
+    def _calculate_impl(self, data: Any) -> MVAResult:
+        """Accepts a MVAInput or a dict of its fields; returns MVAResult."""
+        if isinstance(data, dict):
+            data = MVAInput(**{k: v for k, v in data.items() if k in MVAInput.__dataclass_fields__})
+        return self.compute(data)
+    
+    
+    def compute(self, input_data: MVAInput) -> MVAResult:
         """Calculate MVA."""
         result = MVAResult()
         
@@ -357,7 +390,7 @@ class MVACalculator(BaseCalculator):
             im = input_data.initial_margin_profile[i]
             
             # Discount factor
-            r = input_data.discount_curve.get(t, 0.05)
+            r = curve_value(input_data.discount_curve, t, 0.05)
             df = math.exp(-r * t)
             
             # MVA contribution

@@ -80,6 +80,10 @@ class CalculatorFactory:
             StressedExposureCalculator as PyStressedExposureCalculator,
             PeakExposureCalculator as PyPeakExposureCalculator
         )
+        from .python.xva_calculators import (
+            DVACalculator as PyDVACalculator, FVACalculator as PyFVACalculator,
+            KVACalculator as PyKVACalculator, MVACalculator as PyMVACalculator,
+        )
         from .python.var_calculators import (
             VaRCalculator as PyVaRCalculator,
             ExpectedShortfallCalculator as PyESCalculator,
@@ -100,6 +104,10 @@ class CalculatorFactory:
             CalculatorType.EC: PyECCalculator,
             CalculatorType.RAROC: PyRAROCCalculator,
             CalculatorType.IM: PyIMCalculator,
+            CalculatorType.DVA: PyDVACalculator,
+            CalculatorType.FVA: PyFVACalculator,
+            CalculatorType.KVA: PyKVACalculator,
+            CalculatorType.MVA: PyMVACalculator,
             CalculatorType.VAR: PyVaRCalculator,
             CalculatorType.EXPECTED_SHORTFALL: PyESCalculator,
         }

@@ -1,4 +1,4 @@
-# QLRisk - Market Risk Roadmap v2.1.0
+# QLRisk - Market Risk Roadmap v2.2.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -159,7 +159,7 @@ market-risk members on `models.limit.LimitType` (limit checks reuse `LimitStatus
 - SA-CVA (BA-CVA is implemented)
 - FRTB simplifications listed in [frtb.md](frtb.md) (CSR sector table, securitisations, inflation /
   xccy-basis factors, two-factor IMA DRC)
-- Netting-set level aggregation of exposure in `RiskEngine` (trade-level PFE / EAD are summed today)
+- Netting-set exposure: collateral / margining and hedging-set offsets of SA-CCR add-ons (v2.2 nets RC and applies the multiplier)
 
 Original plan:
 
@@ -186,7 +186,7 @@ money market, repo, cash equities and funds, equity options and forwards, FX van
 barrier options and NDFs, CDS and CDS indices, commodity forwards, swaps and options, and
 cross-currency swaps). See [pricers.md](pricers.md).
 
-**v2.1.0 completed the set:** IR / bond / VIX futures, variance and dividend swaps, equity swap and TRS,
+**v2.2.0 completed the set:** IR / bond / VIX futures, variance and dividend swaps, equity swap and TRS,
 convertible bond, MBS (rate-dependent prepayment), ABS and CDO / CLO tranches now have compact models too.
 
 ## 4. Usage (as delivered)
@@ -228,4 +228,4 @@ print(report)
 
 ---
 
-*QLRisk v2.1.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.2.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
