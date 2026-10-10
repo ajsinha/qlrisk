@@ -1,4 +1,4 @@
-# QLRisk - Market Risk Roadmap v2.3.0
+# QLRisk - Market Risk Roadmap v2.3.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -154,11 +154,18 @@ unchanged and used underneath), `reporting/{hierarchy, report, limits_monitor}.p
 `scenarios/wrong_way.py`, `demos.py` + `--market-risk` / `--frtb`, `marketrisk.*` config keys,
 market-risk members on `models.limit.LimitType` (limit checks reuse `LimitStatus`).
 
-### Outstanding after Phase 5
+### Backlog (deferred after v2.3.1)
 
-- FRTB: securitisation CSR / DRC, inflation and cross-currency-basis GIRR factors (the sample market data has none)
-- SA-CVA inflation factors; legally-related name groupings
-- Model refinements: bond-future cheapest-to-deliver, path-dependent MBS prepayment, convertible call / put features
+The core platform is complete. These items are deferred until there is a business need:
+
+| # | Item | Size | Scope / trigger |
+|---|------|------|-----------------|
+| 1 | FRTB securitisation charges | Medium–large | CSR securitisation (non-CTP and CTP) sensitivities and DRC (MAR21, MAR22); needed only if securitisation tranches sit in the trading book |
+| 2 | Inflation and cross-currency-basis risk factors | Medium | New `MarketData` fields (inflation curves, basis spreads) → risk factors → FRTB GIRR and SA-CVA inflation factors |
+| 3 | SA-CVA refinements | Small | Inflation factors (after #2); explicit groups of legally related counterparties (90% name correlation) |
+| 4 | Bond future cheapest-to-deliver | Medium | Deliverable basket, conversion factors, CTD switch and delivery options |
+| 5 | Path-dependent MBS prepayment | Medium | Rate-path simulation (burnout, seasonality) replacing the deterministic CPR rule |
+| 6 | Convertible call / put features | Medium | Lattice or PDE model with issuer calls, holder puts and credit-equity linkage |
 
 Original plan:
 
@@ -185,7 +192,7 @@ money market, repo, cash equities and funds, equity options and forwards, FX van
 barrier options and NDFs, CDS and CDS indices, commodity forwards, swaps and options, and
 cross-currency swaps). See [pricers.md](pricers.md).
 
-**v2.3.0 completed the set:** IR / bond / VIX futures, variance and dividend swaps, equity swap and TRS,
+**v2.3.1 completed the set:** IR / bond / VIX futures, variance and dividend swaps, equity swap and TRS,
 convertible bond, MBS (rate-dependent prepayment), ABS and CDO / CLO tranches now have compact models too.
 
 ## 4. Usage (as delivered)
@@ -227,4 +234,4 @@ print(report)
 
 ---
 
-*QLRisk v2.3.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.3.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

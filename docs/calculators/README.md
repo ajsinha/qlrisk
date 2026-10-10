@@ -1,4 +1,4 @@
-# QLRisk - Calculator Documentation v2.3.0
+# QLRisk - Calculator Documentation v2.3.1
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -214,6 +214,6 @@ with CCREngine() as engine:
 
 ---
 
-*Document Version: 2.3.0*  
+*Document Version: 2.3.1*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

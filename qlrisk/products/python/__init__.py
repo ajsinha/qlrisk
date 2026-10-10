@@ -1,5 +1,5 @@
 """
-QLRisk - Python Products v2.3.0
+QLRisk - Python Products v2.3.1
 ==============================================
 
 Pure Python implementations of 90+ financial products across all asset classes.
@@ -27,7 +27,7 @@ and confidential. Unauthorized copying, distribution, modification, or use is
 strictly prohibited without explicit written permission from the copyright holder.
 """
 
-__version__ = "2.3.0"
+__version__ = "2.3.1"
 
 # Interest Rate (8)
 from .interest_rate import (
