@@ -30,7 +30,7 @@ This guide covers pricing and sensitivities, counterparty credit risk and XVA, a
 | [market_risk/README.md](market_risk/README.md) | Market-risk roadmap: VaR, ES, sensitivities, stress, backtesting, FRTB |
 | [market_risk/risk_factors.md](market_risk/risk_factors.md) | Risk-factor keys, shocks, dependency detection, factor histories |
 | [market_risk/sensitivities.md](market_risk/sensitivities.md) | DV01, CS01, delta, gamma, vega, theta, cross-gamma, tenor ladders |
-| [Brand kit](../../assets/branding/BRAND.md) | Logo, favicon, tagline and palette |
+| [Brand kit](../assets/branding/BRAND.md) | Logo, favicon, tagline and palette |
 
 ---
 

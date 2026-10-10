@@ -5,7 +5,7 @@ import re
 
 import pytest
 
-DOCS = pathlib.Path(__file__).resolve().parents[1] / "qlrisk" / "docs"
+DOCS = pathlib.Path(__file__).resolve().parents[1] / "docs"
 FILES = sorted((DOCS / "guides").rglob("*.md")) + [DOCS / "market_risk" / "pricers.md"]
 BLOCK = re.compile(r"```python\n(.*?)```", re.S)
 

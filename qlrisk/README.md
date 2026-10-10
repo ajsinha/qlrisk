@@ -54,7 +54,7 @@ whether it is being shocked for VaR, simulated for PFE or bumped for FRTB sensit
 | Unified `RiskEngine`, risk aggregation and reporting, market-risk limits | 🚧 Planned (Phase 5) |
 
 The market-risk build-out is described module by module in
-[`docs/market_risk/README.md`](docs/market_risk/README.md).
+[`docs/market_risk/README.md`](../docs/market_risk/README.md).
 
 ### Key Highlights
 
@@ -312,14 +312,23 @@ qlrisk/
 ├── riskfactors/             # Risk-factor keys, shocks, histories (5 files)
 ├── sensitivities/           # Bump-and-reprice sensitivities and ladders (5 files)
 ├── data/                    # Data generation (2 files)
-├── config/                  # Configuration
-└── docs/                    # Documentation (130+ files)
-    └── market_risk/         # Market-risk roadmap and methodology
+└── config/                  # Configuration
 ```
 
-Tests live in `tests/` at the repository root.
+At the repository root:
 
-Planned market-risk packages (see the [roadmap](docs/market_risk/README.md)):
+```
+docs/                        # Documentation (140+ files)
+├── guides/                  # User guides with tested examples (start here)
+├── market_risk/             # Market-risk roadmap and methodology
+├── calculators/ models/ products/ metrics/   # Reference
+└── architecture.md, quickstart.md, mathematical_formulas.md, saccr.md
+tests/                       # pytest suite (incl. every guide example)
+assets/branding/             # Logo, favicon, hero banner
+dist/                        # Built wheel
+```
+
+Planned market-risk packages (see the [roadmap](../docs/market_risk/README.md)):
 `scenarios/`, `pnl/`, `backtesting/`, `regulatory/`, `reporting/`.
 
 Brand assets (logo, favicon, hero banner) live in [`assets/branding/`](../assets/branding/BRAND.md).
@@ -352,14 +361,14 @@ logging.level=INFO
 
 ## Documentation
 
-**Start with the [user guides](docs/guides/README.md)**: installation, first portfolio, market data,
+**Start with the [user guides](../docs/guides/README.md)**: installation, first portfolio, market data,
 shocks and scenarios, historical data, pricing, sensitivity reports, counterparty exposure. Every example in
 them is executed by the test suite.
 
 See the `docs/` directory for comprehensive documentation:
 
 - `docs/architecture.md` - System architecture
-- `docs/market_risk/` - Market-risk roadmap, [risk factors](docs/market_risk/risk_factors.md) and [sensitivities](docs/market_risk/sensitivities.md)
+- `docs/market_risk/` - Market-risk roadmap, [risk factors](../docs/market_risk/risk_factors.md) and [sensitivities](../docs/market_risk/sensitivities.md)
 - `docs/quickstart.md` - Getting started guide
 - `docs/mathematical_formulas.md` - Mathematical reference
 - `docs/calculators/` - Calculator documentation
