@@ -186,7 +186,7 @@ pip install -r requirements-dev.txt    # development
 ### Run the Tests
 
 ```bash
-pytest                                  # 122 tests, incl. closed-form checks and every guide example
+pytest                                  # 123 tests, incl. closed-form checks and every guide example
 ```
 
 ### Build a Local Wheel
