@@ -1,0 +1,5 @@
+# QLRisk development dependencies (kept in sync with [project.optional-dependencies].dev)
+-r requirements.txt
+pytest>=7
+build
+twine

@@ -11,6 +11,7 @@ from typing import Dict, Any, List, Optional
 import numpy as np
 
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency,
     DayCountConvention, PaymentFrequency,
@@ -55,7 +56,7 @@ class CDO(BaseProduct):
         
         remaining = self.get_remaining_maturity(valuation_date)
         discount_curve = market_data.discount_curve
-        df = np.exp(-discount_curve.get(remaining, 0.05) * remaining)
+        df = np.exp(-curve_value(discount_curve, remaining, 0.05) * remaining)
         
         npv = self.notional * df * 0.01
         

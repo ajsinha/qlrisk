@@ -11,6 +11,8 @@ from typing import Dict, Any, List, Optional
 import numpy as np
 
 
+from ...base import curve_value
+from .._pricing import price_deposit
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency,
     DayCountConvention, PaymentFrequency,
@@ -47,25 +49,8 @@ class CertificateOfDeposit(BaseProduct):
         )
     
     def price(self, market_data: MarketData) -> PricingResult:
-        """Price the product."""
-        valuation_date = market_data.valuation_date
-        
-        if self.is_expired(valuation_date):
-            return PricingResult(npv=0.0, currency=self.currency.value)
-        
-        remaining = self.get_remaining_maturity(valuation_date)
-        discount_curve = market_data.discount_curve
-        df = np.exp(-discount_curve.get(remaining, 0.05) * remaining)
-        
-        npv = self.notional * df * 0.01
-        
-        return PricingResult(
-            npv=npv,
-            currency=self.currency.value,
-            components={"remaining_maturity": remaining},
-            greeks={"dv01": self.notional * remaining * 0.0001},
-            metadata={"product_type": self.product_type.value}
-        )
+        """Price the product (terms from constructor kwargs; see _pricing.price_deposit)."""
+        return price_deposit(self, market_data)
     
     def calculate_ccr_exposure(
         self,

@@ -13,6 +13,7 @@ from typing import Dict, Any, List, Optional
 import numpy as np
 from scipy.stats import norm
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency, FloatingRateIndex,
     DayCountConvention, PaymentFrequency,
@@ -110,8 +111,8 @@ class InterestRateCap(BaseProduct):
                 tau_pay = year_fraction(valuation_date, next_date, DayCountConvention.ACT_365)
                 tau_period = year_fraction(current, next_date, self.day_count)
                 
-                df = np.exp(-discount_curve.get(tau_pay, 0.05) * tau_pay)
-                fwd = discount_curve.get(tau_pay, 0.05)
+                df = np.exp(-curve_value(discount_curve, tau_pay, 0.05) * tau_pay)
+                fwd = curve_value(discount_curve, tau_pay, 0.05)
                 
                 caplet = self._black_caplet(fwd, self.strike, vol, max(tau_fix, 0.01), df, self.notional)
                 total_premium += caplet

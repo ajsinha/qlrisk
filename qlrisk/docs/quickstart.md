@@ -32,23 +32,21 @@ strictly prohibited without explicit written permission from the copyright holde
 - pip package manager
 - (Optional) QuantLib-Python for enhanced performance
 
-### 1.2 Install Dependencies
+### 1.2 Install
 
 ```bash
-# Required dependencies
-pip install numpy scipy
+# From source (editable, with dev tools) — installs numpy, scipy and QuantLib
+pip install -e ".[dev]"
 
-# Optional: QuantLib for high-performance calculations
-pip install QuantLib-Python
+# Or build a local wheel and install it into any other project/virtualenv
+pip install build
+python -m build --wheel                       # -> dist/qlrisk-1.3.0-py3-none-any.whl
+pip install /path/to/qlrisk/dist/qlrisk-1.3.0-py3-none-any.whl
 ```
 
 ### 1.3 Verify Installation
 
 ```bash
-# Extract and navigate to package
-cd qlrisk
-
-# Verify installation
 python -c "
 import qlrisk
 print(f'QLRisk v{qlrisk.__version__}')
@@ -65,17 +63,17 @@ Author: Ashutosh Sinha
 ### 1.4 Run the Demo
 
 ```bash
-# Quick demonstration (fastest)
-python main.py --quick
+# Quick demonstration (fastest) — `qlrisk` is the installed console script
+qlrisk --quick
 
 # Full demonstration
-python main.py
+qlrisk
 
 # Performance benchmarks only
-python main.py --benchmark
+qlrisk --benchmark
 
 # Stress testing only
-python main.py --stress
+qlrisk --stress
 
 # Alternative: Run as module
 python -m qlrisk --quick
@@ -94,10 +92,11 @@ from qlrisk.calculator import CalculatorType
 # Create engine with context manager (auto start/stop)
 with CCREngine() as engine:
     # Calculate Probability of Default
-    result = engine.calculate(CalculatorType.PD, {
-        'rating': 'BBB',
-        'method': 'rating_based'
-    })
+    result = engine.calculate(
+        CalculatorType.PD,
+        {'credit_rating': 'BBB'},
+        calculator_config={'model': 'transition_matrix'},
+    )
     print(f"PD: {result.value:.4%}")
 ```
 

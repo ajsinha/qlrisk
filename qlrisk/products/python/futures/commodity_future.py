@@ -28,6 +28,7 @@ from enum import Enum
 from dataclasses import dataclass
 import numpy as np
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency,
     DayCountConvention, PaymentFrequency,
@@ -348,7 +349,7 @@ class CommodityFuture(BaseProduct):
             return spot
             
         # Get risk-free rate
-        r = market_data.discount_curve.get(remaining, 0.05)
+        r = curve_value(market_data.discount_curve, remaining, 0.05)
         
         # Cost of carry
         carry = r + self.terms.storage_cost - self.terms.convenience_yield
@@ -396,7 +397,7 @@ class CommodityFuture(BaseProduct):
         
         # Discount to present value
         discount_curve = market_data.discount_curve
-        df = np.exp(-discount_curve.get(remaining, 0.05) * remaining)
+        df = np.exp(-curve_value(discount_curve, remaining, 0.05) * remaining)
         npv *= df
         
         # Calculate delta (exposure to underlying)
@@ -416,7 +417,7 @@ class CommodityFuture(BaseProduct):
             greeks={
                 "delta": delta,
                 "gamma": 0.0,  # Futures have zero gamma
-                "theta": -npv * discount_curve.get(remaining, 0.05) / 365,
+                "theta": -npv * curve_value(discount_curve, remaining, 0.05) / 365,
                 "commodity_delta": delta  # Exposure to commodity price
             },
             metadata={

@@ -12,6 +12,7 @@ from datetime import date
 from typing import Dict, Any, Optional
 import numpy as np
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency, FloatingRateIndex,
     DayCountConvention, PaymentFrequency,
@@ -68,7 +69,7 @@ class BasisSwap(BaseProduct):
         discount_curve = market_data.discount_curve
         remaining = self.get_remaining_maturity(valuation_date)
         
-        df = np.exp(-discount_curve.get(remaining, 0.05) * remaining)
+        df = np.exp(-curve_value(discount_curve, remaining, 0.05) * remaining)
         
         # Basis swap NPV approximately equals spread * duration * notional * df
         npv = self.spread * remaining * self.notional * df

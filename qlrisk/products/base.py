@@ -24,6 +24,7 @@ strictly prohibited without explicit written permission from the copyright holde
 """
 
 from abc import ABC, abstractmethod
+from bisect import bisect_right
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from enum import Enum, auto
@@ -362,6 +363,10 @@ class MarketData:
     credit_curves: Dict[str, Dict[float, float]] = field(default_factory=dict)
     correlation_matrix: Optional[np.ndarray] = None
     dividend_curves: Dict[str, Dict[float, float]] = field(default_factory=dict)
+    equity_prices: Dict[str, float] = field(default_factory=dict)
+    bond_prices: Dict[str, float] = field(default_factory=dict)
+    reference_rates: Dict[str, float] = field(default_factory=dict)
+    commodity_prices: Dict[str, float] = field(default_factory=dict)
 
 
 @dataclass
@@ -511,6 +516,23 @@ class BaseProduct(ABC):
             SACCRExposure with RC, PFE add-on, and EAD
         """
         pass
+    
+    def risk_factors(self, market_data: MarketData) -> List[Any]:
+        """
+        Risk factors this product's price depends on.
+        
+        The default detects dependencies by pricing once against an
+        access-recording copy of the market data. Override for products
+        where that is too broad or too slow.
+        
+        Args:
+            market_data: Market data the product will be priced against
+            
+        Returns:
+            List of RiskFactorKey
+        """
+        from ..riskfactors.mapping import detect_risk_factors
+        return detect_risk_factors(self, market_data)
     
     def get_remaining_maturity(self, as_of_date: date) -> float:
         """Calculate remaining maturity in years."""
@@ -704,6 +726,38 @@ def year_fraction(
         ) / 360
     else:
         return days / 365
+
+
+def curve_value(
+    curve: Dict[float, float],
+    time: float,
+    default: float = 0.05
+) -> float:
+    """
+    Read a tenor curve at any time point.
+    
+    Linear interpolation between pillars, flat extrapolation outside them.
+    Returns `default` only when the curve is empty.
+    
+    Args:
+        curve: Mapping of tenor (years) to value (e.g. zero rate)
+        time: Time point in years
+        default: Value used when the curve has no pillars
+        
+    Returns:
+        Curve value at `time`
+    """
+    if not curve:
+        return default
+    tenors = sorted(curve)
+    if time <= tenors[0]:
+        return curve[tenors[0]]
+    if time >= tenors[-1]:
+        return curve[tenors[-1]]
+    i = bisect_right(tenors, time)
+    t0, t1 = tenors[i - 1], tenors[i]
+    w = (time - t0) / (t1 - t0)
+    return curve[t0] + w * (curve[t1] - curve[t0])
 
 
 def discount_factor(rate: float, time: float) -> float:

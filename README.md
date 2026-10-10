@@ -1,6 +1,11 @@
-# QLRisk v1.3.0
+<p align="center">
+  <img src="assets/branding/hero.svg" alt="qlrisk — Every risk. One engine." width="100%">
+</p>
 
-**Comprehensive Counterparty Credit Risk Analytics Platform**
+<h1 align="center">QLRisk v1.3.0</h1>
+
+<p align="center"><strong>Every risk. One engine.</strong><br>
+Market risk, counterparty credit risk and XVA — priced, shocked and measured on one QuantLib-powered core.</p>
 
 ---
 
@@ -19,19 +24,49 @@ strictly prohibited without explicit written permission from the copyright holde
 
 ## Overview
 
-QLRisk is a professional-grade Python library for comprehensive counterparty credit risk (CCR) analytics. It provides complete implementations of exposure calculations, valuation adjustments, regulatory capital metrics, and a wide range of financial product models.
+QLRisk is a professional-grade Python library for **unified trading-book risk analytics**. One product
+library, one market-data and scenario layer, and one multi-threaded engine serve three pillars:
+
+| Pillar | What it answers | Key measures |
+|--------|-----------------|--------------|
+| **Pricing & Sensitivities** | What is it worth, and what moves it? | NPV, Greeks, DV01/PV01, CS01, key-rate and vega buckets |
+| **Market Risk** | How much can we lose from market moves? | VaR, Expected Shortfall, Stressed VaR, stress testing, backtesting, FRTB SA / IMA |
+| **Counterparty Credit Risk & XVA** | How much can we lose if a counterparty defaults? | CE, EE, EPE, PFE, SA-CCR, CVA/DVA/FVA/KVA/MVA, ISDA SIMM, economic capital |
+
+Every pillar uses the same `price()` call on the same 90+ products, so a swap is valued identically
+whether it is being shocked for VaR, simulated for PFE or bumped for FRTB sensitivities.
+
+### Capability Status
+
+| Area | Status |
+|------|--------|
+| 90+ products across 13 asset classes (79 market-driven pricers, 12 placeholders) | ✅ Available |
+| Counterparty credit risk: CE, EE, EEE, PFE, peak and stressed exposure | ✅ Available |
+| Credit risk: PD, LGD, EAD, EL, economic capital, RAROC | ✅ Available |
+| SA-CCR (Basel III/IV), ISDA SIMM initial margin | ✅ Available |
+| XVA: CVA, DVA, FVA, KVA, MVA, ColVA | ✅ Available |
+| Monte Carlo path generation (7 stochastic processes) | ✅ Available |
+| Risk-factor taxonomy, market-data shocking, factor histories, bump-and-reprice sensitivities | ✅ Available (Phase 1) |
+| Market-driven pricers for 59 formerly-placeholder products (bonds, FX/equity/commodity options, CDS, XCCY, ...) | ✅ Available (Phase 1.5) |
+| Historical / parametric / Monte Carlo VaR, Expected Shortfall, Stressed VaR, VaR decomposition | 🚧 Planned (Phase 2) |
+| VaR/ES backtesting, P&L attribution, stress-scenario library, reverse stress testing | 🚧 Planned (Phase 3) |
+| FRTB Standardised Approach and Internal Models Approach, Basel 2.5, SA-CVA / BA-CVA | 🚧 Planned (Phase 4) |
+| Unified `RiskEngine`, risk aggregation and reporting, market-risk limits | 🚧 Planned (Phase 5) |
+
+The market-risk build-out is described module by module in
+[`qlrisk/docs/market_risk/README.md`](qlrisk/docs/market_risk/README.md).
 
 ### Key Highlights
 
-- **90+ Financial Products** across 13 asset classes with full pricing and CCR exposure calculation
+- **90+ Financial Products** across 13 asset classes; 79 price off market data (12 complex products still use placeholder pricing — see the roadmap)
 - **16 Risk Calculators** with dual Python and QuantLib implementations
-- **55+ Domain Models** for trades, portfolios, counterparties, curves, and scenarios
+- **55+ Domain Models** for trades, portfolios, counterparties, curves, market data and scenarios
 - **7 Stochastic Processes** for Monte Carlo simulation (GBM, OU, CIR, Vasicek, Hull-White, Heston, Merton Jump)
 - **Multi-threaded Engine** for high-performance parallel computation
-- **SA-CCR Implementation** fully compliant with Basel III/IV regulatory framework
+- **SA-CCR Implementation** fully compliant with the Basel III/IV regulatory framework
 - **XVA Suite** including CVA, DVA, FVA, KVA, MVA, and ColVA calculations
 - **Comprehensive SFT Coverage** including Stock Loans, Securities Borrowing, Collateral Swaps, Prime Brokerage
-- **Total Return Swaps** for Equity and Bond underlyings with full CCR analytics
+- **Total Return Swaps** for Equity and Bond underlyings with full risk analytics
 
 ---
 
@@ -90,6 +125,22 @@ QLRisk is a professional-grade Python library for comprehensive counterparty cre
 | | `RAROC` | Risk-Adjusted Return on Capital |
 | | `IM` | Initial Margin (ISDA SIMM) |
 
+### Market Risk Measures (✅ = available, others planned)
+
+| Category | Measure | Description |
+|----------|---------|-------------|
+| **Sensitivities** ✅ | `DELTA`, `GAMMA`, `VEGA`, `THETA`, `CROSS_GAMMA` | Bump-and-reprice first/second-order, volatility and time sensitivities |
+| ✅ | `DV01`, `CS01`, key-rate ladders | Rate, credit-spread and key-rate sensitivities on native pillars or FRTB vertices |
+| **VaR** | `VAR_HISTORICAL` | Full-revaluation historical simulation (incl. filtered/EWMA-weighted) |
+| | `VAR_PARAMETRIC` | Delta-normal and delta-gamma (Cornish-Fisher) VaR |
+| | `VAR_MONTE_CARLO` | Simulated risk-factor scenarios with full revaluation |
+| | `STRESSED_VAR` | VaR calibrated to a 12-month stress window |
+| **Tail Risk** | `EXPECTED_SHORTFALL` | ES / CVaR at 97.5% and other confidence levels |
+| **Attribution** | `COMPONENT_VAR`, `MARGINAL_VAR`, `INCREMENTAL_VAR` | Risk decomposition by trade, desk or risk factor |
+| **Regulatory** | `FRTB_SA` | Sensitivities-based method, DRC and RRAO |
+| | `FRTB_IMA` | Liquidity-horizon ES, NMRF stressed ES, IMCC |
+| | `CVA_CAPITAL` | BA-CVA and SA-CVA capital |
+
 ### Domain Models (55+ Types)
 
 | Module | Models |
@@ -124,7 +175,29 @@ cd qlrisk
 pip install -e ".[dev]"
 ```
 
-This installs the dependencies (numpy, scipy, QuantLib) automatically.
+This installs the dependencies (numpy, scipy, QuantLib) automatically. They are also listed in
+`requirements.txt` (runtime) and `requirements-dev.txt` (adds pytest, build, twine):
+
+```bash
+pip install -r requirements.txt        # runtime only
+pip install -r requirements-dev.txt    # development
+```
+
+### Run the Tests
+
+```bash
+pytest                                  # 97 tests, incl. closed-form pricing and Greeks checks
+```
+
+### Build a Local Wheel
+
+```bash
+pip install build
+python -m build --wheel          # -> dist/qlrisk-1.3.0-py3-none-any.whl
+
+# then, in any other project / virtualenv:
+pip install /path/to/qlrisk/dist/qlrisk-1.3.0-py3-none-any.whl
+```
 
 ### Running the Demo
 
@@ -142,7 +215,7 @@ python -m qlrisk --quick
 
 ## Quick Start
 
-### Basic CCR Calculation
+### Basic Risk Calculation
 
 ```python
 from qlrisk.engine import CCREngine
@@ -150,11 +223,40 @@ from qlrisk.calculator import CalculatorType
 
 with CCREngine() as engine:
     # Calculate probability of default
-    pd_result = engine.calculate(CalculatorType.PD, {
-        'rating': 'BBB',
-        'method': 'rating_based'
-    })
+    pd_result = engine.calculate(
+        CalculatorType.PD,
+        {'credit_rating': 'BBB'},
+        calculator_config={'model': 'transition_matrix'},
+    )
     print(f"PD: {pd_result.value:.4%}")
+```
+
+### Sensitivities (DV01, Delta, Vega, ...)
+
+```python
+from datetime import date
+from qlrisk.data import create_sample_market_data
+from qlrisk.products.base import Currency
+from qlrisk.products.python import InterestRateSwap
+from qlrisk.sensitivities import SensitivityEngine, FRTB_GIRR_VERTICES
+
+md = create_sample_market_data(date(2026, 10, 9))
+swap = InterestRateSwap("IRS-1", md.valuation_date, md.valuation_date, date(2031, 10, 9),
+                        10_000_000, Currency.USD, "CP-1", fixed_rate=0.044)
+
+result = SensitivityEngine().compute([swap], md, reporting_currency="USD")
+print(result.aggregate(("risk_class", "measure")))                 # DV01 by risk class
+print(result.ladder("forward_curves", "SOFR", vertices=FRTB_GIRR_VERTICES))
+```
+
+### Shock Market Data
+
+```python
+from qlrisk.riskfactors import apply_shocks, curve_shocks, twist, ShockType
+
+eq_crash  = apply_shocks(md, {"EQ.SPX": -0.20}, ShockType.RELATIVE)
+steepener = apply_shocks(md, curve_shocks(md, "forward_curves", "SOFR", twist(-0.0025, 0.0025)))
+print(swap.price(steepener).npv - swap.price(md).npv)
 ```
 
 ### Generate Test Data
@@ -206,11 +308,21 @@ qlrisk/
 │   └── qlib/                # QuantLib products
 ├── models/                  # Domain models (14 files)
 ├── mathlib/                 # Mathematical library (6 files)
-├── engine/                  # CCR Engine (2 files)
+├── engine/                  # Multi-threaded risk engine (2 files)
+├── riskfactors/             # Risk-factor keys, shocks, histories (5 files)
+├── sensitivities/           # Bump-and-reprice sensitivities and ladders (5 files)
 ├── data/                    # Data generation (2 files)
 ├── config/                  # Configuration
 └── docs/                    # Documentation (130+ files)
+    └── market_risk/         # Market-risk roadmap and methodology
 ```
+
+Tests live in `tests/` at the repository root.
+
+Planned market-risk packages (see the [roadmap](qlrisk/docs/market_risk/README.md)):
+`scenarios/`, `pnl/`, `backtesting/`, `regulatory/`, `reporting/`.
+
+Brand assets (logo, favicon, hero banner) live in [`assets/branding/`](assets/branding/BRAND.md).
 
 ---
 
@@ -243,6 +355,7 @@ logging.level=INFO
 See the `docs/` directory for comprehensive documentation:
 
 - `docs/architecture.md` - System architecture
+- `docs/market_risk/` - Market-risk roadmap, [risk factors](qlrisk/docs/market_risk/risk_factors.md) and [sensitivities](qlrisk/docs/market_risk/sensitivities.md)
 - `docs/quickstart.md` - Getting started guide
 - `docs/mathematical_formulas.md` - Mathematical reference
 - `docs/calculators/` - Calculator documentation
@@ -254,6 +367,7 @@ See the `docs/` directory for comprehensive documentation:
 
 | Version | Date | Changes |
 |---------|------|---------|
+| *Unreleased* | Oct 2026 | Market-risk Phase 1 + 1.5: `riskfactors`, `sensitivities`, synthetic market history, test suite, analytic pricers for 59 products (`commodity_prices` added to MarketData); curve interpolation fix across 87 products (PVs of curve-dependent products change); FX forward/swap PV currency fix; requirements files |
 | **v1.3.0** | Dec 2025 | Documentation overhaul, import fixes, version sync |
 | v1.2.0 | Dec 2025 | XVA calculators, SA-CCR, 80 products |
 | v1.1.0 | Dec 2025 | Expanded products, documentation |
@@ -272,4 +386,4 @@ PROPRIETARY AND CONFIDENTIAL
 
 ---
 
-*QLRisk v1.3.0 | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v1.3.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

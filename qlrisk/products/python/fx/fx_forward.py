@@ -10,6 +10,7 @@ from datetime import date
 from typing import Dict, Any, Optional
 import numpy as np
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency,
     DayCountConvention,
@@ -58,16 +59,16 @@ class FXForward(BaseProduct):
         valuation_date = market_data.valuation_date
         
         if self.is_expired(valuation_date):
-            return PricingResult(npv=0.0, currency=self.base_currency.value)
+            return PricingResult(npv=0.0, currency=self.quote_currency.value)
         
         pair = f"{self.base_currency.value}{self.quote_currency.value}"
         spot = market_data.fx_spots.get(pair, self.forward_rate)
         
         remaining = self.get_remaining_maturity(valuation_date)
         discount_curve = market_data.discount_curve
-        df = np.exp(-discount_curve.get(remaining, 0.05) * remaining)
+        df = np.exp(-curve_value(discount_curve, remaining, 0.05) * remaining)
         
-        fair_forward = spot * np.exp((discount_curve.get(remaining, 0.05) - discount_curve.get(remaining, 0.05)) * remaining)
+        fair_forward = spot * np.exp((curve_value(discount_curve, remaining, 0.05) - curve_value(discount_curve, remaining, 0.05)) * remaining)
         
         if self.is_buy_base:
             npv = self.base_notional * (fair_forward - self.forward_rate) * df
@@ -76,7 +77,7 @@ class FXForward(BaseProduct):
         
         return PricingResult(
             npv=npv,
-            currency=self.base_currency.value,
+            currency=self.quote_currency.value,
             components={"spot": spot, "forward_rate": self.forward_rate, "fair_forward": fair_forward},
             greeks={"fx_delta": self.base_notional * df * (1 if self.is_buy_base else -1)},
             metadata={"product_type": self.product_type.value}

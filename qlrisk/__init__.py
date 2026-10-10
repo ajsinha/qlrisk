@@ -2,7 +2,8 @@
 QLRisk v1.3.0
 ============================
 
-Comprehensive Counterparty Credit Risk Analytics Platform
+Unified Market Risk & Counterparty Credit Risk Analytics Platform
+"Every risk. One engine."
 
 Copyright © 2025-2030, All Rights Reserved
 Ashutosh Sinha | Email: ajsinha@gmail.com
@@ -17,7 +18,13 @@ Components:
 - calculator: 16 risk calculators (Python & QuantLib implementations)
 - models: 55+ domain models for trades, portfolios, counterparties
 - core: Configuration, logging, timing, validation utilities
-- engine: High-performance multi-threaded CCR calculation engine
+- engine: High-performance multi-threaded risk calculation engine
+
+- riskfactors: Risk-factor keys, market-data shocks and factor histories
+- sensitivities: Bump-and-reprice DV01, CS01, delta, gamma, vega, theta, ladders
+
+Further market-risk modules (VaR/ES, stress, backtesting, FRTB) are on the
+roadmap; see docs/market_risk/README.md
 - mathlib: Mathematical library with 7 stochastic processes
 - data: Test data generation and management
 
@@ -27,7 +34,8 @@ Quick Start:
     from qlrisk.calculator import CalculatorType
     
     with CCREngine() as engine:
-        result = engine.calculate(CalculatorType.PD, {'rating': 'BBB'})
+        result = engine.calculate(CalculatorType.PD, {'credit_rating': 'BBB'},
+                                  calculator_config={'model': 'transition_matrix'})
         print(f"PD: {result.value:.4%}")
 
 For more examples, see docs/quickstart.md

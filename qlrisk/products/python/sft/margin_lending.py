@@ -25,6 +25,7 @@ from enum import Enum
 import math
 import numpy as np
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency,
     DayCountConvention, PaymentFrequency,
@@ -220,7 +221,7 @@ class MarginLending(BaseProduct):
         
         # Discount factor
         discount_curve = market_data.discount_curve
-        df = math.exp(-discount_curve.get(remaining, 0.05) * remaining)
+        df = math.exp(-curve_value(discount_curve, remaining, 0.05) * remaining)
         
         # Net exposure
         net_exposure = max(0, self.notional - adjusted_collateral)

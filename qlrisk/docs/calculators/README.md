@@ -17,6 +17,11 @@ QLRisk provides 16 risk calculators, each with dual implementations:
 - **Python**: Pure Python implementation using NumPy/SciPy
 - **QuantLib**: High-performance implementation using QuantLib-Python
 
+The calculators below cover counterparty credit risk, XVA, credit risk and capital. Market-risk
+calculators (sensitivities, VaR, Expected Shortfall, Stressed VaR, VaR decomposition, FRTB SA/IMA,
+CVA capital) are planned on the same `BaseCalculator` / `CalculatorFactory` pattern — see
+[../market_risk/README.md](../market_risk/README.md).
+
 ---
 
 ## Calculator Summary

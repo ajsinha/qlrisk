@@ -35,6 +35,7 @@ from enum import Enum
 from dataclasses import dataclass
 import numpy as np
 
+from ...base import curve_value
 from ...base import (
     BaseProduct, ProductType, AssetClass, Currency,
     DayCountConvention, PaymentFrequency, FloatingRateIndex,
@@ -208,7 +209,7 @@ class EquityTRS(BaseProduct):
         
         # Get discount factor
         discount_curve = market_data.discount_curve
-        df = np.exp(-discount_curve.get(remaining, 0.05) * remaining)
+        df = np.exp(-curve_value(discount_curve, remaining, 0.05) * remaining)
         
         # Calculate equity return
         total_return = self.get_underlying_return(market_data)
