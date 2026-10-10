@@ -49,7 +49,7 @@ if __name__ == "__main__" and __package__ is None:
 # Now imports will work whether run as script or module
 from qlrisk.core import PropertiesConfigurator, get_logger, Timer
 from qlrisk.engine import CCREngine, EngineStatus
-from qlrisk.calculator import CalculatorFactory, CalculatorType
+from qlrisk.calculator import CalculatorFactory, CalculatorType, ImplementationType
 from qlrisk.data import DataGenerator, create_test_dataset, ProductType
 from qlrisk.mathlib import MathFactory, ProcessType
 from qlrisk.config import get_default_config_file
@@ -106,10 +106,11 @@ class QLRiskDemo:
         
         # Try to load configuration
         try:
-            self.config = PropertiesConfigurator()
             if Path(self.config_path).exists():
-                self.config.load_properties(self.config_path)
+                self.config = PropertiesConfigurator(self.config_path)
                 logger.info(f"Loaded configuration from {self.config_path}")
+            else:
+                self.config = PropertiesConfigurator()
         except Exception as e:
             logger.warning(f"Could not load configuration: {e}")
             self.config = None
@@ -808,8 +809,8 @@ def run_quick_demo() -> None:
     print(f"  Registered calculators: {len(available)}")
     
     # Group by type
-    python_count = sum(1 for c in available if c.get('implementation') == 'python')
-    ql_count = sum(1 for c in available if c.get('implementation') == 'quantlib')
+    python_count = sum(1 for c in available if c.get('implementation') == ImplementationType.PYTHON.value)
+    ql_count = sum(1 for c in available if c.get('implementation') == ImplementationType.QUANTLIB.value)
     print(f"    Python implementations: {python_count}")
     print(f"    QuantLib implementations: {ql_count}")
     
@@ -841,9 +842,9 @@ def run_quick_demo() -> None:
     print(f"    FX Rates: {len(market.fx_rates)} currencies")
     
     print_section("Path Generator")
-    from qlrisk.mathlib import PathGenerationParams, ImplementationType
+    from qlrisk.mathlib import PathGenerationParams, ImplementationType as MathImplementationType
     
-    path_gen = demo.math_factory.create_path_generator(implementation=ImplementationType.PYTHON)
+    path_gen = demo.math_factory.create_path_generator(implementation=MathImplementationType.PYTHON)
     params = PathGenerationParams(
         initial_value=100.0,
         drift=0.05,

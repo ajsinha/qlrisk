@@ -12,8 +12,11 @@ and confidential. Unauthorized copying, distribution, modification, or use is
 strictly prohibited without explicit written permission from the copyright holder.
 """
 
+import inspect
 from typing import Dict, Any, Type, Optional, List
 from threading import Lock
+
+from ..core.logger import get_logger
 
 from .base import (
     BaseCalculator,
@@ -21,6 +24,8 @@ from .base import (
     ImplementationType,
     DataCalculatorLike
 )
+
+logger = get_logger(__name__)
 
 
 class CalculatorFactory:
@@ -100,15 +105,18 @@ class CalculatorFactory:
         try:
             from .qlib.pd_calculator import QLPDCalculator
             from .qlib.lgd_calculator import QLLGDCalculator
-            from .qlib.ead_calculator import QLEADCalculator
-            from .qlib.el_calculator import QLELCalculator
-            from .qlib.ce_calculator import QLCECalculator
-            from .qlib.pfe_calculator import QLPFECalculator
-            from .qlib.ee_calculator import QLEECalculator, QLEffectiveExpectedExposureCalculator
-            from .qlib.cva_calculator import QLCVACalculator
-            from .qlib.ec_calculator import QLECCalculator
-            from .qlib.raroc_calculator import QLRAROCCalculator
-            from .qlib.im_calculator import QLIMCalculator
+            from .qlib.ead_calculator import QuantLibEADCalculator as QLEADCalculator
+            from .qlib.el_calculator import QuantLibELCalculator as QLELCalculator
+            from .qlib.ce_calculator import QuantLibCECalculator as QLCECalculator
+            from .qlib.pfe_calculator import QuantLibPFECalculator as QLPFECalculator
+            from .qlib.ee_calculator import (
+                QuantLibEECalculator as QLEECalculator,
+                QuantLibEffectiveEECalculator as QLEffectiveExpectedExposureCalculator,
+            )
+            from .qlib.cva_calculator import QuantLibCVACalculator as QLCVACalculator
+            from .qlib.ec_calculator import QuantLibECCalculator as QLECCalculator
+            from .qlib.raroc_calculator import QuantLibRAROCCalculator as QLRAROCCalculator
+            from .qlib.im_calculator import QuantLibIMCalculator as QLIMCalculator
             from .qlib.stress_calculators import (
                 QLStressedExposureCalculator,
                 QLPeakExposureCalculator
@@ -133,6 +141,13 @@ class CalculatorFactory:
             }
             
             for calc_type, calc_class in qlib_calculators.items():
+                # Skip QuantLib calculators that don't yet implement the BaseCalculator interface
+                if inspect.isabstract(calc_class):
+                    logger.warning(
+                        f"QuantLib {calc_type.value} calculator ({calc_class.__name__}) is incomplete; "
+                        "falling back to Python implementation"
+                    )
+                    continue
                 self.register(calc_type, ImplementationType.QUANTLIB, calc_class)
                 
         except ImportError:

@@ -46,18 +46,21 @@ except ImportError:
     )
 
 if QUANTLIB_AVAILABLE:
-    from .pd_calculator import PDCalculatorQL
-    from .lgd_calculator import LGDCalculatorQL
-    from .ead_calculator import EADCalculatorQL
+    from .pd_calculator import QLPDCalculator as PDCalculatorQL
+    from .lgd_calculator import QLLGDCalculator as LGDCalculatorQL
+    from .ead_calculator import QuantLibEADCalculator as EADCalculatorQL
     from .el_calculator import QuantLibELCalculator as ELCalculatorQL
-    from .ce_calculator import CECalculatorQL
-    from .pfe_calculator import PFECalculatorQL
-    from .ee_calculator import EECalculatorQL
-    from .cva_calculator import CVACalculatorQL
-    from .ec_calculator import ECCalculatorQL
-    from .raroc_calculator import RAROCCalculatorQL
-    from .im_calculator import IMCalculatorQL
-    from .stress_calculators import StressedExposureCalculatorQL, PeakExposureCalculatorQL
+    from .ce_calculator import QuantLibCECalculator as CECalculatorQL
+    from .pfe_calculator import QuantLibPFECalculator as PFECalculatorQL
+    from .ee_calculator import QuantLibEECalculator as EECalculatorQL
+    from .cva_calculator import QuantLibCVACalculator as CVACalculatorQL
+    from .ec_calculator import QuantLibECCalculator as ECCalculatorQL
+    from .raroc_calculator import QuantLibRAROCCalculator as RAROCCalculatorQL
+    from .im_calculator import QuantLibIMCalculator as IMCalculatorQL
+    from .stress_calculators import (
+        QLStressedExposureCalculator as StressedExposureCalculatorQL,
+        QLPeakExposureCalculator as PeakExposureCalculatorQL,
+    )
     
     __all__ = [
         "__version__",
