@@ -1,11 +1,10 @@
-# Time Deposit v1.2.0
+# Time Deposit
 
 <!-- generated:implementation -->
 > **Implementation:** `TimeDeposit` is priced by `price_deposit` in `products/python/_pricing.py`. Product terms are keyword arguments: `rate`, `issuer`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
 >
 > The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
 <!-- /generated:implementation -->
-
 ## Product Overview
 
 | Attribute | Value |

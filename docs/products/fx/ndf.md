@@ -1,11 +1,10 @@
-# Non-Deliverable Forward (NDF) v1.2.0
+# Non-Deliverable Forward (NDF)
 
 <!-- generated:implementation -->
 > **Implementation:** `NonDeliverableForward` is priced by `price_fx_ndf` in `products/python/_pricing.py`. Product terms are keyword arguments: `pair`, `forward_rate`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
 >
 > The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
 <!-- /generated:implementation -->
-
 ## Product Overview
 
 | Attribute | Value |

@@ -1,5 +1,4 @@
-# Rating Model Documentation v1.2.0
-
+# Rating Model Documentation
 ## Overview
 
 The Rating module provides models for credit ratings, rating histories, and transition matrices used in credit risk calculations.

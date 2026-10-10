@@ -1,5 +1,4 @@
-# Alternative Products v1.1.0
-
+# Alternative Products
 ## Overview
 
 Alternative investments including digital assets, real estate, carbon credits, and private markets.

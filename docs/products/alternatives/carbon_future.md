@@ -1,11 +1,10 @@
-# Carbon Future v1.2.0
+# Carbon Future
 
 <!-- generated:implementation -->
 > **Implementation:** `CarbonFuture` is priced by `price_equity_forward` in `products/python/_pricing.py`. Product terms are keyword arguments: `ticker`, `strike` (fair forward), `quantity`, `is_future`, `is_long`. Market inputs come from `MarketData` (see [pricers](../../market_risk/pricers.md)).
 >
 > The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
 <!-- /generated:implementation -->
-
 ## Product Overview
 
 | Attribute | Value |

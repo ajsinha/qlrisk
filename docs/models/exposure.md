@@ -1,5 +1,4 @@
-# Exposure Model Documentation v1.2.0
-
+# Exposure Model Documentation
 ## Overview
 
 The Exposure module provides models for exposure calculation results, including time-series profiles and regulatory metrics like SA-CCR.

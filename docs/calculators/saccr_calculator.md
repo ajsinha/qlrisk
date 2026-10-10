@@ -1,5 +1,4 @@
-# SA-CCR Calculator Documentation v1.2.0
-
+# SA-CCR Calculator Documentation
 ## Overview
 
 The SA-CCR (Standardised Approach for Counterparty Credit Risk) Calculator implements the Basel III/IV regulatory framework for calculating Exposure at Default (EAD) for derivatives.

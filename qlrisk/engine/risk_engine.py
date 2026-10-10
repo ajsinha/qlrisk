@@ -104,6 +104,7 @@ class RiskEngine:
         hierarchy: Optional[Hierarchy] = None,
         limits: Optional[Sequence[RiskLimit]] = None,
         frtb: Optional[Mapping[str, Any]] = None,
+        csa: Optional[Mapping[str, Any]] = None,
     ) -> RiskReport:
         """
         Run the requested measures and return a RiskReport.
@@ -116,6 +117,7 @@ class RiskEngine:
             hierarchy: Reporting tree; defaults to one node per counterparty
             limits: Limits to check; results in report.results['limits']
             frtb: Keyword arguments for frtb_sa_capital (bucket maps, ratings, vol underlyings)
+            csa: Netting set -> regulatory.saccr_netting.CSATerms (collateral, margining) for EXPOSURE
         """
         trades = list(trades)
         wanted = [m.upper() for m in measures]
@@ -208,35 +210,24 @@ class RiskEngine:
                 report.notes.append(f"FRTB: unmapped factors {sa.sbm.skipped_factors}")
 
         if "EXPOSURE" in wanted:
-            pfe, ead, addon, mtm, ns_of = {}, {}, {}, {}, {}
+            from ..regulatory.saccr_netting import saccr_netting_sets
+            pfe, ead = {}, {}
             for t in trades:
                 try:
                     pfe[t.trade_id] = t.calculate_ccr_exposure(market_data, num_scenarios=1000).peak_exposure
-                    sa = t.calculate_saccr(market_data)
-                    ead[t.trade_id], addon[t.trade_id] = sa.ead, sa.pfe_add_on
-                    mtm[t.trade_id] = _pv(t, market_data, self.reporting_currency)
-                    ns_of[t.trade_id] = getattr(t, "netting_set_id", None) or t.counterparty_id
+                    ead[t.trade_id] = t.calculate_saccr(market_data).ead
                 except Exception as exc:
                     report.notes.append(f"Exposure failed for {t.trade_id}: {type(exc).__name__}: {exc}")
-            netting_sets = {}
-            for tid, ns in ns_of.items():
-                agg = netting_sets.setdefault(ns, {"mtm": 0.0, "add_on": 0.0, "trades": []})
-                agg["mtm"] += mtm[tid]
-                agg["add_on"] += addon[tid]
-                agg["trades"].append(tid)
-            for agg in netting_sets.values():
-                v, a = agg["mtm"], agg["add_on"]
-                rc = max(v, 0.0)
-                mult = min(1.0, 0.05 + 0.95 * math.exp(v / (2 * 0.95 * a))) if a > 0 else 1.0
-                agg.update({"replacement_cost": rc, "multiplier": mult, "ead": 1.4 * (rc + mult * a)})
+            netting_sets = saccr_netting_sets([t for t in trades if t.trade_id in ead], market_data,
+                                              self.reporting_currency, csa)
             report.results["netting_sets"] = netting_sets
             report.metrics["exposure.peak_pfe_sum"] = sum(pfe.values())
             report.metrics["exposure.saccr_ead_trade_sum"] = sum(ead.values())
-            report.metrics["exposure.saccr_ead_netted"] = sum(a["ead"] for a in netting_sets.values())
+            report.metrics["exposure.saccr_ead_netted"] = sum(n.ead for n in netting_sets.values())
             add_additive("peak_pfe", pfe)
             add_additive("saccr_ead", ead)
-            report.notes.append("Exposure: SA-CCR EAD netted per netting set (unmargined, no collateral, "
-                                "add-ons summed gross across trades); trade-level PFE / EAD also summed per node")
+            report.notes.append("Exposure: SA-CCR EAD per netting set with CRE52 hedging-set aggregation "
+                                "(see qlrisk.regulatory.saccr_netting); trade-level PFE / EAD also summed per node")
         
         for metric, value in report.metrics.items():
             nodes[ROOT].setdefault(metric, value)

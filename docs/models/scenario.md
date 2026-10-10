@@ -1,5 +1,4 @@
-# Scenario Model Documentation v1.2.0
-
+# Scenario Model Documentation
 ## Overview
 
 The Scenario module provides models for stress testing and simulation scenarios, including market shocks and Monte Carlo path generation.

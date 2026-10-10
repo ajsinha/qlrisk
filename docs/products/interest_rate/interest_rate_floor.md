@@ -1,11 +1,10 @@
-# Interest Rate Floor v1.2.0
+# Interest Rate Floor
 
 <!-- generated:implementation -->
 > **Implementation:** `InterestRateFloor` has its own pricer and constructor arguments (see the example and `help(qlrisk.products.python.InterestRateFloor)`).
 >
 > The narrative below describes the instrument; the example in this page is generated from the code (`scripts/gen_product_docs.py`) and is executed by the test suite.
 <!-- /generated:implementation -->
-
 ## Product Overview
 
 | Attribute | Value |

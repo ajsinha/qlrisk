@@ -1,5 +1,4 @@
-# FVA Calculator Documentation v1.2.0
-
+# FVA Calculator Documentation
 ## Overview
 
 The FVA (Funding Valuation Adjustment) Calculator computes the cost or benefit of funding uncollateralized derivatives positions.

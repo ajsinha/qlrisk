@@ -108,14 +108,20 @@ wwr = wrong_way_exposure(spx_put, md, history, "CR.ACME.5Y", shock_sigmas=3.0)
 print(f"exposure {wwr.base_exposure:,.0f} -> {wwr.conditional_exposure:,.0f} (x{wwr.ratio:.2f}) when ACME widens {wwr.spread_move*1e4:.0f}bp")
 ```
 
-## Netting sets
+## Netting sets (SA-CCR, CRE52)
 
-`EXPOSURE` also nets SA-CCR per netting set (`trade.netting_set_id`, defaulting to the counterparty): replacement
-cost on the netted MtM and the CRE52 multiplier, with add-ons summed gross (no collateral or hedging-set offsets):
+`EXPOSURE` aggregates SA-CCR per netting set (`trade.netting_set_id`, defaulting to the counterparty) with
+hedging-set netting: IR by currency and maturity bucket, FX by pair, credit / equity by entity, commodity by
+type. Pass collateral terms per netting set with `csa=`:
 
 ```python
-for ns, agg in report.results["netting_sets"].items():
-    print(f"{ns:8} MtM {agg['mtm']:>13,.0f}  RC {agg['replacement_cost']:>12,.0f}  multiplier {agg['multiplier']:.2f}  EAD {agg['ead']:>13,.0f}")
+from qlrisk.regulatory.saccr_netting import CSATerms
+
+margined = engine.run(book, md, measures=("EXPOSURE",),
+                      csa={"BANK-A": CSATerms(margined=True, collateral=250_000, threshold=0, minimum_transfer_amount=0)})
+for ns, agg in margined.results["netting_sets"].items():
+    print(f"{ns:8} MtM {agg.mtm:>13,.0f}  RC {agg.replacement_cost:>12,.0f}  add-on {agg.addon:>12,.0f}  "
+          f"multiplier {agg.multiplier:.2f}  EAD {agg.ead:>13,.0f}  {dict((k, round(v)) for k, v in agg.addon_by_class.items())}")
 ```
 
 ## Command line

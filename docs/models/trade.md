@@ -1,5 +1,4 @@
-# Trade Model Documentation v1.2.0
-
+# Trade Model Documentation
 ## Overview
 
 The Trade model represents individual financial transactions in QLRisk. It captures all essential attributes needed for market risk and counterparty credit risk calculations.

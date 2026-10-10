@@ -1,5 +1,4 @@
-# Products Model Documentation v1.2.0
-
+# Products Model Documentation
 ## Overview
 
 The Products model module provides domain models for 27 financial product types used in CCR calculations. These are lightweight data models; for full pricing implementations, see `products/python/`.

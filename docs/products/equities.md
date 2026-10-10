@@ -1,5 +1,4 @@
-# Equity Products v1.1.0
-
+# Equity Products
 ## Overview
 
 Ownership securities and related derivatives.
