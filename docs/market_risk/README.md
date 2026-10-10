@@ -20,8 +20,8 @@ strictly prohibited without explicit written permission from the copyright holde
 | 1 — Risk factors and sensitivities | ✅ Delivered | [risk_factors.md](risk_factors.md), [sensitivities.md](sensitivities.md) |
 | 1.5 — Real pricers for placeholder products | ✅ Delivered (59 of 71) | [pricers.md](pricers.md) |
 | 2 — VaR / ES | ✅ Delivered | [var_es.md](var_es.md), [guide](../guides/market_risk/var_and_es.md) |
-| 3 — Validation and stress | 🚧 Next | |
-| 4 — Regulatory capital | 🚧 Planned | |
+| 3 — Validation and stress | ✅ Delivered | [validation.md](validation.md), [guide](../guides/market_risk/validation_and_stress.md) |
+| 4 — Regulatory capital | 🚧 Next | |
 | 5 — One engine | 🚧 Planned | |
 
 ---
@@ -104,7 +104,12 @@ uses each product's own (QuantLib where applicable) pricer. Original plan:
 | `qlrisk/calculator/factory.py` | EXTEND | Register the above for both implementations; `get_var_calculator()`, `get_es_calculator()` helpers |
 | `qlrisk/engine/market_risk_engine.py` | NEW | `MarketRiskEngine`: `run_sensitivities()`, `run_var()`, `run_es()`, `run_svar()` over a `Portfolio` + `MarketData` + scenario set |
 
-### Phase 3 — Validation, attribution and stress testing
+### Phase 3 — Validation, attribution and stress testing ✅ Delivered
+
+As built: `backtesting/{var_backtest, es_backtest}.py`, `pnl/attribution.py` (P&L explain + PLA test),
+`scenarios/{stress_library, reverse_stress}.py`, `calculator/python/liquidity_var.py`, and
+`MarketRiskEngine.backtest / stress_test / reverse_stress / explain`. Stress P&L runs through the engine
+rather than the CCR `stress_calculators.py`. Original plan:
 
 | Module | Status | Contents |
 |--------|--------|----------|

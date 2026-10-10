@@ -12,8 +12,8 @@ strictly prohibited without explicit written permission from the copyright holde
 ---
 
 Market scenarios for VaR / ES / stress testing: historical, age-weighted,
-filtered historical, Monte Carlo and hypothetical (from shocks), plus
-stressed-period search.
+filtered historical, Monte Carlo and hypothetical (from shocks), a historical
+stress library, reverse stress testing, and stressed-period search.
 """
 
 from .scenario_set import ScenarioSet
@@ -22,8 +22,12 @@ from .generators import (
     age_weights, ewma_volatility, covariance,
 )
 from .stressed_period import StressWindow, find_stress_window
+from .stress_library import StressDefinition, STRESS_LIBRARY, stress_shocks, historical_stress_scenarios
+from .reverse_stress import reverse_stress_test, ReverseStressResult
 
 __all__ = [
     "ScenarioSet", "historical_scenarios", "filtered_historical_scenarios", "monte_carlo_scenarios",
     "age_weights", "ewma_volatility", "covariance", "StressWindow", "find_stress_window",
+    "StressDefinition", "STRESS_LIBRARY", "stress_shocks", "historical_stress_scenarios",
+    "reverse_stress_test", "ReverseStressResult",
 ]

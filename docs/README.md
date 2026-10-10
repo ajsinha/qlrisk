@@ -32,6 +32,7 @@ This guide covers pricing and sensitivities, counterparty credit risk and XVA, a
 | [market_risk/sensitivities.md](market_risk/sensitivities.md) | DV01, CS01, delta, gamma, vega, theta, cross-gamma, tenor ladders |
 | [market_risk/pricers.md](market_risk/pricers.md) | Analytic pricers and product terms |
 | [market_risk/var_es.md](market_risk/var_es.md) | VaR / ES / SVaR methodology, scenarios, decomposition |
+| [market_risk/validation.md](market_risk/validation.md) | Backtesting, P&L explain, PLA, stress library, reverse stress, LVaR |
 | [Brand kit](../assets/branding/BRAND.md) | Logo, favicon, tagline and palette |
 
 ---
@@ -58,7 +59,8 @@ docs/
 │   ├── risk_factors.md         # Risk-factor keys, shocks, histories
 │   ├── sensitivities.md        # Bump-and-reprice sensitivities, ladders
 │   ├── pricers.md              # Analytic pricers and product kwargs
-│   └── var_es.md               # VaR / ES / SVaR methodology
+│   ├── var_es.md               # VaR / ES / SVaR methodology
+│   └── validation.md           # Backtesting, PLA, stress, reverse stress
 │
 ├── calculators/                 # Calculator documentation (18 files)
 │   ├── README.md               # Calculator overview
@@ -155,7 +157,7 @@ docs/
 | Valuation | CVA, DVA, FVA, KVA, MVA |
 | Capital | EC, RAROC, IM |
 | Regulatory | SA-CCR |
-| Market Risk | Sensitivities ✅, VaR (HS/filtered/MC/parametric) ✅, ES ✅, SVaR ✅, decomposition ✅; planned: backtesting, FRTB SA/IMA, CVA capital |
+| Market Risk | Sensitivities ✅, VaR (HS/filtered/MC/parametric) ✅, ES ✅, SVaR ✅, decomposition ✅, backtesting ✅, PLA ✅, stress library ✅, reverse stress ✅; planned: FRTB SA/IMA, CVA capital |
 
 ---
 
