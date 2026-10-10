@@ -1,5 +1,5 @@
 """
-QLRisk v1.3.0 - Package Entry Point
+QLRisk v2.0.0 - Package Entry Point
 ==================================================
 
 Allows the package to be run with: python -m qlrisk

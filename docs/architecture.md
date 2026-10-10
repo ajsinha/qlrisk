@@ -1,4 +1,4 @@
-# QLRisk - Architecture Documentation v1.3.0
+# QLRisk - Architecture Documentation v2.0.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -71,7 +71,7 @@ QLRisk is a high-performance, multi-threaded system for unified trading-book ris
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           QLRisk v1.3.0                           │
+│                           QLRisk v2.0.0                           │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                  │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
@@ -686,6 +686,6 @@ logging.format=%(asctime)s | %(levelname)-8s | %(name)s | %(message)s
 
 ---
 
-*Document Version: 1.3.0*  
+*Document Version: 2.0.0*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

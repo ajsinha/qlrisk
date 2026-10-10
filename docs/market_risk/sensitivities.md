@@ -1,4 +1,4 @@
-# QLRisk - Sensitivities v1.3.0
+# QLRisk - Sensitivities v2.0.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -157,4 +157,4 @@ sensitivity only. All other products price off market data; see [pricers.md](pri
 
 ---
 
-*QLRisk v1.3.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.0.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

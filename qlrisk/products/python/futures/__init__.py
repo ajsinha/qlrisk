@@ -1,5 +1,5 @@
 """
-QLRisk - Futures Products v1.3.0
+QLRisk - Futures Products v2.0.0
 ===============================================
 
 Exchange-traded futures contracts across multiple asset classes.
@@ -20,7 +20,7 @@ and confidential. Unauthorized copying, distribution, modification, or use is
 strictly prohibited without explicit written permission from the copyright holder.
 """
 
-__version__ = "1.3.0"
+__version__ = "2.0.0"
 
 from .index_future import IndexFuture
 from .interest_rate_future import InterestRateFuture
