@@ -920,6 +920,16 @@ Ashutosh Sinha | Email: ajsinha@gmail.com
         help="Run quick demonstration"
     )
     parser.add_argument(
+        "--market-risk",
+        action="store_true",
+        help="Run the market risk demo (VaR, ES, SVaR, stress, backtest, limits)"
+    )
+    parser.add_argument(
+        "--frtb",
+        action="store_true",
+        help="Run the FRTB standardised approach demo"
+    )
+    parser.add_argument(
         "--config",
         type=str,
         help="Path to configuration file"
@@ -943,6 +953,12 @@ Ashutosh Sinha | Email: ajsinha@gmail.com
             run_benchmark_only()
         elif args.stress:
             run_stress_only()
+        elif args.market_risk:
+            from qlrisk.demos import run_market_risk_demo
+            run_market_risk_demo()
+        elif args.frtb:
+            from qlrisk.demos import run_frtb_demo
+            run_frtb_demo()
         else:
             demo = QLRiskDemo(config_path=args.config)
             demo.run_full_demo()

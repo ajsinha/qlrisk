@@ -24,10 +24,11 @@ from .generators import (
 from .stressed_period import StressWindow, find_stress_window
 from .stress_library import StressDefinition, STRESS_LIBRARY, stress_shocks, historical_stress_scenarios
 from .reverse_stress import reverse_stress_test, ReverseStressResult
+from .wrong_way import wrong_way_exposure, WrongWayResult
 
 __all__ = [
     "ScenarioSet", "historical_scenarios", "filtered_historical_scenarios", "monte_carlo_scenarios",
     "age_weights", "ewma_volatility", "covariance", "StressWindow", "find_stress_window",
     "StressDefinition", "STRESS_LIBRARY", "stress_shocks", "historical_stress_scenarios",
-    "reverse_stress_test", "ReverseStressResult",
+    "reverse_stress_test", "ReverseStressResult", "wrong_way_exposure", "WrongWayResult",
 ]
