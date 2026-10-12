@@ -1,5 +1,5 @@
 """
-QLRisk - New Products Examples v2.3.1
+QLRisk - New Products Examples v2.4.0
 =====================================================
 
 Examples for SFT products, Commodity Futures, Equity TRS, and Bond TRS.
@@ -568,7 +568,7 @@ def example_sft_products():
 def main():
     """Run all examples."""
     print("\n" + "="*70)
-    print("CCR ANALYTICS ENGINE - NEW PRODUCTS EXAMPLES v2.3.1")
+    print("CCR ANALYTICS ENGINE - NEW PRODUCTS EXAMPLES v2.4.0")
     print("="*70)
     
     # Run examples

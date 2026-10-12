@@ -1,5 +1,5 @@
 """
-QLRisk - Collateral Swap v2.3.1
+QLRisk - Collateral Swap v2.4.0
 ==============================================
 
 Collateral Swap product implementation for Securities Financing Transactions.

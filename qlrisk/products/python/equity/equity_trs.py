@@ -1,5 +1,5 @@
 """
-QLRisk - Equity Total Return Swap (TRS) v2.3.1
+QLRisk - Equity Total Return Swap (TRS) v2.4.0
 =============================================================
 
 Equity Total Return Swap implementation with full CCR analytics support.

@@ -63,11 +63,16 @@ class RiskReport:
                 fh.write(text)
         return text
     
-    def to_csv(self, path: str) -> None:
+    def to_csv(self, path: Optional[str] = None) -> str:
+        """Write node / metric / value rows; without `path`, into qlrisk's tmp folder. Returns the path."""
+        if path is None:
+            from ..config import tmp_path
+            path = str(tmp_path(f"risk_report_{self.as_of}.csv"))
         with open(path, "w", newline="") as fh:
             writer = csv.DictWriter(fh, fieldnames=["node", "metric", "value"])
             writer.writeheader()
             writer.writerows(self.rows())
+        return path
     
     def __str__(self) -> str:
         width = max((len(k) for k in self.metrics), default=10)
