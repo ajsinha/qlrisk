@@ -1,5 +1,5 @@
 """
-QLRisk - Models Module v2.3.1
+QLRisk - Models Module v2.4.0
 ============================================
 
 Copyright © 2025-2030, All Rights Reserved
@@ -32,7 +32,7 @@ Modules (14):
 Total Classes: 55+
 """
 
-__version__ = "2.3.1"
+__version__ = "2.4.0"
 
 # Trade models
 from .trade import Trade, TradeType, TradeStatus

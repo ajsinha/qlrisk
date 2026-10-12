@@ -1,4 +1,4 @@
-# QLRisk - Risk Factors v2.3.1
+# QLRisk - Risk Factors v2.4.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -196,4 +196,4 @@ The model has four layers: a global factor (equities and rates fall, spreads and
 
 ---
 
-*QLRisk v2.3.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.4.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

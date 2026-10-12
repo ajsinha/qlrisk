@@ -1,4 +1,4 @@
-# QLRisk - Market Risk Roadmap v2.3.1
+# QLRisk - Market Risk Roadmap v2.4.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -154,7 +154,7 @@ unchanged and used underneath), `reporting/{hierarchy, report, limits_monitor}.p
 `scenarios/wrong_way.py`, `demos.py` + `--market-risk` / `--frtb`, `marketrisk.*` config keys,
 market-risk members on `models.limit.LimitType` (limit checks reuse `LimitStatus`).
 
-### Backlog (deferred after v2.3.1)
+### Backlog (deferred after v2.4.0)
 
 The core platform is complete. These items are deferred until there is a business need:
 
@@ -192,7 +192,7 @@ money market, repo, cash equities and funds, equity options and forwards, FX van
 barrier options and NDFs, CDS and CDS indices, commodity forwards, swaps and options, and
 cross-currency swaps). See [pricers.md](pricers.md).
 
-**v2.3.1 completed the set:** IR / bond / VIX futures, variance and dividend swaps, equity swap and TRS,
+**v2.4.0 completed the set:** IR / bond / VIX futures, variance and dividend swaps, equity swap and TRS,
 convertible bond, MBS (rate-dependent prepayment), ABS and CDO / CLO tranches now have compact models too.
 
 ## 4. Usage (as delivered)
@@ -234,4 +234,4 @@ print(report)
 
 ---
 
-*QLRisk v2.3.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.4.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

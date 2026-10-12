@@ -1,5 +1,5 @@
 """
-QLRisk - Fixed Income Products v2.3.1
+QLRisk - Fixed Income Products v2.4.0
 ====================================================
 
 Fixed income products including government bonds, corporate bonds, 
@@ -20,7 +20,7 @@ and confidential. Unauthorized copying, distribution, modification, or use is
 strictly prohibited without explicit written permission from the copyright holder.
 """
 
-__version__ = "2.3.1"
+__version__ = "2.4.0"
 
 from .treasury_bill import TreasuryBill
 from .treasury_note import TreasuryNote

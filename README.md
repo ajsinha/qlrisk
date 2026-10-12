@@ -2,7 +2,7 @@
   <img src="assets/branding/hero.svg" alt="qlrisk — Every risk. One engine." width="100%">
 </p>
 
-<h1 align="center">QLRisk v2.3.1</h1>
+<h1 align="center">QLRisk v2.4.0</h1>
 
 <p align="center"><strong>Every risk. One engine.</strong><br>
 Market risk, counterparty credit risk and XVA — priced, shocked and measured on one QuantLib-powered core.</p>
@@ -208,10 +208,10 @@ pytest                                  # 300 tests, incl. closed-form checks an
 
 ```bash
 pip install build
-python -m build --wheel          # -> dist/qlrisk-2.3.1-py3-none-any.whl
+python -m build --wheel          # -> dist/qlrisk-2.4.0-py3-none-any.whl
 
 # then, in any other project / virtualenv:
-pip install /path/to/qlrisk/dist/qlrisk-2.3.1-py3-none-any.whl
+pip install /path/to/qlrisk/dist/qlrisk-2.4.0-py3-none-any.whl
 ```
 
 ### Running the Demo
@@ -342,7 +342,7 @@ print(f"Final mean: {result.paths[:, -1].mean():.2f}")
 
 ```
 qlrisk/
-├── __init__.py              # Package initialization (v2.3.1)
+├── __init__.py              # Package initialization (v2.4.0)
 ├── __main__.py              # Entry point for python -m
 ├── main.py                  # Main demonstration script
 ├── core/                    # Core utilities (9 files)
@@ -433,7 +433,8 @@ See the `docs/` directory for comprehensive documentation:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| **v2.3.1** | Oct 2026 | Roadmap: backlog of deferred items added |
+| **v2.4.0** | Oct 2026 | Own tmp folder (default `/tmp`; `qlrisk.config.get_tmp_dir` / `set_tmp_dir` / `tmp_path` / `make_tmp_dir`, `$QLRISK_TMP_DIR`, `qlrisk.tmp_dir` property); `RiskReport.to_csv()` defaults into it |
+| v2.3.1 | Oct 2026 | Roadmap: backlog of deferred items added |
 | v2.3.0 | Oct 2026 | SA-CVA (MAR50: IR, FX, counterparty and reference credit spread, equity, commodity delta and vega; hedges); FRTB CSR cross-bucket sector table (MAR21.57); two-factor IMA DRC; FRTB commodity buckets fixed (livestock 9, softs 10); SA-CCR netting sets per CRE52 (hedging sets: IR currency x maturity bucket, FX pair, credit / equity entities, commodity types; margined MF, collateral, threshold / MTA; `RiskEngine.run(csa=...)`); stale v1.x labels removed from 102 doc pages |
 | v2.2.1 | Oct 2026 | Every python example in README and docs/ now runs in the test suite (product pages regenerated, class/enum/attribute tables synced from code by `scripts/sync_doc_listings.py`, all reference pages repaired). Bugs fixed on the way: models package missing core imports (Counterparty, curves, factory unusable), `Portfolio.calculate_summary`, factory cache ignoring config, `SACCRCalculator` not instantiable, SA-CCR crash in 10 SFT / TRS / commodity-future products, QuantLib bond yield (API + dirty/clean price), QuantLib curve pillars on business days, seasoned QuantLib swaps missing fixings; calculators constructible without arguments; PD accepts `rating`; `ELInput.lgd` optional; `PropertiesConfigurator.set()`; SFT / calculator I/O classes exported |
 | v2.2.0 | Oct 2026 | DVA / FVA / KVA / MVA calculators fixed (could not be instantiated) and registered as `CalculatorType.DVA/FVA/KVA/MVA`; XVA curves interpolated; `RiskEngine` EXPOSURE nets SA-CCR EAD per netting set (`results["netting_sets"]`, `exposure.saccr_ead_netted`) |
@@ -458,4 +459,4 @@ PROPRIETARY AND CONFIDENTIAL
 
 ---
 
-*QLRisk v2.3.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.4.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

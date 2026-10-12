@@ -1,5 +1,5 @@
 """
-QLRisk - Margin Loan v2.3.1
+QLRisk - Margin Loan v2.4.0
 ==========================================
 
 Margin Loan (securities-based lending) implementation with full CCR analytics.

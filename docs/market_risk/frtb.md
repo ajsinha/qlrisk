@@ -1,4 +1,4 @@
-# QLRisk - Regulatory Market Risk Capital v2.3.1
+# QLRisk - Regulatory Market Risk Capital v2.4.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -131,4 +131,4 @@ use MF = 1.5√(MPOR/250) and RC = max(V − C, TH + MTA − NICA, 0); multiplie
 
 ---
 
-*QLRisk v2.3.1 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*
+*QLRisk v2.4.0 — Every risk. One engine. | Copyright © 2025-2030 Ashutosh Sinha*

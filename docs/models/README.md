@@ -1,4 +1,4 @@
-# QLRisk - Models Documentation v2.3.1
+# QLRisk - Models Documentation v2.4.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -195,6 +195,6 @@ print(trade.trade_type, curve.zero_rate(3.0), counterparty.name)
 
 ---
 
-*Document Version: 2.3.1*  
+*Document Version: 2.4.0*  
 *Last Updated: December 2025*  
 *Copyright © 2025-2030 Ashutosh Sinha. All Rights Reserved.*

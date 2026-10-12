@@ -1,5 +1,5 @@
 """
-QLRisk - Securities Financing Transactions (SFT) v2.3.1
+QLRisk - Securities Financing Transactions (SFT) v2.4.0
 ======================================================================
 
 Securities Financing Transactions product implementations.
@@ -27,7 +27,7 @@ and confidential. Unauthorized copying, distribution, modification, or use is
 strictly prohibited without explicit written permission from the copyright holder.
 """
 
-__version__ = "2.3.1"
+__version__ = "2.4.0"
 
 from .margin_loan import (
     MarginLoan, 

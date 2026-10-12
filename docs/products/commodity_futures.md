@@ -4,7 +4,7 @@
 
 Commodity futures are standardized exchange-traded contracts obligating the buyer to purchase (or seller to sell) a specific quantity of a commodity at a predetermined price on a specified future date.
 
-## QLRisk - Commodity Futures v2.3.1
+## QLRisk - Commodity Futures v2.4.0
 
 ```
 Copyright © 2025-2030, All Rights Reserved
@@ -254,4 +254,4 @@ Where σ is the commodity-specific volatility.
 
 ---
 
-*QLRisk v2.3.1*
+*QLRisk v2.4.0*
